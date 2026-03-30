@@ -26,6 +26,21 @@ from solver.lr_scheduler import WarmupMultiStepLR
 from processor.processor_clipreid_stage1 import do_train_stage1
 from processor.processor_clipreid_stage2 import do_train_stage2
 
+class _LimitedLoader:
+    def __init__(self, loader, max_batches):
+        self._loader = loader
+        self._max = max_batches
+    def __len__(self):
+        return min(self._max, len(self._loader))
+    def __iter__(self):
+        for i, batch in enumerate(self._loader):
+            if i >= self._max:
+                break
+            yield batch
+    def __getattr__(self, name):
+        return getattr(self._loader, name)
+
+
 def set_seed(seed):
     torch.manual_seed(seed)
     torch.cuda.manual_seed(seed)
@@ -48,6 +63,12 @@ if __name__ == '__main__':
     parser.add_argument("opts", help="Modify config options using the command-line", default=None,
                         nargs=argparse.REMAINDER)
     parser.add_argument("--local_rank", default=0, type=int)
+    parser.add_argument("--max_batches", default=None, type=int,
+                        help="Limit stage-2 loader to this many batches per epoch (smoke test).")
+    parser.add_argument("--max_mem_batches", default=None, type=int,
+                        help="Limit stage-1 CLIP-memory loader to this many batches.")
+    parser.add_argument("--fast_schedule", action="store_true", default=False,
+                        help="Scale LR decay steps proportionally to MAX_EPOCHS.")
     args = parser.parse_args()
 
     if args.config_file != "":
@@ -83,13 +104,25 @@ if __name__ == '__main__':
     #############################################
     train_loader_stage2, train_loader_stage1, val_loader, num_query, num_classes, camera_num, view_num = make_dataloader(cfg)
 
+    if args.max_mem_batches is not None:
+        train_loader_stage1 = _LimitedLoader(train_loader_stage1, args.max_mem_batches)
+    if args.max_batches is not None:
+        train_loader_stage2 = _LimitedLoader(train_loader_stage2, args.max_batches)
+
     model = make_model(cfg, num_class=num_classes, camera_num=camera_num, view_num = view_num)
 
 
     loss_func, center_criterion = make_loss(cfg, num_classes=num_classes)
 
     optimizer_2stage, optimizer_center_2stage = make_optimizer_2stage(cfg, model, center_criterion)
-    scheduler_2stage = WarmupMultiStepLR(optimizer_2stage, cfg.SOLVER.STAGE2.STEPS, cfg.SOLVER.STAGE2.GAMMA, cfg.SOLVER.STAGE2.WARMUP_FACTOR,
+
+    sched_steps = list(cfg.SOLVER.STAGE2.STEPS)
+    if args.fast_schedule:
+        total = cfg.SOLVER.STAGE2.MAX_EPOCHS
+        sched_steps = [max(1, int(total * 0.75)), max(2, int(total * 0.90))]
+        logger.info(f"[fast_schedule] MAX_EPOCHS={total}, scaled steps={sched_steps}")
+
+    scheduler_2stage = WarmupMultiStepLR(optimizer_2stage, sched_steps, cfg.SOLVER.STAGE2.GAMMA, cfg.SOLVER.STAGE2.WARMUP_FACTOR,
                                   cfg.SOLVER.STAGE2.WARMUP_ITERS, cfg.SOLVER.STAGE2.WARMUP_METHOD)
 
     do_train_stage2(

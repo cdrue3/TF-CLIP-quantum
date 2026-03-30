@@ -62,7 +62,8 @@ def make_loss(cfg, num_classes):    # modified by gu
                         loss = cfg.MODEL.I2T_LOSS_WEIGHT * I2TLOSS + loss
                     
                     if isprint:
-                        print("Loss: {:.3f}, ID Loss: {:.3f}, TRI Loss: {:.3f}, I2T Loss: {:.3f}".format(loss, ID_LOSS, TRI_LOSS, I2TLOSS))
+                        i2t_str = "{:.3f}".format(I2TLOSS) if i2tscore is not None else "skipped"
+                        print("Loss: {:.3f}, ID Loss: {:.3f}, TRI Loss: {:.3f}, I2T Loss: {}".format(loss, ID_LOSS, TRI_LOSS, i2t_str))
                         
                     return loss
                 else:

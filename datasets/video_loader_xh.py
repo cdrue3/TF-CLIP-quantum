@@ -102,7 +102,13 @@ class VideoDataset(Dataset):
                     break
                 last_seq.append(index)
 
-            indices_list.append(last_seq)  # <class 'list'>: [[0, 1, 2, 3, 4, 5, 6, 7], [8, 9, 10, 11, 12, 13, 14, 15], [16, 17, 18, 19, 20, 21, 22, 23], [24, 25, 24, 25, 24, 25, 24, 25]]
+            indices_list.append(last_seq)
+            # Cap clips to avoid spending seconds on 900-frame aerial tracklets.
+            # 8 clips = 32 frames; covers median tracklet fully. Uniformly subsample if longer.
+            MAX_CLIPS = 8
+            if len(indices_list) > MAX_CLIPS:
+                step = len(indices_list) / MAX_CLIPS
+                indices_list = [indices_list[int(i * step)] for i in range(MAX_CLIPS)]
             imgs_list = []
             for indices in indices_list:  # <class 'list'>: [0, 1, 2, 3, 4, 5, 6, 7]
                 imgs = []

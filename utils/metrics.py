@@ -9,7 +9,7 @@ def euclidean_distance(qf, gf):
     n = gf.shape[0]
     dist_mat = torch.pow(qf, 2).sum(dim=1, keepdim=True).expand(m, n) + \
                torch.pow(gf, 2).sum(dim=1, keepdim=True).expand(n, m).t()
-    dist_mat.addmm_(1, -2, qf, gf.t())
+    dist_mat.addmm_(qf, gf.t(), beta=1, alpha=-2)
     return dist_mat.cpu().numpy()
 
 def cosine_similarity(qf, gf):
@@ -113,13 +113,13 @@ class R1_mAP_eval():
             feats = torch.nn.functional.normalize(feats, dim=1, p=2)  # along channel
         # query
         qf = feats[:self.num_query]
-        q_pids = np.asarray(self.pids[:self.num_query])
-        q_camids = np.asarray(self.camids[:self.num_query])
+        q_pids = np.asarray(self.pids[:self.num_query], dtype=np.int64)
+        q_camids = np.asarray(self.camids[:self.num_query], dtype=np.int64)
         # gallery
         gf = feats[0:]
-        g_pids = np.asarray(self.pids[0:])
+        g_pids = np.asarray(self.pids[0:], dtype=np.int64)
 
-        g_camids = np.asarray(self.camids[0:])
+        g_camids = np.asarray(self.camids[0:], dtype=np.int64)
         if self.reranking:
             print('=> Enter reranking')
             # distmat = re_ranking(qf, gf, k1=20, k2=6, lambda_value=0.3)
@@ -131,6 +131,7 @@ class R1_mAP_eval():
         cmc, mAP = eval_func(distmat, q_pids, g_pids, q_camids, g_camids)
 
         return cmc, mAP, distmat, self.pids, self.camids, qf, gf
+
 
 
 

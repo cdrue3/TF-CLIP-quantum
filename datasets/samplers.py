@@ -82,7 +82,10 @@ class RandomIdentitySamplerForSeq(Sampler):
         self.num_instances = num_instances  # K=4
         self.num_pids_per_batch = self.batch_size // self.num_instances
         self.index_dic = defaultdict(list)
-        for index, (_, pid, _, _) in enumerate(data_source):
+        for index, item in enumerate(data_source):
+            # iLIDSVID: (start, end, pid, label, camid) — pid at [2]
+            # Other datasets: (path, pid, camid, viewid) — pid at [1]
+            pid = item[2] if len(item) == 5 else item[1]
             self.index_dic[pid].append(index)
         self.pids = list(self.index_dic.keys())
         self.num_identities = len(self.pids)  # 625

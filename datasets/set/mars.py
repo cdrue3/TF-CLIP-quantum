@@ -35,7 +35,7 @@ class infostruct(object):
     pass
 
 class Mars(object):
-    root = '/18640539002/dataset_cc/Mars/'
+    root = 'DATA/MARS'
     train_name_path = osp.join(root, 'info/train_name.txt')
     test_name_path = osp.join(root, 'info/test_name.txt')
     track_train_info_path = osp.join(root, 'info/tracks_train_info.mat')

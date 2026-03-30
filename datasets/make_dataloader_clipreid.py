@@ -15,11 +15,15 @@ from datasets.seqpreprocessor import SeqTrainPreprocessor, SeqTestPreprocessor
 from datasets.set.mars import Mars
 from datasets.set.ilidsvidsequence import iLIDSVIDSEQUENCE
 from datasets.set.lsvid import LSVID
+from datasets.set.agreid import AGReid
+from datasets.set.agvpreid import AGVPReID
 
 __factory = {
 	'mars': Mars,
 	'ilidsvidsequence': iLIDSVIDSEQUENCE,
-	'lsvid': LSVID
+	'lsvid': LSVID,
+	'agreid': AGReid,
+	'agvpreid': AGVPReID,
 }
 
 
@@ -68,7 +72,7 @@ def make_dataloader(cfg):
 	seq_len = cfg.INPUT.SEQ_LEN
 	num_workers = cfg.DATALOADER.NUM_WORKERS
 
-	if cfg.DATASETS.NAMES != 'mars' and cfg.DATASETS.NAMES != 'duke' and cfg.DATASETS.NAMES != 'lsvid':
+	if cfg.DATASETS.NAMES not in ('mars', 'duke', 'lsvid', 'agreid', 'agvpreid'):
 
 		dataset = __factory[cfg.DATASETS.NAMES](root=cfg.DATASETS.ROOT_DIR, split_id=split_id, seq_len=seq_len,
 		                                        seq_srd=seq_srd, num_val=1)
@@ -163,12 +167,12 @@ def make_dataloader(cfg):
 			shuffle=True,
 			num_workers=num_workers,
 			drop_last=True,
-			pin_memory=True,
+			pin_memory=False,
 			collate_fn=train_collate_fn
 		)
 
 		sampler_method = 'rrs_test'
-		batch_size_eval = 30
+		batch_size_eval = 1
 
 		val_set = VideoDataset(dataset.query + dataset.gallery, seq_len=seq_len, sample=sampler_method,
 		                       transform=transform_test)
@@ -186,13 +190,13 @@ def make_dataloader(cfg):
 	return train_loader_stage2, train_loader_stage1, val_loader, len(dataset.query), num_classes, cam_num, view_num
 
 
-def make_eval_all_dataloader(cfg):
+def make_eval_all_dataloader(cfg, case=1):
 	split_id = cfg.DATASETS.SPLIT
 	seq_srd = cfg.INPUT.SEQ_SRD
 	seq_len = cfg.INPUT.SEQ_LEN
 	num_workers = cfg.DATALOADER.NUM_WORKERS
 
-	if cfg.DATASETS.NAMES != 'mars' and cfg.DATASETS.NAMES != 'duke' and cfg.DATASETS.NAMES != 'lsvid':
+	if cfg.DATASETS.NAMES not in ('mars', 'duke', 'lsvid', 'agreid', 'agvpreid'):
 
 		dataset = __factory[cfg.DATASETS.NAMES](root=cfg.DATASETS.ROOT_DIR, split_id=split_id, seq_len=seq_len,
 		                                        seq_srd=seq_srd, num_val=1)
@@ -218,6 +222,11 @@ def make_eval_all_dataloader(cfg):
 	else:
 		dataset = __factory[cfg.DATASETS.NAMES](root=cfg.DATASETS.ROOT_DIR)
 
+		# AG-VPReID: swap to case2 query/gallery if requested
+		if case == 2 and hasattr(dataset, 'case2_query'):
+			dataset.query = dataset.case2_query
+			dataset.gallery = dataset.case2_gallery
+
 		transform_test = SeqT.Compose([SeqT.RectScale(cfg.INPUT.SIZE_TRAIN[0], cfg.INPUT.SIZE_TRAIN[1]),
 		                               SeqT.ToTensor(),
 		                               SeqT.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])])
@@ -226,8 +235,8 @@ def make_eval_all_dataloader(cfg):
 		cam_num = dataset.num_train_cams  # 6
 		view_num = dataset.num_train_vids  # 1
 
-		sampler_method = 'dense'
-		batch_size_eval = 1
+		sampler_method = 'rrs_test'
+		batch_size_eval = 32
 
 		val_set = VideoDataset(dataset.query + dataset.gallery, seq_len=seq_len, sample=sampler_method,
 		                       transform=transform_test)
@@ -236,7 +245,7 @@ def make_eval_all_dataloader(cfg):
 			val_set,
 			batch_size=batch_size_eval,
 			shuffle=False,
-			pin_memory=True,
+			pin_memory=False,
 			num_workers=num_workers,
 			drop_last=False,
 			collate_fn=val_collate_fn
@@ -251,7 +260,7 @@ def make_eval_rrs_dataloader(cfg):
 	seq_len = cfg.INPUT.SEQ_LEN
 	num_workers = cfg.DATALOADER.NUM_WORKERS
 
-	if cfg.DATASETS.NAMES != 'mars' and cfg.DATASETS.NAMES != 'duke' and cfg.DATASETS.NAMES != 'lsvid':
+	if cfg.DATASETS.NAMES not in ('mars', 'duke', 'lsvid', 'agreid', 'agvpreid'):
 
 		dataset = __factory[cfg.DATASETS.NAMES](root=cfg.DATASETS.ROOT_DIR, split_id=split_id, seq_len=seq_len,
 		                                        seq_srd=seq_srd, num_val=1)
@@ -286,7 +295,7 @@ def make_eval_rrs_dataloader(cfg):
 		view_num = dataset.num_train_vids  # 1
 
 		sampler_method = 'rrs_test'
-		batch_size_eval = 30
+		batch_size_eval = 1
 
 		val_set = VideoDataset(dataset.query + dataset.gallery, seq_len=seq_len, sample=sampler_method,
 		                       transform=transform_test)

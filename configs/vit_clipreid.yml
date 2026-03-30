@@ -20,16 +20,16 @@ INPUT:
   PADDING: 10
   PIXEL_MEAN: [0.5, 0.5, 0.5]
   PIXEL_STD: [0.5, 0.5, 0.5]
-  SEQ_LEN: 8
+  SEQ_LEN: 4
 
 DATALOADER:
   SAMPLER: 'softmax_triplet'
   NUM_INSTANCE: 4
-  NUM_WORKERS: 8
+  NUM_WORKERS: 0
 
 SOLVER:
   STAGE1:
-    IMS_PER_BATCH: 64
+    IMS_PER_BATCH: 8
     OPTIMIZER_NAME: "Adam"
     BASE_LR: 0.00035
     WARMUP_LR_INIT: 0.00001
@@ -43,7 +43,7 @@ SOLVER:
     WARMUP_EPOCHS: 5
   
   STAGE2:
-    IMS_PER_BATCH: 16
+    IMS_PER_BATCH: 8
     OPTIMIZER_NAME: "Adam"
     BASE_LR: 0.000005
     WARMUP_METHOD: 'linear'
@@ -66,18 +66,18 @@ TEST:
   EVAL: False
   IMS_PER_BATCH: 1
   RE_RANKING: False
-  WEIGHT: '/best_model.pth.tar'
+  WEIGHT: 'logs/ilids_vit_clip_reid_newprompt+dense_meanp/best_model.pth.tar'
   NECK_FEAT: 'before'
   FEAT_NORM: 'yes'
 
 DATASETS:
   NAMES: ('mars')
-  ROOT_DIR: ('/media/ycy/18b21f78-77a1-403a-959e-d65e937da92b/data/Mars')
+  ROOT_DIR: ('TF-CLIP/DATA/MARS')
 
-  # NAMES: ('ilidsvidsequence')
-  # ROOT_DIR: ('../data/ilidsvidsequence/')
+ # NAMES: ('ilidsvidsequence')
+  #ROOT_DIR: ('DATA/i-LIDS-VID/sequences')
   
   # NAMES: ('lsvid')
   # ROOT_DIR: ('../data/LSVID')
 
-OUTPUT_DIR: 'logs/mars_vit_clip_reid_newprompt+dense_meanp'
+OUTPUT_DIR: 'logs/ilids_vit_clip_reid_newprompt+dense_meanp'

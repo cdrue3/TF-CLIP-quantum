@@ -44,3 +44,19 @@ def save_checkpoint(state, is_best, fpath='checkpoint.pth.tar'):
     torch.save(state, fpath)
     if is_best:
         shutil.copy(fpath, osp.join(osp.dirname(fpath), 'best_model.pth.tar'))
+
+def save_slim_checkpoint(model, fpath):
+    """Save only trainable parameters (excludes frozen CLIP backbone).
+
+    Reduces checkpoint size from ~405MB to ~5MB by omitting the frozen ViT
+    weights. All eval scripts use strict=False so they load slim checkpoints
+    correctly — missing frozen weights are silently ignored and the backbone
+    is re-initialised from the pretrained CLIP weights at model build time.
+    """
+    slim = {k: v for k, v in model.state_dict().items()
+            if k in {n for n, p in model.named_parameters() if p.requires_grad}}
+    mkdir_if_missing(osp.dirname(fpath))
+    torch.save(slim, fpath)
+    # Also write best_model.pth.tar (eval scripts look for this name)
+    best_fpath = osp.join(osp.dirname(fpath), 'best_model.pth.tar')
+    shutil.copy(fpath, best_fpath)

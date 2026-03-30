@@ -1,0 +1,37 @@
+# Data — too large for git
+DATA/
+
+# Checkpoints and logs
+logs/
+*.pth.tar
+*.pth
+
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+*.egg-info/
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Office / media files
+*.pptx
+*.pdf
+*.png
+*.jpg
+*.jpeg
+
+# Environment
+.env
+*.env
+
+# IDE
+.vscode/
+.idea/
+
+# Misc
+*.npy
+dist_mat.npy

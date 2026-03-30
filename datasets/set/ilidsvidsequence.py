@@ -25,8 +25,8 @@ class iLIDSVIDSEQUENCE(Datasequence):
         if download:
             self.download()
 
-        if not self._check_integrity():
-            self.imgextract()
+        #if not self._check_integrity():
+            #self.imgextract()
         # --> load完后就有了train，val，和trainval，实际上最开始只有trainval，我们按照num_val
         self.load(seq_len, seq_srd, num_val)
         self.num_train_cams = 2
