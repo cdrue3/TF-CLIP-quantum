@@ -144,7 +144,7 @@ class QuantumTemporalGated(nn.Module):
         # Batched VQC: [T, B, n_q]
         angles_cpu  = angles.permute(1, 0, 2).cpu().float()
         weights_cpu = self.qlayer_weights.cpu().float()
-        q_out = self.circuit(angles_cpu, weights_cpu).to(input_device)   # [B, 2^n_q]
+        q_out = self.circuit(angles_cpu, weights_cpu).float().to(input_device)   # [B, 2^n_q]
 
         delta = self.upscale(q_out)   # [B, in_features]
 

@@ -79,7 +79,7 @@ class AGVPReID(object):
     Each tracklet entry: (img_paths_list, pid_label, cam_id, 1)
     """
 
-    def __init__(self, root='DATA/AG-VPReID', *args, **kwargs):
+    def __init__(self, root='DATA/AG-VPReID', max_pids=0, *args, **kwargs):
         train_dir = os.path.join(root, 'train')
         case1_dir = os.path.join(root, 'case1_aerial_to_ground')
         case2_dir = os.path.join(root, 'case2_ground_to_aerial')
@@ -88,19 +88,41 @@ class AGVPReID(object):
         raw_train = _load_split(train_dir,
                                 cache_path=os.path.join(root, 'scan_cache_train.json'))
         all_pids = sorted({t[1] for t in raw_train})
+        n_total_train_pids = len(all_pids)
+        if max_pids and max_pids < n_total_train_pids:
+            print(f"=> Subsetting to {max_pids}/{n_total_train_pids} train IDs (DATASETS.MAX_PIDS)")
+            all_pids = all_pids[:max_pids]
         pid2label = {p: i for i, p in enumerate(all_pids)}
         train_tracklets = [(imgs, pid2label[pid], cam, seq)
-                           for imgs, pid, cam, seq in raw_train]
+                           for imgs, pid, cam, seq in raw_train
+                           if pid in pid2label]
 
         # --- eval splits (original pid ints as labels) ---
         case1_query   = _load_split(os.path.join(case1_dir, 'query'),
                                     cache_path=os.path.join(root, 'scan_cache_c1q.json'))
         case1_gallery = _load_split(os.path.join(case1_dir, 'gallery'),
                                     cache_path=os.path.join(root, 'scan_cache_c1g.json'))
-        case2_query   = _load_split(os.path.join(case2_dir, 'query'),
-                                    cache_path=os.path.join(root, 'scan_cache_c2q.json'))
-        case2_gallery = _load_split(os.path.join(case2_dir, 'gallery'),
-                                    cache_path=os.path.join(root, 'scan_cache_c2g.json'))
+
+        # --- proportional eval subset ---
+        if max_pids and max_pids < n_total_train_pids:
+            all_c1_pids = sorted({t[1] for t in case1_query})
+            n_eval = round(max_pids * len(all_c1_pids) / n_total_train_pids)
+            keep_eval = set(all_c1_pids[:n_eval])
+            case1_query   = [t for t in case1_query   if t[1] in keep_eval]
+            case1_gallery = [t for t in case1_gallery if t[1] in keep_eval]
+            print(f"=> Subsetting eval to {n_eval}/{len(all_c1_pids)} case1 IDs")
+
+        case2_missing = not os.path.isdir(case2_dir)
+        if case2_missing:
+            print(f"WARNING: case2 directory not found ({case2_dir}). "
+                  "case2_query and case2_gallery will be empty. "
+                  "Eval with --case 2 or --case 0 (both) will be skipped/invalid.")
+            case2_query, case2_gallery = [], []
+        else:
+            case2_query   = _load_split(os.path.join(case2_dir, 'query'),
+                                        cache_path=os.path.join(root, 'scan_cache_c2q.json'))
+            case2_gallery = _load_split(os.path.join(case2_dir, 'gallery'),
+                                        cache_path=os.path.join(root, 'scan_cache_c2g.json'))
 
         n_train_cams = len({t[2] for t in train_tracklets})
 
@@ -111,10 +133,13 @@ class AGVPReID(object):
             len({t[1] for t in case1_query}), len(case1_query)))
         print("  case1 gallery: {:4d} ids | {:5d} tracklets (ground)".format(
             len({t[1] for t in case1_gallery}), len(case1_gallery)))
-        print("  case2 query  : {:4d} ids | {:5d} tracklets (ground)".format(
-            len({t[1] for t in case2_query}), len(case2_query)))
-        print("  case2 gallery: {:4d} ids | {:5d} tracklets (aerial)".format(
-            len({t[1] for t in case2_gallery}), len(case2_gallery)))
+        if case2_missing:
+            print("  case2        : NOT AVAILABLE (directory missing)")
+        else:
+            print("  case2 query  : {:4d} ids | {:5d} tracklets (ground)".format(
+                len({t[1] for t in case2_query}), len(case2_query)))
+            print("  case2 gallery: {:4d} ids | {:5d} tracklets (aerial)".format(
+                len({t[1] for t in case2_gallery}), len(case2_gallery)))
 
         self.train = train_tracklets
         self.query = case1_query

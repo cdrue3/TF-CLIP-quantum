@@ -129,7 +129,8 @@ def make_dataloader(cfg):
 		)
 
 	else:
-		dataset = __factory[cfg.DATASETS.NAMES](root=cfg.DATASETS.ROOT_DIR)
+		dataset = __factory[cfg.DATASETS.NAMES](root=cfg.DATASETS.ROOT_DIR,
+		                                         max_pids=cfg.DATASETS.MAX_PIDS)
 
 		transform_train = SeqT.Compose([SeqT.RectScale(cfg.INPUT.SIZE_TRAIN[0], cfg.INPUT.SIZE_TRAIN[1]),
 		                                SeqT.RandomHorizontalFlip(),

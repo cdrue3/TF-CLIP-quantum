@@ -26,7 +26,8 @@ def do_train_stage2(cfg,
              optimizer_center,
              scheduler,
              loss_fn,
-             num_query, local_rank, num_classes):
+             num_query, local_rank, num_classes,
+             use_amp=True):
     
     # --- Configuration & Device Setup ---
     log_period = cfg.SOLVER.STAGE2.LOG_PERIOD
@@ -52,7 +53,7 @@ def do_train_stage2(cfg,
     acc_meter_id2 = AverageMeter()
 
     evaluator = R1_mAP_eval(num_query, max_rank=50, feat_norm=cfg.TEST.FEAT_NORM)
-    scaler = amp.GradScaler()
+    scaler = amp.GradScaler(enabled=use_amp)
     xent_frame = CrossEntropyLabelSmooth(num_classes=num_classes)
 
     @torch.no_grad()
@@ -105,7 +106,7 @@ def do_train_stage2(cfg,
                     # Chunk to avoid OOM on dense-sampled tracklets (e.g. 937 frames).
                     MAX_CLIP_BATCH = 16
                     chunk_feats = []
-                    with amp.autocast(enabled=True):
+                    with amp.autocast(enabled=use_amp):
                         for ci in range(0, n, MAX_CLIP_BATCH):
                             img_chunk = img[ci : ci + MAX_CLIP_BATCH].to(device)
                             chunk_feats.append(model(img_chunk, get_image=True).cpu())
@@ -117,7 +118,7 @@ def do_train_stage2(cfg,
                             labels.append(i)
                             image_features.append(img_feat.cpu())
                 else:
-                    with amp.autocast(enabled=True):
+                    with amp.autocast(enabled=use_amp):
                         image_feature = model(img, get_image=True)
                         for i, img_feat in zip(target, image_feature):
                             labels.append(i)
@@ -164,7 +165,7 @@ def do_train_stage2(cfg,
             target_cam = target_cam.to(device) if cfg.MODEL.SIE_CAMERA else None
             target_view = target_view.to(device) if cfg.MODEL.SIE_VIEW else None
             
-            with amp.autocast(enabled=True):
+            with amp.autocast(enabled=use_amp):
                 B, T, C, H, W = img.shape
 
                 score, feat, logits1 = model(x = img, cam_label=target_cam, view_label=target_view, text_features2=cluster_features)

@@ -69,6 +69,10 @@ if __name__ == '__main__':
                         help="Limit stage-1 CLIP-memory loader to this many batches.")
     parser.add_argument("--fast_schedule", action="store_true", default=False,
                         help="Scale LR decay steps proportionally to MAX_EPOCHS.")
+    parser.add_argument("--no_amp", action="store_true", default=False,
+                        help="Disable AMP (may be faster on GPUs without Tensor Cores).")
+    parser.add_argument("--compile", action="store_true", default=False,
+                        help="Apply torch.compile to the model for potential speedup.")
     args = parser.parse_args()
 
     if args.config_file != "":
@@ -110,7 +114,9 @@ if __name__ == '__main__':
         train_loader_stage2 = _LimitedLoader(train_loader_stage2, args.max_batches)
 
     model = make_model(cfg, num_class=num_classes, camera_num=camera_num, view_num = view_num)
-
+    if args.compile:
+        logger.info("Applying torch.compile to model...")
+        model = torch.compile(model)
 
     loss_func, center_criterion = make_loss(cfg, num_classes=num_classes)
 
@@ -137,5 +143,6 @@ if __name__ == '__main__':
         scheduler_2stage,
         loss_func,
         num_query, args.local_rank,
-        num_classes
+        num_classes,
+        use_amp=not args.no_amp,
     )

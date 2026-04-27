@@ -6,7 +6,7 @@ This file exists so that a new Claude Code session (on any machine) can immediat
 
 ## Who is the user
 
-Connor Claypool — undergraduate student at QUT, participating in the KIT IMPULSE Summer Research Program (April–July 2026). Supervisor at QUT. The research question is: **"Balancing classical and quantum contributions in a hybrid architecture for aerial-ground video person re-identification."** Target paper venue: WACV 2027.
+Connor  — graduate student at QUT, participating in the KIT IMPULSE Summer Research Program (April–July 2026). Supervisor at QUT. The research question is: **"Balancing classical and quantum contributions in a hybrid architecture for aerial-ground video person re-identification."** Target paper venue: WACV 2027.
 
 Connor is technically capable and learns fast. He prefers terse, direct communication. Do not over-explain basics. Do not summarise what you just did — he can read the output.
 
@@ -92,6 +92,26 @@ TF-CLIP is a two-stage video person re-ID model:
 **Temporal pooling**: Each tracklet has T=8 frames. Each frame → ViT → 768-dim vector. The T vectors are mean-pooled into a single tracklet descriptor. All quantum variants augment or replace this mean-pooling step.
 
 **At eval time**: The 768-dim descriptor after the bottleneck layer (`NECK_FEAT='before'`) is used for retrieval. **Important**: When `NECK_FEAT='before'` (the default), adapter-style quantum modules are BYPASSED at eval — they only act as training regularizers. Only QTemporal/TQA runs at eval because it IS the pooling step.
+
+---
+
+## Quantum Approaches: Overview
+
+This project explores **quantum-enhanced hybrid architectures broadly** — not exclusively VQCs. Two distinct paradigms have been implemented:
+
+### 1. Variational Quantum Circuits (VQCs) — primary approach
+Parameterized circuits trained end-to-end by gradient descent alongside the classical backbone. The circuit has learnable weights (rotation angles) optimized via backprop through PennyLane. Used in all `train_q*.py` scripts except `train_qkernel.py`.
+
+### 2. Quantum Kernels — tested, rejected
+Implemented in `quantum_models/quantum_kernel.py`, trained in `train_qkernel.py`. Instead of a trainable circuit, uses a fixed **IQP feature map** (Instantaneous Quantum Polynomial) to compute a similarity kernel between feature vectors:
+
+```
+K(x1, x2) = |⟨0| U†(x1) U(x2) |0⟩|²
+```
+
+The IQP map applies Hadamard + RZ(x_k) per qubit + IsingZZ(x_i·x_{i+1}) entangling gates. The kernel value is the probability of measuring all-zeros — i.e., how much the two quantum states overlap. Distance = 1 − K, used to replace Euclidean distance at retrieval time.
+
+**Why kernels failed**: Quantum concentration. With enough qubits, quantum feature maps produce states that are nearly orthogonal for *all* input pairs — K(x1,x2) ≈ 0 everywhere. This makes the kernel essentially uninformative; all gallery items look equally dissimilar to the query. The effect worsens with more qubits and deeper circuits. On AG-VPReID (1604 classes, 768-dim features compressed to n_qubits angles), concentration was severe enough to always hurt Rank-1 vs classical Euclidean. Also note: the IQP circuit itself has **no learnable parameters** — only the `pre_net` linear compression layer is trained, meaning the kernel's expressivity is fundamentally limited.
 
 ---
 
@@ -223,6 +243,7 @@ All `train_q*.py` save only trainable weights (~5MB vs 405MB full checkpoint). T
 5. **QTemporal and QChannel** are the most promising architectures on AG-VPReID at 15ep
 6. **Dataset size matters** — quantum advantage stronger on smaller datasets (AG-ReID 157 IDs > AG-VPReID 1604 IDs)
 7. **ASQA rejected** — selectively applying VQC to aerial cameras disrupts the joint embedding space
+8. **Quantum kernel (IQP) rejected** — quantum concentration makes K(x1,x2)≈0 for all pairs at scale, rendering the kernel uninformative; always hurts Rank-1 vs classical Euclidean
 
 ---
 

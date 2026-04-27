@@ -85,6 +85,7 @@ _C.DATASETS.ROOT_DIR = ('../data')
 
 _C.DATASETS.SPLIT = 0
 _C.DATASETS.SEQ_SRD = 4
+_C.DATASETS.MAX_PIDS = 0  # 0 = use all IDs; >0 = cap train IDs and scale eval proportionally
 
 # -----------------------------------------------------------------------------
 # DataLoader

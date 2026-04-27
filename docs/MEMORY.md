@@ -94,6 +94,9 @@ Full table + iLIDS results: `results.md`.
 - `processor/processor_clipreid_stage2.py` — training loop + CLIP memory disk cache
 - `results.md` — comprehensive results across all datasets/architectures
 
+## Pending Architecture Ideas
+- [idea_qft_parallel.md](idea_qft_parallel.md) — Parallel QFT + StronglyEntanglingLayers branch in VQC. QFT gives structured frequency mixing (no parameters, no barren plateau), SEL retains learnable expressivity. Novel framing for WACV paper. Revisit after Colab setup.
+
 ## KIT Program (April–July 2026)
 Research: "Balancing classical and quantum contributions in a hybrid architecture". Paper: WACV 2027.
 Research Q1: which subtask benefits from quantum? Q2: input-adaptive routing (gated adapter explores this).
