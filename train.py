@@ -89,7 +89,7 @@ if __name__ == '__main__':
     if output_dir and not os.path.exists(output_dir):
         os.makedirs(output_dir)
 
-    logger = setup_logger("transreid", output_dir, if_train=True)
+    logger = setup_logger("TFCLIP", output_dir, if_train=True)
     logger.info("Saving model in the path :{}".format(cfg.OUTPUT_DIR))
     logger.info(args)
 
