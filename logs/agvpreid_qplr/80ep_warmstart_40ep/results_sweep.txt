@@ -1,0 +1,11 @@
+Checkpoint sweep — classical — logs/agvpreid_qplr/80ep_warmstart_40ep
+Epoch        Rank-1   Rank-5
+------------------------------
+ep05        55.30%   71.90%
+ep10        57.00%   73.20%
+ep15        19.40%   35.20%
+ep20        50.60%   68.70%
+ep25        49.90%   65.90%
+ep30         4.40%   10.50%
+ep35        53.30%   71.00%
+ep40        55.30%   72.90%

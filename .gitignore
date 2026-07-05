@@ -1,16 +1,14 @@
 # Data — too large for git
 DATA/
 
-# Checkpoints (never commit model weights)
+# Checkpoints — never commit
 *.pth.tar
 *.pth
+
+# Logs — allow .txt/.log results but not checkpoints
 logs/**/*.pth.tar
 logs/**/*.pth
-
-# Cache files
-*.pt
-logs/**/clip_memory_cache*
-logs/**/scan_cache*.json
+# Allow logs/ text files (results, sweeps, train logs)
 
 # Python cache
 __pycache__/
@@ -41,9 +39,5 @@ __pycache__/
 # Misc
 *.npy
 dist_mat.npy
-
-# Claude Code session data
-.claude/
-
-# PyTorch cached tensors (clip_memory_cache.pt etc.)
 *.pt
+.claude/

@@ -1,0 +1,30 @@
+2026-05-21 21:52:37,584 TFCLIP INFO: [quantum_retrieval] mode=swap_test
+2026-05-21 21:52:46,588 TFCLIP INFO: Loaded checkpoint: logs/agvpreid_classical_80ep/best_model.pth.tar
+2026-05-21 21:52:46,732 TFCLIP INFO: Extracting features...
+2026-05-21 22:03:52,996 TFCLIP INFO: Features extracted in 666.3s — shape torch.Size([5247, 2048]), len(pids)=5247, len(camids)=5247, num_query=2528
+2026-05-21 22:03:53,001 TFCLIP INFO: Split: 2528 query, 2719 gallery
+2026-05-21 22:03:53,001 TFCLIP INFO: Computing classical L2 ranking (baseline)...
+2026-05-21 22:03:53,712 TFCLIP INFO: Classical ranking: 711.1ms total, 0.281ms/query
+2026-05-21 22:03:53,712 TFCLIP INFO: Running quantum swap test reranking (top-50, n_qubits=4)...
+2026-05-21 23:16:32,651 TFCLIP INFO: Saved reranked indices to logs/quantum_retrieval_swap_classical/swap_test_ranked.pt
+2026-05-21 23:16:32,652 TFCLIP INFO: 
+============================================================
+SWAP TEST SPEED METRICS
+  Classical ranking (L2, full gallery):  711.1ms total
+  Quantum reranking (swap test, top-50): 4358.8s total
+  Quantum is 6130x SLOWER on simulator
+  (Expected: swap test is O(K) circuit calls, each ~ms on CPU)
+  NOTE: Swap test computes quantum overlap |<q|g>|^2, not L2.
+  The goal is ACCURACY improvement from the different metric,
+  not speed improvement. Speed advantage only applies on hardware
+  where circuit calls are O(1) vs O(D) classical dot products.
+  On quantum hardware: K circuit calls vs K*D classical ops
+  → speedup proportional to D/circuit_depth ≈ 2048/depth
+============================================================
+2026-05-21 23:16:33,019 TFCLIP INFO: 
+============================================================
+RESULTS SUMMARY
+  Classical L2 Rank-1:  65.9%
+  Quantum swap_test Rank-1: 45.5%
+  Delta:                -20.4%
+============================================================

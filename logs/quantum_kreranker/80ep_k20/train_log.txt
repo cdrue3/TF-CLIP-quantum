@@ -1,0 +1,5 @@
+2026-06-11 01:24:47,193 qkreranker INFO: Checkpoint: logs/agvpreid_classical_80ep/best_model.pth.tar
+2026-06-11 01:24:47,193 qkreranker INFO: n_qubits=8, n_layers=2, epochs=80, k=20, alpha=0.3
+2026-06-11 01:24:47,193 qkreranker INFO: Device: cuda
+2026-06-11 01:24:55,060 qkreranker INFO: Loaded checkpoint (missing=12, unexpected=0)
+2026-06-11 01:24:55,182 qkreranker INFO: Extracting query + gallery features...

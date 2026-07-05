@@ -1,0 +1,31 @@
+2026-06-09 16:38:55,147 qreranker INFO: Checkpoint: logs/agvpreid_classical_80ep/best_model.pth.tar
+2026-06-09 16:38:55,147 qreranker INFO: n_qubits=8, n_layers=2, epochs=80, top_k=20, alpha=0.3
+2026-06-09 16:38:55,148 qreranker INFO: Device: cuda
+2026-06-09 16:39:03,347 qreranker INFO: Loaded checkpoint (missing=12, unexpected=0)
+2026-06-09 16:39:03,413 qreranker INFO: Loading cached training features from /tmp/qreranker_train_feats.pt
+2026-06-09 16:39:03,443 qreranker INFO: Train features: torch.Size([2120, 2048]), 250 IDs
+2026-06-09 16:39:03,446 qreranker INFO: Training VQC reranker for 80 epochs...
+2026-06-09 16:39:32,947 qreranker INFO: Epoch[1/80] loss=0.6930 acc=0.517 lr=1.0e-03
+2026-06-09 16:41:31,551 qreranker INFO: Epoch[5/80] loss=0.6643 acc=0.667 lr=9.9e-04
+2026-06-09 16:44:02,938 qreranker INFO: Epoch[10/80] loss=0.6311 acc=0.676 lr=9.6e-04
+2026-06-09 16:46:30,344 qreranker INFO: Epoch[15/80] loss=0.6066 acc=0.696 lr=9.2e-04
+2026-06-09 16:48:58,453 qreranker INFO: Epoch[20/80] loss=0.5850 acc=0.711 lr=8.6e-04
+2026-06-09 16:51:27,448 qreranker INFO: Epoch[25/80] loss=0.5684 acc=0.717 lr=7.8e-04
+2026-06-09 16:53:57,345 qreranker INFO: Epoch[30/80] loss=0.5502 acc=0.728 lr=6.9e-04
+2026-06-09 16:56:30,655 qreranker INFO: Epoch[35/80] loss=0.5255 acc=0.751 lr=6.0e-04
+2026-06-09 16:58:55,652 qreranker INFO: Epoch[40/80] loss=0.5041 acc=0.773 lr=5.1e-04
+2026-06-09 17:01:25,750 qreranker INFO: Epoch[45/80] loss=0.4799 acc=0.793 lr=4.1e-04
+2026-06-09 17:03:59,708 qreranker INFO: Epoch[50/80] loss=0.4856 acc=0.782 lr=3.2e-04
+2026-06-09 17:06:25,053 qreranker INFO: Epoch[55/80] loss=0.4701 acc=0.792 lr=2.3e-04
+2026-06-09 17:08:57,055 qreranker INFO: Epoch[60/80] loss=0.4803 acc=0.783 lr=1.5e-04
+2026-06-09 17:11:28,890 qreranker INFO: Epoch[65/80] loss=0.4654 acc=0.795 lr=9.3e-05
+2026-06-09 17:13:57,953 qreranker INFO: Epoch[70/80] loss=0.4530 acc=0.800 lr=4.8e-05
+2026-06-09 17:16:32,244 qreranker INFO: Epoch[75/80] loss=0.4568 acc=0.795 lr=2.0e-05
+2026-06-09 17:19:06,357 qreranker INFO: Epoch[80/80] loss=0.4720 acc=0.783 lr=1.0e-05
+2026-06-09 17:19:06,359 qreranker INFO: Saved final reranker weights to logs/quantum_reranker/80ep_k20/reranker.pt
+2026-06-09 17:19:06,359 qreranker INFO: Extracting query + gallery features for eval...
+2026-06-09 17:20:54,570 qreranker INFO: Query: 2528, Gallery: 2719
+2026-06-09 17:20:55,351 qreranker INFO: Classical L2 Rank-1: 66.4%
+2026-06-09 17:20:55,352 qreranker INFO: Reranking top-20 with VQC (alpha=0.3)...
+2026-06-09 17:25:39,575 qreranker INFO: VQC Reranked Rank-1:  58.9%
+2026-06-09 17:25:39,576 qreranker INFO: Delta vs classical:   -7.6pp

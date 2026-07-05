@@ -1,0 +1,21 @@
+2026-06-25 11:49:08,110 TFCLIP INFO: Saving model in the path: logs/agvpreid_q_triplet_allheads_80ep
+2026-06-25 11:49:08,111 TFCLIP INFO: Namespace(config_file='configs/vit_clipreid_agvpreid.yml', n_qubits=6, n_layers=1, fast_schedule=False, local_rank=0, opts=['SOLVER.STAGE2.MAX_EPOCHS', '80', 'SOLVER.STAGE2.EVAL_PERIOD', '999', 'SOLVER.STAGE2.CHECKPOINT_PERIOD', '10', 'DATASETS.ROOT_DIR', 'DATA/subset_250', 'INPUT.SEQ_LEN', '8', 'OUTPUT_DIR', 'logs/agvpreid_q_triplet_allheads_80ep'])
+2026-06-25 11:49:08,111 TFCLIP INFO: QuantumTripletLoss: n_qubits=6, n_layers=1 (no LR boost — q_triplet at backbone BASE_LR)
+2026-06-25 11:49:18,053 TFCLIP INFO: QuantumTripletLoss params: 18 (pre_net deferred until first batch)
+2026-06-25 11:49:18,054 TFCLIP.train INFO: start training
+2026-06-25 11:49:24,828 TFCLIP.train INFO: [GradCheck] Gradient norms after first backward pass:
+2026-06-25 11:49:24,832 TFCLIP.train INFO:   classifier2.weight: grad_norm=1.5328e+05  param_norm=4.3743e-01
+2026-06-25 11:49:24,834 TFCLIP.train INFO:   classifier_proj.weight: grad_norm=1.2464e+05  param_norm=3.5860e-01
+2026-06-25 11:49:24,836 TFCLIP.train INFO:   classifier_proj_temp.weight: grad_norm=1.9809e+05  param_norm=4.3841e-01
+2026-06-25 11:49:24,836 TFCLIP.train INFO:   classifier_proj_temp2.weight: grad=None  (no gradient!)
+2026-06-25 11:49:46,626 TFCLIP.train INFO: Epoch[1] Iteration[50/265] Loss: 11.089, Acc_clip: 0.227, Acc_id1: 0.000, Acc_id2: 0.004, Base Lr: 3.50e-06
+2026-06-25 11:50:08,434 TFCLIP.train INFO: Epoch[1] Iteration[100/265] Loss: 10.425, Acc_clip: 0.305, Acc_id1: 0.001, Acc_id2: 0.004, Base Lr: 3.50e-06
+2026-06-25 11:50:30,803 TFCLIP.train INFO: Epoch[1] Iteration[150/265] Loss: 10.072, Acc_clip: 0.358, Acc_id1: 0.001, Acc_id2: 0.003, Base Lr: 3.50e-06
+2026-06-25 11:50:52,731 TFCLIP.train INFO: Epoch[1] Iteration[200/265] Loss: 9.875, Acc_clip: 0.368, Acc_id1: 0.002, Acc_id2: 0.003, Base Lr: 3.50e-06
+2026-06-25 11:51:15,118 TFCLIP.train INFO: Epoch[1] Iteration[250/265] Loss: 9.661, Acc_clip: 0.376, Acc_id1: 0.003, Acc_id2: 0.006, Base Lr: 3.50e-06
+2026-06-25 11:51:21,873 TFCLIP.train INFO: Epoch 1 done. Time per batch: 0.467[s] Speed: 17.1[samples/s]
+2026-06-25 11:51:45,220 TFCLIP.train INFO: Epoch[2] Iteration[50/265] Loss: 8.878, Acc_clip: 0.525, Acc_id1: 0.007, Acc_id2: 0.010, Base Lr: 6.65e-06
+2026-06-25 11:52:07,627 TFCLIP.train INFO: Epoch[2] Iteration[100/265] Loss: 8.876, Acc_clip: 0.535, Acc_id1: 0.012, Acc_id2: 0.011, Base Lr: 6.65e-06
+2026-06-25 11:52:29,639 TFCLIP.train INFO: Epoch[2] Iteration[150/265] Loss: 8.774, Acc_clip: 0.535, Acc_id1: 0.027, Acc_id2: 0.015, Base Lr: 6.65e-06
+2026-06-25 11:52:52,057 TFCLIP.train INFO: Epoch[2] Iteration[200/265] Loss: 8.651, Acc_clip: 0.550, Acc_id1: 0.044, Acc_id2: 0.027, Base Lr: 6.65e-06
+2026-06-25 11:53:14,629 TFCLIP.train INFO: Epoch[2] Iteration[250/265] Loss: 8.551, Acc_clip: 0.542, Acc_id1: 0.068, Acc_id2: 0.049, Base Lr: 6.65e-06

@@ -1,0 +1,30 @@
+/home/ubuntu/.local/lib/python3.12/site-packages/timm/models/layers/__init__.py:49: FutureWarning: Importing from timm.models.layers is deprecated, please import via timm.layers
+  warnings.warn(f"Importing from {__name__} is deprecated, please import via timm.layers", FutureWarning)
+2026-05-23 02:55:17,263 TFCLIP INFO: [quantum_retrieval] mode=durr_hoyer
+=> Loading scan cache: DATA/subset_250/scan_cache_train.json
+=> Loading scan cache: DATA/subset_250/scan_cache_c1q.json
+=> Loading scan cache: DATA/subset_250/scan_cache_c1g.json
+WARNING: case2 directory not found (DATA/subset_250/case2_ground_to_aerial). case2_query and case2_gallery will be empty. Eval with --case 2 or --case 0 (both) will be skipped/invalid.
+=> AG-VPReID loaded
+  train  :  250 ids |  2323 tracklets | 6 cameras
+  case1 query  :  227 ids |  2528 tracklets (aerial)
+  case1 gallery:  227 ids |  2719 tracklets (ground)
+  case2        : NOT AVAILABLE (directory missing)
+Resized position embedding: %s to %s torch.Size([197, 768]) torch.Size([129, 768])
+Position embedding resize to height:16 width: 8
+camera number is : 6
+[FeaturePreprocessor] mode=none, in_features=768, seq_len=8
+2026-05-23 02:55:26,797 TFCLIP INFO: Loaded checkpoint: logs/agvpreid_classical_80ep/best_model.pth.tar
+2026-05-23 02:55:26,899 TFCLIP INFO: Extracting features...
+/home/ubuntu/TF-CLIP-quantum/utils/seqtransforms.py:187: UserWarning: TypedStorage is deprecated. It will be removed in the future and UntypedStorage will be the only storage class. This should only matter to you if you are using storages directly.  To access UntypedStorage directly, use tensor.untyped_storage() instead of tensor.storage()
+  img = torch.ByteTensor(torch.ByteStorage.from_buffer(frame.tobytes()))
+2026-05-23 03:06:47,304 TFCLIP INFO: Features extracted in 680.4s — shape torch.Size([5247, 2048]), len(pids)=5247, len(camids)=5247, num_query=2528
+2026-05-23 03:06:47,399 TFCLIP INFO: Split: 2528 query, 2719 gallery
+2026-05-23 03:06:47,399 TFCLIP INFO: Computing classical L2 ranking (baseline)...
+2026-05-23 03:06:48,003 TFCLIP INFO: Classical ranking: 603.7ms total, 0.239ms/query
+2026-05-23 03:06:48,003 TFCLIP INFO: Running Dürr-Høyer quantum minimum finding...
+Traceback (most recent call last):
+  File "/home/ubuntu/TF-CLIP-quantum/eval_agvpreid_quantum.py", line 195, in <module>
+    logger.info(f"Gallery size N={n_gallery}, √N={math.sqrt(n_gallery):.1f}")
+                                                  ^^^^
+NameError: name 'math' is not defined. Did you forget to import 'math'?

@@ -1,0 +1,11 @@
+Checkpoint sweep — classical — logs/agvpreid_classical_singlehead_80ep
+Epoch        Rank-1   Rank-5
+------------------------------
+ep10        33.40%   51.60%
+ep20        49.40%   67.20%
+ep30        50.00%   67.00%
+ep40        64.60%   78.20%
+ep50        64.90%   78.50%
+ep60        66.20%   79.50%
+ep70        65.90%   79.50%
+ep80        66.00%   79.50%

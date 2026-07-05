@@ -1,0 +1,20 @@
+Checkpoint sweep — quantum k-reciprocal — logs/quantum_kreranker/80ep_k20
+Epoch          Rank-1      vs L2
+----------------------------------
+ep01         66.42%     +0.00pp
+ep05         65.66%     -0.75pp
+ep10         65.23%     -1.19pp
+ep15         65.43%     -0.99pp
+ep20         65.35%     -1.07pp
+ep25         65.39%     -1.03pp
+ep30         65.27%     -1.15pp
+ep35         65.39%     -1.03pp
+ep40         65.62%     -0.79pp
+ep45         65.66%     -0.75pp
+ep50         65.59%     -0.83pp
+ep55         65.82%     -0.59pp
+ep60         65.78%     -0.63pp
+ep65         65.78%     -0.63pp
+ep70         65.74%     -0.67pp
+ep75         65.74%     -0.67pp
+ep80         65.74%     -0.67pp

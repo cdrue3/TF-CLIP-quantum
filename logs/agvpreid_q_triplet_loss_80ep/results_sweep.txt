@@ -1,0 +1,11 @@
+Checkpoint sweep — classical — logs/agvpreid_q_triplet_loss_80ep
+Epoch        Rank-1   Rank-5
+------------------------------
+ep10        53.20%   69.50%
+ep20        57.10%   74.00%
+ep30        55.40%   71.40%
+ep40        62.40%   77.30%
+ep50        62.90%   77.60%
+ep60        64.70%   78.40%
+ep70        65.20%   78.60%
+ep80        65.10%   78.50%

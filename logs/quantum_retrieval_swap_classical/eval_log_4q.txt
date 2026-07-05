@@ -1,0 +1,73 @@
+/home/ubuntu/.local/lib/python3.12/site-packages/timm/models/layers/__init__.py:49: FutureWarning: Importing from timm.models.layers is deprecated, please import via timm.layers
+  warnings.warn(f"Importing from {__name__} is deprecated, please import via timm.layers", FutureWarning)
+2026-05-21 21:52:37,584 TFCLIP INFO: [quantum_retrieval] mode=swap_test
+=> Loading scan cache: DATA/subset_250/scan_cache_train.json
+=> Loading scan cache: DATA/subset_250/scan_cache_c1q.json
+=> Loading scan cache: DATA/subset_250/scan_cache_c1g.json
+WARNING: case2 directory not found (DATA/subset_250/case2_ground_to_aerial). case2_query and case2_gallery will be empty. Eval with --case 2 or --case 0 (both) will be skipped/invalid.
+=> AG-VPReID loaded
+  train  :  250 ids |  2323 tracklets | 6 cameras
+  case1 query  :  227 ids |  2528 tracklets (aerial)
+  case1 gallery:  227 ids |  2719 tracklets (ground)
+  case2        : NOT AVAILABLE (directory missing)
+Resized position embedding: %s to %s torch.Size([197, 768]) torch.Size([129, 768])
+Position embedding resize to height:16 width: 8
+camera number is : 6
+[FeaturePreprocessor] mode=none, in_features=768, seq_len=8
+2026-05-21 21:52:46,588 TFCLIP INFO: Loaded checkpoint: logs/agvpreid_classical_80ep/best_model.pth.tar
+2026-05-21 21:52:46,732 TFCLIP INFO: Extracting features...
+/home/ubuntu/TF-CLIP-quantum/utils/seqtransforms.py:187: UserWarning: TypedStorage is deprecated. It will be removed in the future and UntypedStorage will be the only storage class. This should only matter to you if you are using storages directly.  To access UntypedStorage directly, use tensor.untyped_storage() instead of tensor.storage()
+  img = torch.ByteTensor(torch.ByteStorage.from_buffer(frame.tobytes()))
+2026-05-21 22:03:52,996 TFCLIP INFO: Features extracted in 666.3s — shape torch.Size([5247, 2048]), len(pids)=5247, len(camids)=5247, num_query=2528
+2026-05-21 22:03:53,001 TFCLIP INFO: Split: 2528 query, 2719 gallery
+2026-05-21 22:03:53,001 TFCLIP INFO: Computing classical L2 ranking (baseline)...
+2026-05-21 22:03:53,712 TFCLIP INFO: Classical ranking: 711.1ms total, 0.281ms/query
+2026-05-21 22:03:53,712 TFCLIP INFO: Running quantum swap test reranking (top-50, n_qubits=4)...
+  SwapTest rerank: 100/2528 queries done [171s elapsed, ~4143s remaining]
+  SwapTest rerank: 200/2528 queries done [343s elapsed, ~3990s remaining]
+  SwapTest rerank: 300/2528 queries done [514s elapsed, ~3820s remaining]
+  SwapTest rerank: 400/2528 queries done [688s elapsed, ~3660s remaining]
+  SwapTest rerank: 500/2528 queries done [865s elapsed, ~3509s remaining]
+  SwapTest rerank: 600/2528 queries done [1040s elapsed, ~3343s remaining]
+  SwapTest rerank: 700/2528 queries done [1223s elapsed, ~3193s remaining]
+  SwapTest rerank: 800/2528 queries done [1397s elapsed, ~3018s remaining]
+  SwapTest rerank: 900/2528 queries done [1572s elapsed, ~2844s remaining]
+  SwapTest rerank: 1000/2528 queries done [1746s elapsed, ~2668s remaining]
+  SwapTest rerank: 1100/2528 queries done [1921s elapsed, ~2494s remaining]
+  SwapTest rerank: 1200/2528 queries done [2091s elapsed, ~2314s remaining]
+  SwapTest rerank: 1300/2528 queries done [2260s elapsed, ~2135s remaining]
+  SwapTest rerank: 1400/2528 queries done [2427s elapsed, ~1956s remaining]
+  SwapTest rerank: 1500/2528 queries done [2596s elapsed, ~1779s remaining]
+  SwapTest rerank: 1600/2528 queries done [2767s elapsed, ~1605s remaining]
+  SwapTest rerank: 1700/2528 queries done [2939s elapsed, ~1432s remaining]
+  SwapTest rerank: 1800/2528 queries done [3109s elapsed, ~1257s remaining]
+  SwapTest rerank: 1900/2528 queries done [3277s elapsed, ~1083s remaining]
+  SwapTest rerank: 2000/2528 queries done [3463s elapsed, ~914s remaining]
+  SwapTest rerank: 2100/2528 queries done [3635s elapsed, ~741s remaining]
+  SwapTest rerank: 2200/2528 queries done [3803s elapsed, ~567s remaining]
+  SwapTest rerank: 2300/2528 queries done [3969s elapsed, ~393s remaining]
+  SwapTest rerank: 2400/2528 queries done [4139s elapsed, ~221s remaining]
+  SwapTest rerank: 2500/2528 queries done [4311s elapsed, ~48s remaining]
+[QuantumSwapTest] Reranked 2528 queries (top-50) in 4358.7s
+2026-05-21 23:16:32,651 TFCLIP INFO: Saved reranked indices to logs/quantum_retrieval_swap_classical/swap_test_ranked.pt
+2026-05-21 23:16:32,652 TFCLIP INFO: 
+============================================================
+SWAP TEST SPEED METRICS
+  Classical ranking (L2, full gallery):  711.1ms total
+  Quantum reranking (swap test, top-50): 4358.8s total
+  Quantum is 6130x SLOWER on simulator
+  (Expected: swap test is O(K) circuit calls, each ~ms on CPU)
+  NOTE: Swap test computes quantum overlap |<q|g>|^2, not L2.
+  The goal is ACCURACY improvement from the different metric,
+  not speed improvement. Speed advantage only applies on hardware
+  where circuit calls are O(1) vs O(D) classical dot products.
+  On quantum hardware: K circuit calls vs K*D classical ops
+  → speedup proportional to D/circuit_depth ≈ 2048/depth
+============================================================
+2026-05-21 23:16:33,019 TFCLIP INFO: 
+============================================================
+RESULTS SUMMARY
+  Classical L2 Rank-1:  65.9%
+  Quantum swap_test Rank-1: 45.5%
+  Delta:                -20.4%
+============================================================

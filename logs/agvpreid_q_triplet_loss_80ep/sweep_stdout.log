@@ -1,0 +1,33 @@
+Found 8 checkpoints. Results → logs/agvpreid_q_triplet_loss_80ep/results_sweep.txt
+
+[ep10] Running eval on logs/agvpreid_q_triplet_loss_80ep/checkpoint_ep10.pth.tar ...
+  Rank-1: 53.20%  Rank-5: 69.50%
+[ep20] Running eval on logs/agvpreid_q_triplet_loss_80ep/checkpoint_ep20.pth.tar ...
+  Rank-1: 57.10%  Rank-5: 74.00%
+[ep30] Running eval on logs/agvpreid_q_triplet_loss_80ep/checkpoint_ep30.pth.tar ...
+  Rank-1: 55.40%  Rank-5: 71.40%
+[ep40] Running eval on logs/agvpreid_q_triplet_loss_80ep/checkpoint_ep40.pth.tar ...
+  Rank-1: 62.40%  Rank-5: 77.30%
+[ep50] Running eval on logs/agvpreid_q_triplet_loss_80ep/checkpoint_ep50.pth.tar ...
+  Rank-1: 62.90%  Rank-5: 77.60%
+[ep60] Running eval on logs/agvpreid_q_triplet_loss_80ep/checkpoint_ep60.pth.tar ...
+  Rank-1: 64.70%  Rank-5: 78.40%
+[ep70] Running eval on logs/agvpreid_q_triplet_loss_80ep/checkpoint_ep70.pth.tar ...
+  Rank-1: 65.20%  Rank-5: 78.60%
+[ep80] Running eval on logs/agvpreid_q_triplet_loss_80ep/checkpoint_ep80.pth.tar ...
+  Rank-1: 65.10%  Rank-5: 78.50%
+
+Done. Summary written to logs/agvpreid_q_triplet_loss_80ep/results_sweep.txt
+
+Checkpoint sweep — classical — logs/agvpreid_q_triplet_loss_80ep
+Epoch        Rank-1   Rank-5
+------------------------------
+ep10        53.20%   69.50%
+ep20        57.10%   74.00%
+ep30        55.40%   71.40%
+ep40        62.40%   77.30%
+ep50        62.90%   77.60%
+ep60        64.70%   78.40%
+ep70        65.20%   78.60%
+ep80        65.10%   78.50%
+

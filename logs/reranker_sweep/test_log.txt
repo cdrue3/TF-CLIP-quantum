@@ -1,0 +1,73 @@
+2026-06-09 17:35:24,343 reranker_sweep INFO: Device: cuda
+2026-06-09 17:35:33,952 reranker_sweep INFO: Extracting query + gallery features...
+2026-06-09 17:37:24,976 reranker_sweep INFO: Query: 2528, Gallery: 2719
+2026-06-09 17:37:25,895 reranker_sweep INFO: Classical L2 Rank-1: 66.4%
+2026-06-09 17:37:25,896 reranker_sweep INFO: 
+=======================================================
+2026-06-09 17:37:25,896 reranker_sweep INFO: Sweeping quantum reranker: logs/quantum_reranker/80ep_k20
+2026-06-09 17:37:25,897 reranker_sweep INFO: =======================================================
+2026-06-09 17:42:20,082 reranker_sweep INFO: ep01  quantum    66.4%  (+0.0pp vs classical)
+2026-06-09 17:47:16,749 reranker_sweep INFO: ep05  quantum    66.3%  (-0.1pp vs classical)
+2026-06-09 17:52:16,370 reranker_sweep INFO: ep10  quantum    64.5%  (-1.9pp vs classical)
+2026-06-09 17:57:16,486 reranker_sweep INFO: ep15  quantum    63.6%  (-2.8pp vs classical)
+2026-06-09 18:02:18,392 reranker_sweep INFO: ep20  quantum    63.2%  (-3.2pp vs classical)
+2026-06-09 18:07:17,669 reranker_sweep INFO: ep25  quantum    62.9%  (-3.5pp vs classical)
+2026-06-09 18:12:18,731 reranker_sweep INFO: ep30  quantum    61.7%  (-4.7pp vs classical)
+2026-06-09 18:17:21,366 reranker_sweep INFO: ep35  quantum    62.1%  (-4.4pp vs classical)
+2026-06-09 18:22:29,039 reranker_sweep INFO: ep40  quantum    61.3%  (-5.1pp vs classical)
+2026-06-09 18:27:34,765 reranker_sweep INFO: ep45  quantum    60.0%  (-6.4pp vs classical)
+2026-06-09 18:32:39,366 reranker_sweep INFO: ep50  quantum    59.5%  (-6.9pp vs classical)
+2026-06-09 18:37:44,843 reranker_sweep INFO: ep55  quantum    58.6%  (-7.8pp vs classical)
+2026-06-09 18:42:51,583 reranker_sweep INFO: ep60  quantum    58.9%  (-7.6pp vs classical)
+2026-06-09 18:47:54,462 reranker_sweep INFO: ep65  quantum    58.9%  (-7.5pp vs classical)
+2026-06-09 18:53:02,431 reranker_sweep INFO: ep70  quantum    58.9%  (-7.6pp vs classical)
+2026-06-09 18:58:08,484 reranker_sweep INFO: ep75  quantum    58.9%  (-7.5pp vs classical)
+2026-06-09 19:03:13,478 reranker_sweep INFO: ep80  quantum    58.9%  (-7.6pp vs classical)
+2026-06-09 19:03:13,582 reranker_sweep INFO: 
+=======================================================
+2026-06-09 19:03:13,582 reranker_sweep INFO: Sweeping classical reranker: logs/classical_reranker/80ep_k20
+2026-06-09 19:03:13,583 reranker_sweep INFO: =======================================================
+2026-06-09 19:03:36,360 reranker_sweep INFO: ep01  classical  63.6%  (-2.8pp vs classical)
+2026-06-09 19:03:58,091 reranker_sweep INFO: ep05  classical  56.8%  (-9.6pp vs classical)
+2026-06-09 19:04:20,070 reranker_sweep INFO: ep10  classical  54.0%  (-12.4pp vs classical)
+2026-06-09 19:04:43,217 reranker_sweep INFO: ep15  classical  54.2%  (-12.2pp vs classical)
+2026-06-09 19:05:07,060 reranker_sweep INFO: ep20  classical  53.1%  (-13.3pp vs classical)
+2026-06-09 19:05:31,536 reranker_sweep INFO: ep25  classical  57.0%  (-9.4pp vs classical)
+2026-06-09 19:05:54,565 reranker_sweep INFO: ep30  classical  55.4%  (-11.0pp vs classical)
+2026-06-09 19:06:18,283 reranker_sweep INFO: ep35  classical  54.1%  (-12.3pp vs classical)
+2026-06-09 19:06:41,950 reranker_sweep INFO: ep40  classical  55.6%  (-10.8pp vs classical)
+2026-06-09 19:07:05,454 reranker_sweep INFO: ep45  classical  53.8%  (-12.6pp vs classical)
+2026-06-09 19:07:27,348 reranker_sweep INFO: ep50  classical  53.6%  (-12.8pp vs classical)
+2026-06-09 19:07:53,088 reranker_sweep INFO: ep55  classical  53.6%  (-12.8pp vs classical)
+2026-06-09 19:08:16,069 reranker_sweep INFO: ep60  classical  54.6%  (-11.8pp vs classical)
+2026-06-09 19:08:39,598 reranker_sweep INFO: ep65  classical  54.5%  (-11.9pp vs classical)
+2026-06-09 19:09:02,358 reranker_sweep INFO: ep70  classical  54.5%  (-11.9pp vs classical)
+2026-06-09 19:09:26,334 reranker_sweep INFO: ep75  classical  54.6%  (-11.8pp vs classical)
+2026-06-09 19:09:50,649 reranker_sweep INFO: ep80  classical  54.6%  (-11.8pp vs classical)
+2026-06-09 19:09:50,752 reranker_sweep INFO: 
+=======================================================
+2026-06-09 19:09:50,752 reranker_sweep INFO: SUMMARY
+2026-06-09 19:09:50,752 reranker_sweep INFO: Classical L2 baseline: 66.4%
+2026-06-09 19:09:50,753 reranker_sweep INFO: Epoch      Quantum R1   Classical R1   Q-delta   C-delta
+2026-06-09 19:09:50,753 reranker_sweep INFO: -------------------------------------------------------
+2026-06-09 19:09:50,753 reranker_sweep INFO: ep01            66.4%          63.6%    +0.0pp    -2.8pp
+2026-06-09 19:09:50,753 reranker_sweep INFO: ep05            66.3%          56.8%    -0.1pp    -9.6pp
+2026-06-09 19:09:50,753 reranker_sweep INFO: ep10            64.5%          54.0%    -1.9pp   -12.4pp
+2026-06-09 19:09:50,753 reranker_sweep INFO: ep15            63.6%          54.2%    -2.8pp   -12.2pp
+2026-06-09 19:09:50,753 reranker_sweep INFO: ep20            63.2%          53.1%    -3.2pp   -13.3pp
+2026-06-09 19:09:50,753 reranker_sweep INFO: ep25            62.9%          57.0%    -3.5pp    -9.4pp
+2026-06-09 19:09:50,753 reranker_sweep INFO: ep30            61.7%          55.4%    -4.7pp   -11.0pp
+2026-06-09 19:09:50,753 reranker_sweep INFO: ep35            62.1%          54.1%    -4.4pp   -12.3pp
+2026-06-09 19:09:50,753 reranker_sweep INFO: ep40            61.3%          55.6%    -5.1pp   -10.8pp
+2026-06-09 19:09:50,753 reranker_sweep INFO: ep45            60.0%          53.8%    -6.4pp   -12.6pp
+2026-06-09 19:09:50,753 reranker_sweep INFO: ep50            59.5%          53.6%    -6.9pp   -12.8pp
+2026-06-09 19:09:50,753 reranker_sweep INFO: ep55            58.6%          53.6%    -7.8pp   -12.8pp
+2026-06-09 19:09:50,753 reranker_sweep INFO: ep60            58.9%          54.6%    -7.6pp   -11.8pp
+2026-06-09 19:09:50,754 reranker_sweep INFO: ep65            58.9%          54.5%    -7.5pp   -11.9pp
+2026-06-09 19:09:50,754 reranker_sweep INFO: ep70            58.9%          54.5%    -7.6pp   -11.9pp
+2026-06-09 19:09:50,754 reranker_sweep INFO: ep75            58.9%          54.6%    -7.5pp   -11.8pp
+2026-06-09 19:09:50,754 reranker_sweep INFO: ep80            58.9%          54.6%    -7.6pp   -11.8pp
+2026-06-09 19:09:50,754 reranker_sweep INFO: -------------------------------------------------------
+2026-06-09 19:09:50,754 reranker_sweep INFO: Best quantum:    66.4%  (+0.0pp)
+2026-06-09 19:09:50,754 reranker_sweep INFO: Best classical:  63.6%  (-2.8pp)
+2026-06-09 19:09:50,754 reranker_sweep INFO: Quantum vs MLP:  +2.8pp

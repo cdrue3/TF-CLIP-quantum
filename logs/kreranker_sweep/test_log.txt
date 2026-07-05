@@ -1,0 +1,30 @@
+2026-06-11 01:25:50,085 kreranker_sweep INFO: Extracting query + gallery features...
+2026-06-11 01:27:28,452 kreranker_sweep INFO: Classical L2 Rank-1:           66.42%
+2026-06-11 01:27:28,452 kreranker_sweep INFO: Running classical k-reciprocal (k1=20, k2=6, lambda=0.3)...
+2026-06-11 01:32:24,543 kreranker_sweep INFO: Classical k-reciprocal Rank-1: 65.35%  (-1.07pp)
+2026-06-11 01:32:24,544 kreranker_sweep INFO: 
+Sweeping 17 checkpoints from logs/quantum_kreranker/80ep_k20
+2026-06-11 01:37:30,900 kreranker_sweep INFO: ep01  quantum-kreranker  66.42%  (+0.00pp vs L2)
+2026-06-11 01:42:19,566 kreranker_sweep INFO: ep05  quantum-kreranker  65.66%  (-0.75pp vs L2)
+2026-06-11 01:47:14,550 kreranker_sweep INFO: ep10  quantum-kreranker  65.23%  (-1.19pp vs L2)
+2026-06-11 01:52:06,970 kreranker_sweep INFO: ep15  quantum-kreranker  65.43%  (-0.99pp vs L2)
+2026-06-11 01:57:02,483 kreranker_sweep INFO: ep20  quantum-kreranker  65.35%  (-1.07pp vs L2)
+2026-06-11 02:01:55,874 kreranker_sweep INFO: ep25  quantum-kreranker  65.39%  (-1.03pp vs L2)
+2026-06-11 02:06:49,081 kreranker_sweep INFO: ep30  quantum-kreranker  65.27%  (-1.15pp vs L2)
+2026-06-11 02:11:43,583 kreranker_sweep INFO: ep35  quantum-kreranker  65.39%  (-1.03pp vs L2)
+2026-06-11 02:16:25,383 kreranker_sweep INFO: ep40  quantum-kreranker  65.62%  (-0.79pp vs L2)
+2026-06-11 02:21:06,882 kreranker_sweep INFO: ep45  quantum-kreranker  65.66%  (-0.75pp vs L2)
+2026-06-11 02:25:47,980 kreranker_sweep INFO: ep50  quantum-kreranker  65.59%  (-0.83pp vs L2)
+2026-06-11 02:30:29,669 kreranker_sweep INFO: ep55  quantum-kreranker  65.82%  (-0.59pp vs L2)
+2026-06-11 02:35:19,966 kreranker_sweep INFO: ep60  quantum-kreranker  65.78%  (-0.63pp vs L2)
+2026-06-11 02:40:11,767 kreranker_sweep INFO: ep65  quantum-kreranker  65.78%  (-0.63pp vs L2)
+2026-06-11 02:45:07,366 kreranker_sweep INFO: ep70  quantum-kreranker  65.74%  (-0.67pp vs L2)
+2026-06-11 02:50:04,374 kreranker_sweep INFO: ep75  quantum-kreranker  65.74%  (-0.67pp vs L2)
+2026-06-11 02:54:58,486 kreranker_sweep INFO: ep80  quantum-kreranker  65.74%  (-0.67pp vs L2)
+2026-06-11 02:54:58,486 kreranker_sweep INFO: 
+==================================================
+2026-06-11 02:54:58,486 kreranker_sweep INFO: Classical L2:           66.42%  (baseline)
+2026-06-11 02:54:58,487 kreranker_sweep INFO: Classical k-reciprocal: 65.35%  (-1.07pp)
+2026-06-11 02:54:58,487 kreranker_sweep INFO: Best quantum kreranker: 66.42%  (+0.00pp) at ep01
+2026-06-11 02:54:58,487 kreranker_sweep INFO: Quantum vs classical k-reciprocal: +1.07pp
+2026-06-11 02:54:58,487 kreranker_sweep INFO: Results written to logs/kreranker_sweep/results_sweep.txt
