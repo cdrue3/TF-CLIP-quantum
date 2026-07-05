@@ -1,0 +1,47 @@
+[followon] Fri Jun 19 18:39:18 UTC 2026 — previous chain done, starting parallel experiments...
+[chain] Fri Jun 19 18:39:18 UTC 2026 — starting 80ep_parallel_ham...
+/home/ubuntu/.local/lib/python3.12/site-packages/timm/models/layers/__init__.py:49: FutureWarning: Importing from timm.models.layers is deprecated, please import via timm.layers
+  warnings.warn(f"Importing from {__name__} is deprecated, please import via timm.layers", FutureWarning)
+Traceback (most recent call last):
+  File "/home/ubuntu/TF-CLIP-quantum/train_qtemporal_ber.py", line 294, in <module>
+    cfg.merge_from_list(args.opts)
+  File "/home/ubuntu/.local/lib/python3.12/site-packages/yacs/config.py", line 243, in merge_from_list
+    _assert_with_logging(subkey in d, "Non-existent key: {}".format(full_key))
+  File "/home/ubuntu/.local/lib/python3.12/site-packages/yacs/config.py", line 545, in _assert_with_logging
+    assert cond, msg
+           ^^^^
+AssertionError: Non-existent key: --n_qubits
+[chain] Fri Jun 19 18:39:34 UTC 2026 — 80ep_parallel_ham training done. Eval sweep...
+=== SWEEP DONE: logs/agvpreid_sqp_ber/80ep_parallel_ham ===
+[chain] Fri Jun 19 18:39:34 UTC 2026 — 80ep_parallel_ham sweep done.
+[chain] Fri Jun 19 18:39:34 UTC 2026 — starting 80ep_parallel_gated...
+/home/ubuntu/.local/lib/python3.12/site-packages/timm/models/layers/__init__.py:49: FutureWarning: Importing from timm.models.layers is deprecated, please import via timm.layers
+  warnings.warn(f"Importing from {__name__} is deprecated, please import via timm.layers", FutureWarning)
+Traceback (most recent call last):
+  File "/home/ubuntu/TF-CLIP-quantum/train_qtemporal_ber.py", line 294, in <module>
+    cfg.merge_from_list(args.opts)
+  File "/home/ubuntu/.local/lib/python3.12/site-packages/yacs/config.py", line 223, in merge_from_list
+    _assert_with_logging(
+  File "/home/ubuntu/.local/lib/python3.12/site-packages/yacs/config.py", line 545, in _assert_with_logging
+    assert cond, msg
+           ^^^^
+AssertionError: Override list has odd length: ['SOLVER.STAGE2.MAX_EPOCHS', '80', 'SOLVER.STAGE2.EVAL_PERIOD', '5', 'SOLVER.STAGE2.CHECKPOINT_PERIOD', '5', 'DATASETS.ROOT_DIR', 'DATA/subset_250', '--n_qubits', '8', '--n_layers', '2', '--parallel', '--fusion_mode', 'gated', 'OUTPUT_DIR', 'logs/agvpreid_sqp_ber/80ep_parallel_gated']; it must be a list of pairs
+[chain] Fri Jun 19 18:39:50 UTC 2026 — 80ep_parallel_gated training done. Eval sweep...
+=== SWEEP DONE: logs/agvpreid_sqp_ber/80ep_parallel_gated ===
+[chain] Fri Jun 19 18:39:50 UTC 2026 — 80ep_parallel_gated sweep done.
+[chain] Fri Jun 19 18:39:50 UTC 2026 — starting 80ep_parallel_deep...
+/home/ubuntu/.local/lib/python3.12/site-packages/timm/models/layers/__init__.py:49: FutureWarning: Importing from timm.models.layers is deprecated, please import via timm.layers
+  warnings.warn(f"Importing from {__name__} is deprecated, please import via timm.layers", FutureWarning)
+Traceback (most recent call last):
+  File "/home/ubuntu/TF-CLIP-quantum/train_qtemporal_ber.py", line 294, in <module>
+    cfg.merge_from_list(args.opts)
+  File "/home/ubuntu/.local/lib/python3.12/site-packages/yacs/config.py", line 223, in merge_from_list
+    _assert_with_logging(
+  File "/home/ubuntu/.local/lib/python3.12/site-packages/yacs/config.py", line 545, in _assert_with_logging
+    assert cond, msg
+           ^^^^
+AssertionError: Override list has odd length: ['SOLVER.STAGE2.MAX_EPOCHS', '80', 'SOLVER.STAGE2.EVAL_PERIOD', '5', 'SOLVER.STAGE2.CHECKPOINT_PERIOD', '5', 'DATASETS.ROOT_DIR', 'DATA/subset_250', '--n_qubits', '8', '--n_layers', '3', '--parallel', 'OUTPUT_DIR', 'logs/agvpreid_sqp_ber/80ep_parallel_deep']; it must be a list of pairs
+[chain] Fri Jun 19 18:40:06 UTC 2026 — 80ep_parallel_deep training done. Eval sweep...
+=== SWEEP DONE: logs/agvpreid_sqp_ber/80ep_parallel_deep ===
+[chain] Fri Jun 19 18:40:06 UTC 2026 — 80ep_parallel_deep sweep done.
+[chain] Fri Jun 19 18:40:06 UTC 2026 — ALL EXPERIMENTS DONE.

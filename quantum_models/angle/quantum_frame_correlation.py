@@ -110,13 +110,6 @@ class QuantumFrameCorrelation(nn.Module):
             nn.init.normal_(self.qlayer.weights, mean=0, std=0.01)
         nn.init.normal_(self.upscale.weight, mean=0, std=0.001)
 
-    def to(self, *args, **kwargs):
-        """Pin qlayer to CPU; all other modules follow device."""
-        super().to(*args, **kwargs)
-        if not self.bypass_quantum:
-            self.qlayer.to(device=torch.device("cpu"), dtype=torch.float32)
-        return self
-
     def forward(self, x: torch.Tensor) -> torch.Tensor:
         """
         Args:
@@ -130,7 +123,6 @@ class QuantumFrameCorrelation(nn.Module):
             return mean_feat
 
         input_dtype  = x.dtype
-        input_device = x.device
         B, T, D = x.shape
         x_f = x.float()
 
@@ -145,16 +137,15 @@ class QuantumFrameCorrelation(nn.Module):
         ) * math.pi
         angles = angles.reshape(B * self.n_pairs, self.n_qubits)   # [B*n_pairs, n_q]
 
-        # VQC on CPU: single batched call over all B*n_pairs.
-        angles_cpu = angles.float()
-        q_out = self.qlayer(angles_cpu).to(input_device)           # [B*n_pairs, 2^n_q]
+        # VQC: single batched call over all B*n_pairs.
+        q_out = self.qlayer(angles.float())                        # [B*n_pairs, 2^n_q]
 
         # Average over pairs: [B, n_pairs, 2^n_q] → [B, 2^n_q]
         q_out = q_out.reshape(B, self.n_pairs, self.n_measurements).mean(1)
 
         delta = self.upscale(q_out)   # [B, in_features]
 
-        return (mean_feat.float() + delta).to(input_dtype)
+        return (mean_feat.float() + delta).to(dtype=input_dtype)
 
     def extra_repr(self) -> str:
         return (

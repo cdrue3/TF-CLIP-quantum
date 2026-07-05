@@ -1,10 +1,16 @@
 # Data — too large for git
 DATA/
 
-# Checkpoints and logs
-logs/
+# Checkpoints (never commit model weights)
 *.pth.tar
 *.pth
+logs/**/*.pth.tar
+logs/**/*.pth
+
+# Cache files
+*.pt
+logs/**/clip_memory_cache*
+logs/**/scan_cache*.json
 
 # Python cache
 __pycache__/

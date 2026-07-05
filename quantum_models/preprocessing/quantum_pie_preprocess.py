@@ -95,7 +95,6 @@ class QuantumSpatialFilter(nn.Module):
         nn.init.normal_(self.spatial_net.weight, mean=0, std=0.001)
         nn.init.zeros_(self.spatial_net.bias)
 
-
     def forward(self, x: torch.Tensor) -> torch.Tensor:
         """
         Args:
@@ -106,8 +105,7 @@ class QuantumSpatialFilter(nn.Module):
         if self.bypass_quantum:
             return x
 
-        input_dtype  = x.dtype
-        input_device = x.device
+        input_dtype = x.dtype
         BT, C, H, W  = x.shape
         G = self.grid_size
 
@@ -117,10 +115,10 @@ class QuantumSpatialFilter(nn.Module):
         cell_means = cell_means.permute(0, 2, 3, 1).reshape(BT * G * G, C)  # [BT*G^2, 3]
 
         angles = torch.sigmoid(self.pre_net(cell_means)) * math.pi  # [BT*G^2, n_q]
-        angles_cpu  = angles.cpu().float()
-        weights_cpu = self.qlayer_weights.float()
+        angles_f  = angles.float()
+        weights_f = self.qlayer_weights.float()
 
-        probs = self.circuit(angles_cpu, weights_cpu).float()  # [BT*G^2, 2^n_q]
+        probs = self.circuit(angles_f, weights_f).float()  # [BT*G^2, 2^n_q]
 
         # Spatial gate: [BT*G^2, 1] → [BT, 1, G, G]
         gate = self.spatial_net(probs)  # [BT*G^2, 1]
@@ -129,7 +127,7 @@ class QuantumSpatialFilter(nn.Module):
         # Upsample gate to original spatial resolution
         gate_map = F.interpolate(gate, size=(H, W), mode='bilinear', align_corners=False)  # [BT,1,H,W]
 
-        return (x.float() * (1.0 + gate_map)).to(input_dtype)
+        return (x.float() * (1.0 + gate_map)).to(dtype=input_dtype)
 
     def extra_repr(self) -> str:
         return (

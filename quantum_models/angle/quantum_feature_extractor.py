@@ -110,12 +110,6 @@ class QuantumFeatureExtractor(nn.Module):
         # preventing barren plateau at init.
         nn.init.normal_(self.qlayer.weights, mean=0, std=0.01)
 
-    def to(self, *args, **kwargs):
-        """Pin qlayer to CPU; pre_net can move freely to GPU."""
-        super().to(*args, **kwargs)
-        self.qlayer.to(device=torch.device("cpu"), dtype=torch.float32)
-        return self
-
     def forward(self, x: torch.Tensor) -> torch.Tensor:
         """
         Args:
@@ -124,18 +118,14 @@ class QuantumFeatureExtractor(nn.Module):
             quantum_feat: [B, 2^n_qubits]  (same dtype and device as input)
         """
         input_dtype  = x.dtype
-        input_device = x.device
 
         x = x.float()
-        x = self.pre_net(x)                    # [B, n_qubits]  on input_device
+        x = self.pre_net(x)                    # [B, n_qubits]
         x = torch.sigmoid(x) * math.pi         # (0, π)
 
-        # PennyLane runs on CPU.
-        x = x.float()
-        x = self.qlayer(x)                     # [B, 2^n_qubits]  on CPU
-        x = x.to(input_device)                 # [B, 2^n_qubits]  on input_device
+        x = self.qlayer(x.float())             # [B, 2^n_qubits]
 
-        return x.to(input_dtype)
+        return x.to(dtype=input_dtype)
 
     def extra_repr(self) -> str:
         return (
@@ -208,13 +198,6 @@ class QuantumAugmentedClassifier(nn.Module):
         # kaiming_uniform with fan_in = fused_dim (or in_features for linear probe).
         nn.init.kaiming_uniform_(self.post_net.weight, a=math.sqrt(5))
 
-    def to(self, *args, **kwargs):
-        """Delegate to() to quantum_extractor which handles CPU-pinning."""
-        super().to(*args, **kwargs)
-        if not self.bypass_quantum:
-            self.quantum_extractor.to(*args, **kwargs)
-        return self
-
     def forward(self, x: torch.Tensor) -> torch.Tensor:
         """
         Args:
@@ -226,7 +209,7 @@ class QuantumAugmentedClassifier(nn.Module):
 
         if self.bypass_quantum:
             # Pure linear probe: no VQC, no concat, no bottleneck.
-            return self.post_net(x.float()).to(input_dtype)
+            return self.post_net(x.float()).to(dtype=input_dtype)
 
         x_classical = x.float()                          # preserve original features
         quantum_feat = self.quantum_extractor(x_classical)  # [B, 2^n_qubits]
@@ -235,7 +218,7 @@ class QuantumAugmentedClassifier(nn.Module):
         fused = torch.cat([x_classical, quantum_feat], dim=1)   # [B, fused_dim]
 
         logits = self.post_net(fused)                    # [B, num_classes]
-        return logits.to(input_dtype)
+        return logits.to(dtype=input_dtype)
 
     def extra_repr(self) -> str:
         if self.bypass_quantum:

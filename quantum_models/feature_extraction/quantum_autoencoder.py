@@ -91,6 +91,11 @@ class QuantumAutoEncoder(nn.Module):
         # Near-zero decoder: output ≈ x at init (residual identity)
         nn.init.normal_(self.decoder.weight, mean=0, std=0.001)
 
+    def _apply(self, fn):
+        super()._apply(fn)
+        if not self.bypass_quantum:
+            self.qlayer_weights.data = self.qlayer_weights.data.cpu().float()
+        return self
 
     def forward(self, x: torch.Tensor) -> tuple:
         """
@@ -109,9 +114,9 @@ class QuantumAutoEncoder(nn.Module):
 
         angles = torch.sigmoid(self.encoder_pre(x.float())) * math.pi  # [B, n_q]
         angles_cpu  = angles.cpu().float()
-        weights_cpu = self.qlayer_weights.float()
+        weights_cpu = self.qlayer_weights.cpu().float()
 
-        probs = self.circuit(angles_cpu, weights_cpu).float()  # [B, 2^n_q]
+        probs = self.circuit(angles_cpu, weights_cpu).float().to(input_device)  # [B, 2^n_q]
         x_recon = self.decoder(probs)  # [B, in_features]
 
         output = (x.float() + x_recon).to(input_dtype)

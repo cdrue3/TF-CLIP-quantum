@@ -112,12 +112,6 @@ class QTLClassifier(nn.Module):
         # distribution before the output layer dominates the gradient signal.
         nn.init.normal_(self.output_layer.weight, std=0.001)
 
-    def to(self, *args, **kwargs):
-        """Keep qlayer pinned to CPU regardless of model.to(device) calls."""
-        super().to(*args, **kwargs)
-        self.qlayer.to(device=torch.device("cpu"), dtype=torch.float32)
-        return self
-
     def forward(self, x: torch.Tensor) -> torch.Tensor:
         """
         Args:
@@ -126,21 +120,18 @@ class QTLClassifier(nn.Module):
             logits: [B, num_classes]
         """
         input_dtype  = x.dtype
-        input_device = x.device
         x = x.float()
 
         # Stage 1: dress layer + tanh·π → angles in (−π, π)
         x = torch.tanh(self.dress_layer(x)) * math.pi   # [B, n_qubits]
 
-        # Stage 2: VQC (CPU)
-        x = x.cpu().float()
-        x = self.qlayer(x)                               # [B, 2^n_qubits]
-        x = x.to(input_device)
+        # Stage 2: VQC
+        x = self.qlayer(x.float())                       # [B, 2^n_qubits]
 
         # Stage 3: output projection
         x = self.output_layer(x)                         # [B, num_classes]
 
-        return x.to(input_dtype)
+        return x.to(dtype=input_dtype)
 
     def extra_repr(self) -> str:
         return (

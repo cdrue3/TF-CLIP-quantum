@@ -133,14 +133,6 @@ class QuantumInterlacedAdapter(nn.Module):
         # upscale2: near-zero so residual delta ≈ 0 at init
         nn.init.normal_(self.upscale2.weight, mean=0, std=0.001)
 
-    def to(self, *args, **kwargs):
-        """Pin both qlayers to CPU."""
-        super().to(*args, **kwargs)
-        if not self.bypass_quantum:
-            self.qlayer1.to(device=torch.device("cpu"), dtype=torch.float32)
-            self.qlayer2.to(device=torch.device("cpu"), dtype=torch.float32)
-        return self
-
     def forward(self, x: torch.Tensor) -> torch.Tensor:
         """
         Args:
@@ -149,7 +141,6 @@ class QuantumInterlacedAdapter(nn.Module):
             x_out: [B, in_features] (same shape/dtype/device as input)
         """
         input_dtype  = x.dtype
-        input_device = x.device
         x_f = x.float()
 
         # Stage 1: in_features → mid_features via VQC1

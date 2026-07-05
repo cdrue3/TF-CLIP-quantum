@@ -65,7 +65,12 @@ class QuantumChannelPreprocess(nn.Module):
 
         self.pre_net = nn.Linear(n_channels, n_qubits, bias=True)
 
-        if not bypass_quantum:
+        if bypass_quantum:
+            self.classical_expansion = nn.Sequential(
+                nn.Linear(n_qubits, self.n_measurements),
+                nn.ReLU(),
+            )
+        else:
             n_q = n_qubits
             dev = qml.device(device_name, wires=n_q)
 
@@ -79,19 +84,20 @@ class QuantumChannelPreprocess(nn.Module):
             weight_shape = qml.StronglyEntanglingLayers.shape(n_layers=n_layers, n_wires=n_q)
             self.qlayer_weights = nn.Parameter(torch.zeros(weight_shape))
 
-        # channel_net: maps VQC probs → channel attention scalars
+        # channel_net: maps VQC/classical probs → channel attention scalars
         self.channel_net = nn.Linear(self.n_measurements, n_channels)
         self._init_weights()
 
     def _init_weights(self):
         nn.init.kaiming_normal_(self.pre_net.weight, a=0, mode="fan_in")
         nn.init.zeros_(self.pre_net.bias)
-        if not self.bypass_quantum:
+        if self.bypass_quantum:
+            nn.init.kaiming_normal_(self.classical_expansion[0].weight, a=0, mode="fan_in")
+        else:
             nn.init.normal_(self.qlayer_weights, mean=0, std=0.01)
         # channel_net init: output near 0 → attention near 0 → output ≈ input (identity)
         nn.init.normal_(self.channel_net.weight, mean=0, std=0.001)
         nn.init.zeros_(self.channel_net.bias)
-
 
     def forward(self, x: torch.Tensor) -> torch.Tensor:
         """
@@ -100,26 +106,25 @@ class QuantumChannelPreprocess(nn.Module):
         Returns:
             [B*T, 3, H, W]  (channel-rescaled, same shape)
         """
-        if self.bypass_quantum:
-            return x
-
-        input_dtype  = x.dtype
-        input_device = x.device
+        input_dtype = x.dtype
 
         # Global average pool → [B*T, 3] channel descriptor
         channel_desc = x.float().mean(dim=[2, 3])  # [B*T, 3]
 
         angles = torch.sigmoid(self.pre_net(channel_desc)) * math.pi  # [B*T, n_q]
-        angles_cpu  = angles.cpu().float()
-        weights_cpu = self.qlayer_weights.float()
 
-        probs = self.circuit(angles_cpu, weights_cpu).float()  # [B*T, 2^n_q]
+        if self.bypass_quantum:
+            probs = self.classical_expansion(angles)  # [B*T, 2^n_q]
+        else:
+            angles_f  = angles.float()
+            weights_f = self.qlayer_weights.float()
+            probs = self.circuit(angles_f, weights_f).float()  # [B*T, 2^n_q]
 
         # channel_weights: [B*T, 3] ∈ ≈0 at init → identity residual
         channel_weights = self.channel_net(probs)  # [B*T, 3]
         channel_weights = channel_weights[:, :, None, None]  # [B*T, 3, 1, 1] for broadcast
 
-        return (x.float() * (1.0 + channel_weights)).to(input_dtype)
+        return (x.float() * (1.0 + channel_weights)).to(dtype=input_dtype)
 
     def extra_repr(self) -> str:
         return (

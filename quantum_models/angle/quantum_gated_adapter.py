@@ -97,13 +97,6 @@ class GatedQuantumAdapter(nn.Module):
             nn.init.normal_(self.qlayer.weights, mean=0, std=0.01)
         nn.init.normal_(self.upscale.weight, mean=0, std=0.001)
 
-    def to(self, *args, **kwargs):
-        """Pin qlayer to CPU; all other modules follow device migrations."""
-        super().to(*args, **kwargs)
-        if not self.bypass_quantum:
-            self.qlayer.to(device=torch.device("cpu"), dtype=torch.float32)
-        return self
-
     def forward(
         self, x: torch.Tensor, return_gates: bool = False
     ):
@@ -115,7 +108,6 @@ class GatedQuantumAdapter(nn.Module):
             x_adapted [B, in_features], or (x_adapted, g [B]) if return_gates=True.
         """
         input_dtype  = x.dtype
-        input_device = x.device
         x_f = x.float()
 
         # Gate: [B, 1] → broadcast over in_features.
@@ -126,12 +118,11 @@ class GatedQuantumAdapter(nn.Module):
         if self.bypass_quantum:
             q_feat = self.classical_expansion(angles)
         else:
-            angles_cpu = angles.float()
-            q_feat = self.qlayer(angles_cpu).to(input_device)
+            q_feat = self.qlayer(angles.float())
         delta = self.upscale(q_feat)   # [B, in_features]
 
         # Gated residual.
-        x_adapted = (x_f + g * delta).to(input_dtype)
+        x_adapted = (x_f + g * delta).to(dtype=input_dtype)
 
         if return_gates:
             return x_adapted, g.squeeze(1).detach().cpu()

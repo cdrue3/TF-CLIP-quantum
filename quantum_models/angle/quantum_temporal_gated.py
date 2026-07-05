@@ -110,7 +110,6 @@ class QuantumTemporalGated(nn.Module):
         nn.init.normal_(self.gate_net.weight, mean=0, std=0.01)
         nn.init.constant_(self.gate_net.bias, -2.0)   # gate starts near 0.12 (nearly closed)
 
-
     def forward(self, x: torch.Tensor) -> torch.Tensor:
         """
         Args:
@@ -123,8 +122,7 @@ class QuantumTemporalGated(nn.Module):
         if self.bypass_quantum:
             return mean_feat
 
-        input_dtype  = x.dtype
-        input_device = x.device
+        input_dtype = x.dtype
         B, T, D = x.shape
 
         # Gate: scalar per sample conditioned on mean-pooled tracklet.
@@ -136,13 +134,13 @@ class QuantumTemporalGated(nn.Module):
         angles = angles.reshape(B, T, self.n_qubits)          # [B, T, n_q]
 
         # Batched VQC: [T, B, n_q]
-        angles_cpu  = angles.permute(1, 0, 2).float()
-        weights_cpu = self.qlayer_weights.float()
-        q_out = self.circuit(angles_cpu, weights_cpu).float()   # [B, 2^n_q]
+        angles_f  = angles.permute(1, 0, 2).float()
+        weights_f = self.qlayer_weights.float()
+        q_out = self.circuit(angles_f, weights_f).float()   # [B, 2^n_q]
 
         delta = self.upscale(q_out)   # [B, in_features]
 
-        return (mean_feat.float() + g * delta).to(input_dtype)
+        return (mean_feat.float() + g * delta).to(dtype=input_dtype)
 
     def extra_repr(self) -> str:
         return (

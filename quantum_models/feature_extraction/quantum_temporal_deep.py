@@ -81,26 +81,24 @@ class QuantumTemporalDeep(nn.Module):
             nn.init.normal_(self.qlayer_weights, mean=0, std=0.005)
         nn.init.normal_(self.upscale.weight, mean=0, std=0.001)
 
-
     def forward(self, x: torch.Tensor) -> torch.Tensor:
         mean_feat = x.mean(1)
         if self.bypass_quantum:
             return mean_feat
 
-        input_dtype  = x.dtype
-        input_device = x.device
+        input_dtype = x.dtype
         B, T, D = x.shape
 
         angles = torch.sigmoid(self.pre_net(x.float().reshape(B * T, D))) * math.pi
         angles = angles.reshape(B, T, self.n_qubits)
 
-        angles_cpu  = angles.permute(1, 0, 2).float()
-        weights_cpu = self.qlayer_weights.float()
+        angles_f  = angles.permute(1, 0, 2).float()
+        weights_f = self.qlayer_weights.float()
 
-        q_out = self.circuit(angles_cpu, weights_cpu).float()
+        q_out = self.circuit(angles_f, weights_f).float()
         delta = self.upscale(q_out)
 
-        return (mean_feat.float() + delta).to(input_dtype)
+        return (mean_feat.float() + delta).to(dtype=input_dtype)
 
     def extra_repr(self) -> str:
         vqc_params = self.n_layers * self.n_qubits * 3

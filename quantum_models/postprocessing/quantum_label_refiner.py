@@ -103,6 +103,11 @@ class QuantumLabelRefiner(nn.Module):
         nn.init.normal_(self.refine_net.weight, mean=0, std=0.01)
         nn.init.zeros_(self.refine_net.bias) if hasattr(self.refine_net, 'bias') and self.refine_net.bias is not None else None
 
+    def _apply(self, fn):
+        super()._apply(fn)
+        if not self.bypass_quantum:
+            self.qlayer_weights.data = self.qlayer_weights.data.cpu().float()
+        return self
 
     def forward(self, logits: torch.Tensor, targets: torch.Tensor) -> torch.Tensor:
         """
@@ -132,9 +137,9 @@ class QuantumLabelRefiner(nn.Module):
         # VQC processing
         angles = torch.sigmoid(self.pre_net(top_logits.float())) * math.pi  # [B, n_q]
         angles_cpu  = angles.cpu().float()
-        weights_cpu = self.qlayer_weights.float()
+        weights_cpu = self.qlayer_weights.cpu().float()
 
-        probs = self.circuit(angles_cpu, weights_cpu).float()  # [B, 2^n_q]
+        probs = self.circuit(angles_cpu, weights_cpu).float().to(input_device)  # [B, 2^n_q]
 
         # Refined soft weights for top-K classes
         refined_logits = self.refine_net(probs)  # [B, K]

@@ -304,8 +304,8 @@ if __name__ == '__main__':
     # tqa.upscale: standard LR (1×) — takes gradient from classical heads.
     # classifier heads (nn.Linear): 10× — same as baseline LARGE_FC_LR.
     # ------------------------------------------------------------------ #
-    TQA_LR_FACTOR        = 3
-    CLASSIFIER_LR_FACTOR = 10
+    TQA_LR_FACTOR        = 1
+    CLASSIFIER_LR_FACTOR = 1
     n_tqa, n_cls = 0, 0
 
     param_to_name = {id(p): n for n, p in model.named_parameters()}

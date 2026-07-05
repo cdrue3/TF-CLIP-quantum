@@ -69,6 +69,11 @@ class _SingleHead(nn.Module):
         if not self.bypass_quantum:
             nn.init.normal_(self.qlayer_weights, mean=0, std=0.01)
 
+    def _apply(self, fn):
+        super()._apply(fn)
+        if not self.bypass_quantum:
+            self.qlayer_weights.data = self.qlayer_weights.data.cpu().float()
+        return self
 
     def forward(self, x):
         if self.bypass_quantum:
@@ -78,8 +83,8 @@ class _SingleHead(nn.Module):
         angles = torch.sigmoid(self.pre_net(x.float())) * math.pi  # [B, n_q]
         probs = self.circuit(
             angles.cpu().float(),
-            self.qlayer_weights.float()
-        ).float()  # [B, 2^n_q]
+            self.qlayer_weights.cpu().float()
+        ).float().to(input_device)  # [B, 2^n_q]
         return probs
 
 

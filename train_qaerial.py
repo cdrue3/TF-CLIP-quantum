@@ -307,8 +307,8 @@ if __name__ == '__main__':
     # the linear weights directly (e.g. 'classifier2.weight'). Use a different
     # naming convention: boost all 'classifier' params by 10×, adapter params by 3×.
     # ------------------------------------------------------------------ #
-    ADAPTER_LR_FACTOR     = 3    # pre_net + qlayer: conservative
-    CLASSIFIER_LR_FACTOR  = 10   # nn.Linear heads: same as baseline LARGE_FC_LR
+    ADAPTER_LR_FACTOR     = 1    # pre_net + qlayer: conservative
+    CLASSIFIER_LR_FACTOR = 1   # nn.Linear heads: same as baseline LARGE_FC_LR
     n_adapter, n_cls = 0, 0
 
     param_to_name = {id(p): n for n, p in model.named_parameters()}

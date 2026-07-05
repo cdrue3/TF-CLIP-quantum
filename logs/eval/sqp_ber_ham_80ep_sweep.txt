@@ -1,0 +1,49 @@
+=== logs/agvpreid_sqp_ber/80ep_ham/checkpoint_ep05.pth.tar ===
+2026-06-18 16:55:59,757 TFCLIP INFO: [Case 1 (aerial→ground)] Rank-1: 56.8%  Rank-5: 73.3%
+2026-06-18 16:55:59,899 TFCLIP INFO: Case 1 (aerial→ground): Rank-1 56.8%  Rank-5 73.3%
+=== logs/agvpreid_sqp_ber/80ep_ham/checkpoint_ep10.pth.tar ===
+2026-06-18 16:58:27,208 TFCLIP INFO: [Case 1 (aerial→ground)] Rank-1: 46.1%  Rank-5: 62.8%
+2026-06-18 16:58:27,353 TFCLIP INFO: Case 1 (aerial→ground): Rank-1 46.1%  Rank-5 62.8%
+=== logs/agvpreid_sqp_ber/80ep_ham/checkpoint_ep15.pth.tar ===
+2026-06-18 17:00:54,692 TFCLIP INFO: [Case 1 (aerial→ground)] Rank-1: 53.3%  Rank-5: 68.9%
+2026-06-18 17:00:54,845 TFCLIP INFO: Case 1 (aerial→ground): Rank-1 53.3%  Rank-5 68.9%
+=== logs/agvpreid_sqp_ber/80ep_ham/checkpoint_ep20.pth.tar ===
+2026-06-18 17:03:07,965 TFCLIP INFO: [Case 1 (aerial→ground)] Rank-1: 58.4%  Rank-5: 74.6%
+2026-06-18 17:03:08,112 TFCLIP INFO: Case 1 (aerial→ground): Rank-1 58.4%  Rank-5 74.6%
+=== logs/agvpreid_sqp_ber/80ep_ham/checkpoint_ep25.pth.tar ===
+2026-06-18 17:05:21,056 TFCLIP INFO: [Case 1 (aerial→ground)] Rank-1: 27.0%  Rank-5: 45.2%
+2026-06-18 17:05:21,180 TFCLIP INFO: Case 1 (aerial→ground): Rank-1 27.0%  Rank-5 45.2%
+=== logs/agvpreid_sqp_ber/80ep_ham/checkpoint_ep30.pth.tar ===
+2026-06-18 17:07:33,398 TFCLIP INFO: [Case 1 (aerial→ground)] Rank-1: 1.0%  Rank-5: 3.3%
+2026-06-18 17:07:33,533 TFCLIP INFO: Case 1 (aerial→ground): Rank-1 1.0%  Rank-5 3.3%
+=== logs/agvpreid_sqp_ber/80ep_ham/checkpoint_ep35.pth.tar ===
+2026-06-18 17:09:55,346 TFCLIP INFO: [Case 1 (aerial→ground)] Rank-1: 55.1%  Rank-5: 71.5%
+2026-06-18 17:09:55,485 TFCLIP INFO: Case 1 (aerial→ground): Rank-1 55.1%  Rank-5 71.5%
+=== logs/agvpreid_sqp_ber/80ep_ham/checkpoint_ep40.pth.tar ===
+2026-06-18 17:12:16,794 TFCLIP INFO: [Case 1 (aerial→ground)] Rank-1: 56.4%  Rank-5: 71.7%
+2026-06-18 17:12:16,944 TFCLIP INFO: Case 1 (aerial→ground): Rank-1 56.4%  Rank-5 71.7%
+=== logs/agvpreid_sqp_ber/80ep_ham/checkpoint_ep45.pth.tar ===
+2026-06-18 17:14:42,677 TFCLIP INFO: [Case 1 (aerial→ground)] Rank-1: 60.3%  Rank-5: 74.5%
+2026-06-18 17:14:42,821 TFCLIP INFO: Case 1 (aerial→ground): Rank-1 60.3%  Rank-5 74.5%
+=== logs/agvpreid_sqp_ber/80ep_ham/checkpoint_ep50.pth.tar ===
+2026-06-18 17:17:04,146 TFCLIP INFO: [Case 1 (aerial→ground)] Rank-1: 56.8%  Rank-5: 71.7%
+2026-06-18 17:17:04,286 TFCLIP INFO: Case 1 (aerial→ground): Rank-1 56.8%  Rank-5 71.7%
+=== logs/agvpreid_sqp_ber/80ep_ham/checkpoint_ep55.pth.tar ===
+2026-06-18 17:19:27,723 TFCLIP INFO: [Case 1 (aerial→ground)] Rank-1: 57.7%  Rank-5: 72.2%
+2026-06-18 17:19:27,869 TFCLIP INFO: Case 1 (aerial→ground): Rank-1 57.7%  Rank-5 72.2%
+=== logs/agvpreid_sqp_ber/80ep_ham/checkpoint_ep60.pth.tar ===
+2026-06-18 17:21:41,734 TFCLIP INFO: [Case 1 (aerial→ground)] Rank-1: 58.3%  Rank-5: 72.5%
+2026-06-18 17:21:41,890 TFCLIP INFO: Case 1 (aerial→ground): Rank-1 58.3%  Rank-5 72.5%
+=== logs/agvpreid_sqp_ber/80ep_ham/checkpoint_ep65.pth.tar ===
+2026-06-18 17:24:08,097 TFCLIP INFO: [Case 1 (aerial→ground)] Rank-1: 57.9%  Rank-5: 72.4%
+2026-06-18 17:24:08,238 TFCLIP INFO: Case 1 (aerial→ground): Rank-1 57.9%  Rank-5 72.4%
+=== logs/agvpreid_sqp_ber/80ep_ham/checkpoint_ep70.pth.tar ===
+2026-06-18 17:26:34,183 TFCLIP INFO: [Case 1 (aerial→ground)] Rank-1: 58.0%  Rank-5: 72.5%
+2026-06-18 17:26:34,322 TFCLIP INFO: Case 1 (aerial→ground): Rank-1 58.0%  Rank-5 72.5%
+=== logs/agvpreid_sqp_ber/80ep_ham/checkpoint_ep75.pth.tar ===
+2026-06-18 17:28:56,618 TFCLIP INFO: [Case 1 (aerial→ground)] Rank-1: 58.0%  Rank-5: 72.7%
+2026-06-18 17:28:56,763 TFCLIP INFO: Case 1 (aerial→ground): Rank-1 58.0%  Rank-5 72.7%
+=== logs/agvpreid_sqp_ber/80ep_ham/checkpoint_ep80.pth.tar ===
+2026-06-18 17:31:22,170 TFCLIP INFO: [Case 1 (aerial→ground)] Rank-1: 58.1%  Rank-5: 72.7%
+2026-06-18 17:31:22,319 TFCLIP INFO: Case 1 (aerial→ground): Rank-1 58.1%  Rank-5 72.7%
+=== SWEEP DONE: logs/agvpreid_sqp_ber/80ep_ham ===

@@ -100,12 +100,6 @@ class QClassifierReupload(nn.Module):
             nn.init.normal_(self.qlayer_weights, mean=0, std=0.01)
         nn.init.normal_(self.upscale.weight, mean=0, std=0.001)
 
-    def _apply(self, fn):
-        super()._apply(fn)
-        if not self.bypass_quantum:
-            self.qlayer_weights.data = self.qlayer_weights.data.cpu().float()
-        return self
-
     def _preprocess(self, x: torch.Tensor) -> torch.Tensor:
         """
         x: [N, D] (N = B*T flattened) → [N, D]
@@ -143,7 +137,6 @@ class QClassifierReupload(nn.Module):
             return mean_feat
 
         input_dtype  = x.dtype
-        input_device = x.device
         B, T, D = x.shape
 
         # Flatten to [B*T, D], apply preprocessing
@@ -155,20 +148,20 @@ class QClassifierReupload(nn.Module):
 
         # Reshape to [n_blocks, N, n_qubits] for PennyLane broadcasting
         angles = angles.reshape(B * T, self.n_blocks, self.n_qubits) # [N, n_b, n_q]
-        angles_cpu = angles.permute(1, 0, 2).cpu().float()           # [n_b, N, n_q]
+        angles_in = angles.permute(1, 0, 2).float()                   # [n_b, N, n_q]
 
         # Single batched circuit call — PennyLane broadcasts over N
         q_out = self.circuit(
-            angles_cpu,
-            self.qlayer_weights.cpu().float()
+            angles_in,
+            self.qlayer_weights.float()
         ).float()                                                     # [N, 2^n_q]
 
         # Pool over frames: [B*T, 2^n_q] → [B, T, 2^n_q] → mean → [B, 2^n_q]
         q_out = q_out.reshape(B, T, self.n_measurements).mean(1)
 
         # Upscale + skip
-        delta = self.upscale(q_out.to(input_device))                 # [B, D]
-        return (mean_feat.float() + delta).to(input_dtype)
+        delta = self.upscale(q_out)                                  # [B, D]
+        return (mean_feat.float() + delta).to(dtype=input_dtype)
 
     def extra_repr(self):
         return (

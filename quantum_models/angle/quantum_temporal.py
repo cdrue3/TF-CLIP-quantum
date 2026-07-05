@@ -107,7 +107,6 @@ class QuantumTemporalAgg(nn.Module):
             nn.init.normal_(self.qlayer_weights, mean=0, std=0.01)
         nn.init.normal_(self.upscale.weight, mean=0, std=0.001)
 
-
     def forward(self, x: torch.Tensor) -> torch.Tensor:
         """
         Args:
@@ -120,24 +119,22 @@ class QuantumTemporalAgg(nn.Module):
         if self.bypass_quantum:
             return mean_feat
 
-        input_dtype  = x.dtype
-        input_device = x.device
+        input_dtype = x.dtype
         B, T, D = x.shape
 
         # Pre-net per frame → [B, T, n_qubits] angles
         angles = torch.sigmoid(self.pre_net(x.float().reshape(B * T, D))) * math.pi
         angles = angles.reshape(B, T, self.n_qubits)   # [B, T, n_q]
 
-        # VQC on CPU: single batched call via parameter broadcasting.
         # Transpose to [T, B, n_q] so circuit[t] = [B, n_q] → PennyLane broadcasts over B.
-        angles_cpu  = angles.permute(1, 0, 2).float()  # [T, B, n_q]
-        weights_cpu = self.qlayer_weights.float()
+        angles_f  = angles.permute(1, 0, 2).float()  # [T, B, n_q]
+        weights_f = self.qlayer_weights.float()
 
-        q_out = self.circuit(angles_cpu, weights_cpu).float()  # [B, 2^n_q]
+        q_out = self.circuit(angles_f, weights_f).float()  # [B, 2^n_q]
 
         delta = self.upscale(q_out)   # [B, in_features]
 
-        return (mean_feat.float() + delta).to(input_dtype)
+        return (mean_feat.float() + delta).to(dtype=input_dtype)
 
     def extra_repr(self) -> str:
         return (

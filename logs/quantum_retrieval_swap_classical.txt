@@ -1,0 +1,20 @@
+/home/ubuntu/.local/lib/python3.12/site-packages/timm/models/layers/__init__.py:49: FutureWarning: Importing from timm.models.layers is deprecated, please import via timm.layers
+  warnings.warn(f"Importing from {__name__} is deprecated, please import via timm.layers", FutureWarning)
+2026-05-21 09:33:58,126 TFCLIP INFO: [quantum_retrieval] mode=swap_test
+=> Loading scan cache: DATA/subset_250/scan_cache_train.json
+=> Loading scan cache: DATA/subset_250/scan_cache_c1q.json
+=> Loading scan cache: DATA/subset_250/scan_cache_c1g.json
+WARNING: case2 directory not found (DATA/subset_250/case2_ground_to_aerial). case2_query and case2_gallery will be empty. Eval with --case 2 or --case 0 (both) will be skipped/invalid.
+=> AG-VPReID loaded
+  train  :  250 ids |  2323 tracklets | 6 cameras
+  case1 query  :  227 ids |  2528 tracklets (aerial)
+  case1 gallery:  227 ids |  2719 tracklets (ground)
+  case2        : NOT AVAILABLE (directory missing)
+Resized position embedding: %s to %s torch.Size([197, 768]) torch.Size([129, 768])
+Position embedding resize to height:16 width: 8
+camera number is : 6
+[FeaturePreprocessor] mode=none, in_features=768, seq_len=8
+2026-05-21 09:34:09,200 TFCLIP INFO: Loaded checkpoint: logs/agvpreid_classical_80ep/best_model.pth.tar
+2026-05-21 09:34:09,403 TFCLIP INFO: Extracting features...
+/home/ubuntu/TF-CLIP-quantum/utils/seqtransforms.py:187: UserWarning: TypedStorage is deprecated. It will be removed in the future and UntypedStorage will be the only storage class. This should only matter to you if you are using storages directly.  To access UntypedStorage directly, use tensor.untyped_storage() instead of tensor.storage()
+  img = torch.ByteTensor(torch.ByteStorage.from_buffer(frame.tobytes()))

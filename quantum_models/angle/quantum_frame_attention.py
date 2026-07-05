@@ -101,13 +101,6 @@ class QuantumFrameAttention(nn.Module):
         nn.init.normal_(self.weight_net.weight, mean=0, std=0.001)
         nn.init.zeros_(self.weight_net.bias)
 
-    def to(self, *args, **kwargs):
-        """Pin qlayer to CPU."""
-        super().to(*args, **kwargs)
-        if not self.bypass_quantum:
-            self.qlayer.to(device=torch.device("cpu"), dtype=torch.float32)
-        return self
-
     def forward(self, x: torch.Tensor) -> torch.Tensor:
         """
         Args:
@@ -117,7 +110,6 @@ class QuantumFrameAttention(nn.Module):
         """
         B, T, D = x.shape
         input_dtype  = x.dtype
-        input_device = x.device
         x_f = x.float()
 
         # Compress each frame: [B, T, D] → [B, T, n_qubits]
@@ -127,8 +119,7 @@ class QuantumFrameAttention(nn.Module):
         if self.bypass_quantum:
             q_feat = self.classical_expansion(angles)              # [B*T, 2^n_qubits]
         else:
-            angles_cpu = angles.float()
-            q_feat = self.qlayer(angles_cpu).to(input_device)     # [B*T, 2^n_qubits]
+            q_feat = self.qlayer(angles.float())                   # [B*T, 2^n_qubits]
 
         q_feat = q_feat.view(B, T, self.n_quantum_features)       # [B, T, 2^n_qubits]
 
@@ -139,7 +130,7 @@ class QuantumFrameAttention(nn.Module):
         # Weighted sum over frames
         out = (attn_weights.unsqueeze(-1) * x_f).sum(dim=1)      # [B, D]
 
-        return out.to(input_dtype)
+        return out.to(dtype=input_dtype)
 
     def extra_repr(self) -> str:
         mode = "classical_bypass" if self.bypass_quantum else "VQC"

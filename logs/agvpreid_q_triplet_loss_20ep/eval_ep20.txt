@@ -1,0 +1,38 @@
+/home/ubuntu/.local/lib/python3.12/site-packages/timm/models/layers/__init__.py:49: FutureWarning: Importing from timm.models.layers is deprecated, please import via timm.layers
+  warnings.warn(f"Importing from {__name__} is deprecated, please import via timm.layers", FutureWarning)
+2026-05-21 23:17:36,833 TFCLIP INFO: checkpoint=logs/agvpreid_q_triplet_loss_20ep/checkpoint_ep20.pth.tar
+2026-05-21 23:17:36,833 TFCLIP INFO: 
+============================================================
+Evaluating Case 1 (aerial→ground)
+============================================================
+=> Loading scan cache: DATA/subset_250/scan_cache_train.json
+=> Loading scan cache: DATA/subset_250/scan_cache_c1q.json
+=> Loading scan cache: DATA/subset_250/scan_cache_c1g.json
+WARNING: case2 directory not found (DATA/subset_250/case2_ground_to_aerial). case2_query and case2_gallery will be empty. Eval with --case 2 or --case 0 (both) will be skipped/invalid.
+=> AG-VPReID loaded
+  train  :  250 ids |  2323 tracklets | 6 cameras
+  case1 query  :  227 ids |  2528 tracklets (aerial)
+  case1 gallery:  227 ids |  2719 tracklets (ground)
+  case2        : NOT AVAILABLE (directory missing)
+2026-05-21 23:17:37,906 TFCLIP INFO: 164 tracklets total, num_query=2528
+Resized position embedding: %s to %s torch.Size([197, 768]) torch.Size([129, 768])
+Position embedding resize to height:16 width: 8
+camera number is : 6
+[FeaturePreprocessor] mode=none, in_features=768, seq_len=8
+Traceback (most recent call last):
+  File "/home/ubuntu/TF-CLIP-quantum/eval_agvpreid.py", line 98, in <module>
+    results[c] = run_eval(cfg, args, c, logger)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/ubuntu/TF-CLIP-quantum/eval_agvpreid.py", line 52, in run_eval
+    state_dict = torch.load(args.checkpoint, map_location="cpu", weights_only=False)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/torch/serialization.py", line 1530, in load
+    with _open_file_like(f, "rb") as opened_file:
+         ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/torch/serialization.py", line 795, in _open_file_like
+    return _open_file(name_or_buffer, mode)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/torch/serialization.py", line 776, in __init__
+    super().__init__(open(name, mode))  # noqa: SIM115
+                     ^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: 'logs/agvpreid_q_triplet_loss_20ep/checkpoint_ep20.pth.tar'

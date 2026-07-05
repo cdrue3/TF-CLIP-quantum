@@ -1,0 +1,200 @@
+2026-05-21 00:30:50,255 TFCLIP INFO: Saving model in the path: logs/agvpreid_qclassifier_reupload_20ep
+2026-05-21 00:30:50,255 TFCLIP INFO: Namespace(config_file='configs/vit_clipreid_agvpreid.yml', n_qubits=8, n_layers=2, classical_ablation=False, preprocess='none', opts=['DATASETS.ROOT_DIR', 'DATA/subset_250', 'INPUT.SEQ_LEN', '8', 'SOLVER.STAGE2.MAX_EPOCHS', '20', 'SOLVER.STAGE2.EVAL_PERIOD', '999', 'SOLVER.STAGE2.CHECKPOINT_PERIOD', '5', 'OUTPUT_DIR', 'logs/agvpreid_qclassifier_reupload_20ep'], fast_schedule=False, local_rank=0, n_ids=None, max_batches=None, max_mem_batches=None, max_eval_batches=None)
+2026-05-21 00:30:50,255 TFCLIP INFO: [QClassifierReupload] n_qubits=8, n_layers=2, seq_len=8, mode=quantum VQC, pattern=motion diff re-uploading (residual on mean-pool), qtd: 768→8→256→768 (skip + mean-pool), all 4 classifier heads: classical nn.Linear
+2026-05-21 00:30:50,256 TFCLIP INFO: Loaded configuration file configs/vit_clipreid_agvpreid.yml
+2026-05-21 00:30:50,256 TFCLIP INFO: 
+# configs/vit_clipreid_agvpreid.yml
+#
+# TF-CLIP — AG-VPReID dataset
+# 1602 train identities, official case1/case2 query-gallery splits
+
+MODEL:
+  PRETRAIN_CHOICE: 'imagenet'
+  METRIC_LOSS_TYPE: 'triplet'
+  IF_LABELSMOOTH: 'on'
+  IF_WITH_CENTER: 'no'
+  NAME: 'ViT-B-16'
+  STRIDE_SIZE: [16, 16]
+  ID_LOSS_WEIGHT : 0.25
+  TRIPLET_LOSS_WEIGHT : 1.0
+  I2T_LOSS_WEIGHT : 1.0
+  SIE_CAMERA: True
+  SIE_COE : 1.0
+
+INPUT:
+  SIZE_TRAIN: [256, 128]
+  SIZE_TEST: [256, 128]
+  PROB: 0.5
+  RE_PROB: 0.5
+  PADDING: 10
+  PIXEL_MEAN: [0.5, 0.5, 0.5]
+  PIXEL_STD: [0.5, 0.5, 0.5]
+  SEQ_LEN: 8
+
+DATALOADER:
+  SAMPLER: 'softmax_triplet'
+  NUM_INSTANCE: 4
+  NUM_WORKERS: 4
+
+SOLVER:
+  STAGE1:
+    IMS_PER_BATCH: 8
+    OPTIMIZER_NAME: "Adam"
+    BASE_LR: 0.00035
+    WARMUP_LR_INIT: 0.00001
+    LR_MIN: 1e-6
+    WARMUP_METHOD: 'linear'
+    WEIGHT_DECAY:  1e-4
+    WEIGHT_DECAY_BIAS: 1e-4
+    MAX_EPOCHS: 120
+    CHECKPOINT_PERIOD: 120
+    LOG_PERIOD: 50
+    WARMUP_EPOCHS: 5
+
+  STAGE2:
+    IMS_PER_BATCH: 8
+    OPTIMIZER_NAME: "Adam"
+    BASE_LR: 0.000035
+    WARMUP_METHOD: 'linear'
+    WARMUP_ITERS: 10
+    WARMUP_FACTOR: 0.1
+    WEIGHT_DECAY:  0.0001
+    WEIGHT_DECAY_BIAS: 0.0001
+    LARGE_FC_LR: False
+    LARGE_Prompt_LR: True
+    MAX_EPOCHS: 80
+    CHECKPOINT_PERIOD: 40
+    LOG_PERIOD: 50
+    EVAL_PERIOD: 10
+    BIAS_LR_FACTOR: 2
+    STEPS: [30, 50, 70]
+    GAMMA: 0.1
+
+TEST:
+  EVAL: False
+  IMS_PER_BATCH: 1
+  RE_RANKING: False
+  WEIGHT: 'logs/agvpreid_classical_baseline/last_model.pth.tar'
+  NECK_FEAT: 'before'
+  FEAT_NORM: 'yes'
+
+DATASETS:
+  NAMES: ('agvpreid')
+  ROOT_DIR: ('DATA/AG-VPReID')
+
+OUTPUT_DIR: 'logs/agvpreid_classical_baseline'
+
+2026-05-21 00:30:50,256 TFCLIP INFO: Running with config:
+DATALOADER:
+  NUM_INSTANCE: 4
+  NUM_WORKERS: 4
+  SAMPLER: softmax_triplet
+DATASETS:
+  MAX_PIDS: 0
+  NAMES: agvpreid
+  ROOT_DIR: DATA/subset_250
+  SEQ_SRD: 4
+  SPLIT: 0
+INPUT:
+  PADDING: 10
+  PIXEL_MEAN: [0.5, 0.5, 0.5]
+  PIXEL_STD: [0.5, 0.5, 0.5]
+  PROB: 0.5
+  RE_PROB: 0.5
+  SAMPLE_STRIDE: 4
+  SEQ_LEN: 8
+  SEQ_SRD: 4
+  SIZE_TEST: [256, 128]
+  SIZE_TRAIN: [256, 128]
+  TEST_FRAMES: 4
+MODEL:
+  ATT_DROP_RATE: 0.0
+  COS_LAYER: False
+  DEVICE: cuda
+  DEVICE_ID: 0
+  DIST_TRAIN: False
+  DROP_OUT: 0.0
+  DROP_PATH: 0.1
+  I2T_LOSS_WEIGHT: 1.0
+  ID_LOSS_TYPE: softmax
+  ID_LOSS_WEIGHT: 0.25
+  IF_LABELSMOOTH: on
+  IF_WITH_CENTER: no
+  LAST_STRIDE: 1
+  METRIC_LOSS_TYPE: triplet
+  NAME: ViT-B-16
+  NECK: bnneck
+  NO_MARGIN: False
+  PRETRAIN_CHOICE: imagenet
+  PRETRAIN_PATH: 
+  SIE_CAMERA: True
+  SIE_COE: 1.0
+  SIE_VIEW: False
+  STRIDE_SIZE: [16, 16]
+  TRANSFORMER_TYPE: None
+  TRIPLET_LOSS_WEIGHT: 1.0
+OUTPUT_DIR: logs/agvpreid_qclassifier_reupload_20ep
+SOLVER:
+  MARGIN: 0.3
+  SEED: 1234
+  STAGE1:
+    BASE_LR: 0.00035
+    CHECKPOINT_PERIOD: 120
+    COSINE_MARGIN: 0.5
+    COSINE_SCALE: 30
+    EVAL_PERIOD: 10
+    IMS_PER_BATCH: 8
+    LOG_PERIOD: 50
+    LR_MIN: 1e-06
+    MAX_EPOCHS: 120
+    MOMENTUM: 0.9
+    OPTIMIZER_NAME: Adam
+    WARMUP_EPOCHS: 5
+    WARMUP_FACTOR: 0.01
+    WARMUP_ITERS: 500
+    WARMUP_LR_INIT: 1e-05
+    WARMUP_METHOD: linear
+    WEIGHT_DECAY: 0.0001
+    WEIGHT_DECAY_BIAS: 0.0001
+  STAGE2:
+    BASE_LR: 3.5e-05
+    BIAS_LR_FACTOR: 2
+    CENTER_LOSS_WEIGHT: 0.0005
+    CENTER_LR: 0.5
+    CHECKPOINT_PERIOD: 5
+    COSINE_MARGIN: 0.5
+    COSINE_SCALE: 30
+    EVAL_PERIOD: 999
+    GAMMA: 0.1
+    IMS_PER_BATCH: 8
+    LARGE_FC_LR: False
+    LARGE_Prompt_LR: True
+    LOG_PERIOD: 50
+    LR_MIN: 1.6e-05
+    MAX_EPOCHS: 20
+    MOMENTUM: 0.9
+    OPTIMIZER_NAME: Adam
+    STEPS: (30, 50, 70)
+    WARMUP_EPOCHS: 5
+    WARMUP_FACTOR: 0.1
+    WARMUP_ITERS: 10
+    WARMUP_LR_INIT: 0.01
+    WARMUP_METHOD: linear
+    WEIGHT_DECAY: 0.0001
+    WEIGHT_DECAY_BIAS: 0.0001
+TEST:
+  DIST_MAT: dist_mat.npy
+  EVAL: False
+  FEAT_NORM: yes
+  IMS_PER_BATCH: 1
+  NECK_FEAT: before
+  RE_RANKING: False
+  WEIGHT: logs/agvpreid_classical_baseline/last_model.pth.tar
+2026-05-21 00:30:52,441 TFCLIP INFO: [eval-loader] 164 tracklets total, num_query=2528.
+2026-05-21 00:31:00,506 TFCLIP INFO: [TQA_LR] qtd pre_net/qlayer 3× (LR=1.05e-04, 1 params); classifiers 10× (LR=3.50e-04, 4 params).
+2026-05-21 00:31:00,507 TFCLIP.train INFO: start training
+2026-05-21 00:32:11,155 TFCLIP.train INFO: [GradCheck] Gradient norms after first backward pass:
+2026-05-21 00:32:11,255 TFCLIP.train INFO:   classifier2.weight: grad_norm=1.3453e+05  param_norm=4.3825e-01
+2026-05-21 00:32:11,259 TFCLIP.train INFO:   classifier_proj.weight: grad_norm=1.0791e+05  param_norm=3.5830e-01
+2026-05-21 00:32:11,262 TFCLIP.train INFO:   classifier_proj_temp.weight: grad_norm=4.5260e+04  param_norm=4.3832e-01
+2026-05-21 00:32:11,264 TFCLIP.train INFO:   classifier_proj_temp2.weight: grad_norm=1.4198e+05  param_norm=4.3847e-01

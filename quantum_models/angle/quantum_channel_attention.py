@@ -103,13 +103,6 @@ class QuantumChannelAttention(nn.Module):
         nn.init.normal_(self.expand.weight, mean=0, std=0.001)
         nn.init.constant_(self.expand.bias, 4.0)
 
-    def to(self, *args, **kwargs):
-        """Pin qlayer to CPU; all other modules follow device."""
-        super().to(*args, **kwargs)
-        if not self.bypass_quantum:
-            self.qlayer.to(device=torch.device("cpu"), dtype=torch.float32)
-        return self
-
     def forward(self, x: torch.Tensor) -> torch.Tensor:
         """
         Args:
@@ -118,7 +111,6 @@ class QuantumChannelAttention(nn.Module):
             x_out: [B, in_features]  (same shape/dtype/device as input)
         """
         input_dtype  = x.dtype
-        input_device = x.device
         x_f = x.float()
 
         angles = torch.sigmoid(self.pre_net(x_f)) * math.pi  # [B, n_qubits]
@@ -126,15 +118,14 @@ class QuantumChannelAttention(nn.Module):
         if self.bypass_quantum:
             q_feat = self.classical_expansion(angles)          # [B, 2^n_qubits]
         else:
-            angles_cpu = angles.float()
-            q_feat = self.qlayer(angles_cpu).to(input_device)  # [B, 2^n_qubits]
+            q_feat = self.qlayer(angles.float())               # [B, 2^n_qubits]
 
         attn_weights = torch.sigmoid(self.expand(q_feat))      # [B, in_features] ∈ (0,1)
 
         # Multiplicative attention + residual: preserves original features at init
         x_out = x_f * attn_weights + x_f
 
-        return x_out.to(input_dtype)
+        return x_out.to(dtype=input_dtype)
 
     def extra_repr(self) -> str:
         mode = "classical_bypass" if self.bypass_quantum else "VQC"

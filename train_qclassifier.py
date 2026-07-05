@@ -324,8 +324,8 @@ if __name__ == '__main__':
     #   decision boundary before the VQC features drift.
     # ------------------------------------------------------------------ #
     n_measurements = 2 ** args.n_qubits   # probs() output dim
-    POST_NET_LR_FACTOR = max(5, int(768 * 10 / n_measurements))
-    VQC_LR_FACTOR      = 3     # pre_net + qlayer: conservative — prevents sigmoid drift
+    POST_NET_LR_FACTOR = 1
+    VQC_LR_FACTOR      = 1     # pre_net + qlayer: conservative — prevents sigmoid drift
     n_post, n_vqc = 0, 0
 
     param_to_name = {id(p): n for n, p in model.named_parameters()}

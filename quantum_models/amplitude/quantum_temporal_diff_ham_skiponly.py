@@ -108,13 +108,6 @@ class QTDHam(nn.Module):
         if not self.bypass_quantum:
             nn.init.normal_(self.qlayer_weights, mean=0, std=0.01)
 
-    def _apply(self, fn):
-        # Keep qlayer_weights on CPU — VQC runs on CPU, ViT backbone runs on GPU
-        super()._apply(fn)
-        if not self.bypass_quantum:
-            self.qlayer_weights.data = self.qlayer_weights.data.cpu().float()
-        return self
-
     def forward(self, x: torch.Tensor) -> torch.Tensor:
         """x: [B, T, in_features] → [B, in_features] — skip only, no upscale"""
         mean_feat = x.mean(1)
@@ -122,7 +115,6 @@ class QTDHam(nn.Module):
             return mean_feat
 
         input_dtype  = x.dtype
-        input_device = x.device
         B, T, D = x.shape
 
         # Motion signal: T-1 consecutive frame differences, each 768-dim
@@ -138,8 +130,8 @@ class QTDHam(nn.Module):
         #   einsum: contracts feature dim (i) against Pauli index (i) in the basis,
         #   producing a batch of Hamiltonians [B*(T-1), 32, 32].
         H = torch.einsum('bi,ijk->bjk',
-                         diffs_flat.cpu().to(torch.complex64),
-                         self.pauli_basis.cpu())                    # [B*(T-1), 32, 32]
+                         diffs_flat.to(torch.complex64),
+                         self.pauli_basis)                          # [B*(T-1), 32, 32]
 
         # Step 2: Compute unitary U = e^{-iH}
         #   Because H is Hermitian (real coefficients × Hermitian Paulis = Hermitian),
@@ -162,7 +154,7 @@ class QTDHam(nn.Module):
         # StronglyEntanglingLayers (trainable) transforms it, then we measure probs
         q_out = self.circuit(
             initial_state,
-            self.qlayer_weights.cpu().float()
+            self.qlayer_weights.float()
         ).float()                                                    # [B*(T-1), 32]
 
         # Average over the T-1 differences — each contributes one measurement
@@ -170,9 +162,9 @@ class QTDHam(nn.Module):
 
         # Zero-pad circuit output to in_features, add directly to mean_pool (no upscale)
         # Circuit corrects the first n_states dims of the descriptor; no classical projection
-        pad = torch.zeros(B, D - self.n_states, device=input_device, dtype=torch.float32)
-        q_padded = torch.cat([q_out.to(input_device), pad], dim=1)    # [B, in_features]
-        return (mean_feat.float() + q_padded).to(input_dtype)
+        pad = torch.zeros(B, D - self.n_states, device=q_out.device, dtype=torch.float32)
+        q_padded = torch.cat([q_out, pad], dim=1)                     # [B, in_features]
+        return (mean_feat.float() + q_padded).to(dtype=input_dtype)
 
     def extra_repr(self):
         return (f"in_features={self.in_features}, n_qubits={self.n_qubits}, "

@@ -1,0 +1,49 @@
+=== logs/agvpreid_qpreprocess/80ep_classical_ablation/checkpoint_ep05.pth.tar ===
+2026-06-25 19:03:41,662 TFCLIP INFO: [Case 1 (aerial→ground)] Rank-1: 53.9%  Rank-5: 70.1%
+2026-06-25 19:03:41,813 TFCLIP INFO: Case 1 (aerial→ground): Rank-1 53.9%  Rank-5 70.1%
+=== logs/agvpreid_qpreprocess/80ep_classical_ablation/checkpoint_ep10.pth.tar ===
+2026-06-25 19:05:59,484 TFCLIP INFO: [Case 1 (aerial→ground)] Rank-1: 41.0%  Rank-5: 61.1%
+2026-06-25 19:05:59,640 TFCLIP INFO: Case 1 (aerial→ground): Rank-1 41.0%  Rank-5 61.1%
+=== logs/agvpreid_qpreprocess/80ep_classical_ablation/checkpoint_ep15.pth.tar ===
+2026-06-25 19:08:23,849 TFCLIP INFO: [Case 1 (aerial→ground)] Rank-1: 50.7%  Rank-5: 68.0%
+2026-06-25 19:08:23,996 TFCLIP INFO: Case 1 (aerial→ground): Rank-1 50.7%  Rank-5 68.0%
+=== logs/agvpreid_qpreprocess/80ep_classical_ablation/checkpoint_ep20.pth.tar ===
+2026-06-25 19:10:44,735 TFCLIP INFO: [Case 1 (aerial→ground)] Rank-1: 39.0%  Rank-5: 58.5%
+2026-06-25 19:10:44,874 TFCLIP INFO: Case 1 (aerial→ground): Rank-1 39.0%  Rank-5 58.5%
+=== logs/agvpreid_qpreprocess/80ep_classical_ablation/checkpoint_ep25.pth.tar ===
+2026-06-25 19:13:01,875 TFCLIP INFO: [Case 1 (aerial→ground)] Rank-1: 38.9%  Rank-5: 59.6%
+2026-06-25 19:13:02,032 TFCLIP INFO: Case 1 (aerial→ground): Rank-1 38.9%  Rank-5 59.6%
+=== logs/agvpreid_qpreprocess/80ep_classical_ablation/checkpoint_ep30.pth.tar ===
+2026-06-25 19:15:21,720 TFCLIP INFO: [Case 1 (aerial→ground)] Rank-1: 28.7%  Rank-5: 47.7%
+2026-06-25 19:15:21,859 TFCLIP INFO: Case 1 (aerial→ground): Rank-1 28.7%  Rank-5 47.7%
+=== logs/agvpreid_qpreprocess/80ep_classical_ablation/checkpoint_ep35.pth.tar ===
+2026-06-25 19:17:38,787 TFCLIP INFO: [Case 1 (aerial→ground)] Rank-1: 53.8%  Rank-5: 70.8%
+2026-06-25 19:17:38,943 TFCLIP INFO: Case 1 (aerial→ground): Rank-1 53.8%  Rank-5 70.8%
+=== logs/agvpreid_qpreprocess/80ep_classical_ablation/checkpoint_ep40.pth.tar ===
+2026-06-25 19:19:59,915 TFCLIP INFO: [Case 1 (aerial→ground)] Rank-1: 52.1%  Rank-5: 70.2%
+2026-06-25 19:20:00,067 TFCLIP INFO: Case 1 (aerial→ground): Rank-1 52.1%  Rank-5 70.2%
+=== logs/agvpreid_qpreprocess/80ep_classical_ablation/checkpoint_ep45.pth.tar ===
+2026-06-25 19:22:09,493 TFCLIP INFO: [Case 1 (aerial→ground)] Rank-1: 54.7%  Rank-5: 71.1%
+2026-06-25 19:22:09,631 TFCLIP INFO: Case 1 (aerial→ground): Rank-1 54.7%  Rank-5 71.1%
+=== logs/agvpreid_qpreprocess/80ep_classical_ablation/checkpoint_ep50.pth.tar ===
+2026-06-25 19:24:17,896 TFCLIP INFO: [Case 1 (aerial→ground)] Rank-1: 55.4%  Rank-5: 72.8%
+2026-06-25 19:24:18,036 TFCLIP INFO: Case 1 (aerial→ground): Rank-1 55.4%  Rank-5 72.8%
+=== logs/agvpreid_qpreprocess/80ep_classical_ablation/checkpoint_ep55.pth.tar ===
+2026-06-25 19:26:27,377 TFCLIP INFO: [Case 1 (aerial→ground)] Rank-1: 57.2%  Rank-5: 73.5%
+2026-06-25 19:26:27,549 TFCLIP INFO: Case 1 (aerial→ground): Rank-1 57.2%  Rank-5 73.5%
+=== logs/agvpreid_qpreprocess/80ep_classical_ablation/checkpoint_ep60.pth.tar ===
+2026-06-25 19:28:46,185 TFCLIP INFO: [Case 1 (aerial→ground)] Rank-1: 57.2%  Rank-5: 73.6%
+2026-06-25 19:28:46,325 TFCLIP INFO: Case 1 (aerial→ground): Rank-1 57.2%  Rank-5 73.6%
+=== logs/agvpreid_qpreprocess/80ep_classical_ablation/checkpoint_ep65.pth.tar ===
+2026-06-25 19:31:06,639 TFCLIP INFO: [Case 1 (aerial→ground)] Rank-1: 57.0%  Rank-5: 73.5%
+2026-06-25 19:31:06,779 TFCLIP INFO: Case 1 (aerial→ground): Rank-1 57.0%  Rank-5 73.5%
+=== logs/agvpreid_qpreprocess/80ep_classical_ablation/checkpoint_ep70.pth.tar ===
+2026-06-25 19:33:23,788 TFCLIP INFO: [Case 1 (aerial→ground)] Rank-1: 57.2%  Rank-5: 73.7%
+2026-06-25 19:33:23,937 TFCLIP INFO: Case 1 (aerial→ground): Rank-1 57.2%  Rank-5 73.7%
+=== logs/agvpreid_qpreprocess/80ep_classical_ablation/checkpoint_ep75.pth.tar ===
+2026-06-25 19:35:44,670 TFCLIP INFO: [Case 1 (aerial→ground)] Rank-1: 57.3%  Rank-5: 73.8%
+2026-06-25 19:35:44,807 TFCLIP INFO: Case 1 (aerial→ground): Rank-1 57.3%  Rank-5 73.8%
+=== logs/agvpreid_qpreprocess/80ep_classical_ablation/checkpoint_ep80.pth.tar ===
+2026-06-25 19:38:01,955 TFCLIP INFO: [Case 1 (aerial→ground)] Rank-1: 57.3%  Rank-5: 73.8%
+2026-06-25 19:38:02,095 TFCLIP INFO: Case 1 (aerial→ground): Rank-1 57.3%  Rank-5 73.8%
+=== SWEEP DONE: logs/agvpreid_qpreprocess/80ep_classical_ablation ===

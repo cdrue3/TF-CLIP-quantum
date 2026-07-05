@@ -111,20 +111,12 @@ class QTDHam(nn.Module):
             nn.init.normal_(self.qlayer_weights, mean=0, std=0.01)
         nn.init.normal_(self.upscale.weight, mean=0, std=0.001)
 
-    def _apply(self, fn):
-        # Keep qlayer_weights on CPU — VQC runs on CPU, ViT backbone runs on GPU
-        super()._apply(fn)
-        if not self.bypass_quantum:
-            self.qlayer_weights.data = self.qlayer_weights.data.cpu().float()
-        return self
-
     def forward(self, x: torch.Tensor) -> torch.Tensor:
         """x: [B, T, in_features] → [B, n_states] — circuit output IS the descriptor"""
         if self.bypass_quantum:
             return x.mean(1)
 
         input_dtype  = x.dtype
-        input_device = x.device
         B, T, D = x.shape
 
         # Motion signal: T-1 consecutive frame differences, each 768-dim
@@ -140,8 +132,8 @@ class QTDHam(nn.Module):
         #   einsum: contracts feature dim (i) against Pauli index (i) in the basis,
         #   producing a batch of Hamiltonians [B*(T-1), 32, 32].
         H = torch.einsum('bi,ijk->bjk',
-                         diffs_flat.cpu().to(torch.complex64),
-                         self.pauli_basis.cpu())                    # [B*(T-1), 32, 32]
+                         diffs_flat.to(torch.complex64),
+                         self.pauli_basis)                          # [B*(T-1), 32, 32]
 
         # Step 2: Compute unitary U = e^{-iH}
         #   Because H is Hermitian (real coefficients × Hermitian Paulis = Hermitian),
@@ -164,13 +156,13 @@ class QTDHam(nn.Module):
         # StronglyEntanglingLayers (trainable) transforms it, then we measure probs
         q_out = self.circuit(
             initial_state,
-            self.qlayer_weights.cpu().float()
+            self.qlayer_weights.float()
         ).float()                                                    # [B*(T-1), 32]
 
         # Average over the T-1 differences — each contributes one measurement
         q_out = q_out.reshape(B, self.n_diffs, self.n_states).mean(1)  # [B, n_states]
 
-        return self.upscale(q_out.to(input_device)).to(input_dtype)
+        return self.upscale(q_out).to(dtype=input_dtype)
 
     def extra_repr(self):
         return (f"in_features={self.in_features}, n_qubits={self.n_qubits}, "

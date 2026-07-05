@@ -63,12 +63,6 @@ class QTDAmp(nn.Module):
             nn.init.normal_(self.qlayer_weights, mean=0, std=0.01)
         nn.init.normal_(self.upscale.weight, mean=0, std=0.001)
 
-    def _apply(self, fn):
-        super()._apply(fn)
-        if not self.bypass_quantum:
-            self.qlayer_weights.data = self.qlayer_weights.data.cpu().float()
-        return self
-
     def forward(self, x: torch.Tensor) -> torch.Tensor:
         """x: [B, T, in_features] → [B, in_features]"""
         mean_feat = x.mean(1)
@@ -76,7 +70,6 @@ class QTDAmp(nn.Module):
             return mean_feat
 
         input_dtype  = x.dtype
-        input_device = x.device
         B, T, D = x.shape
 
         diffs = x[:, 1:] - x[:, :-1]                                   # [B, T-1, D]
@@ -90,17 +83,17 @@ class QTDAmp(nn.Module):
 
         # Normalise for AmplitudeEmbedding (||x||=1 required)
         norms       = diffs_flat.norm(dim=1, keepdim=True).clamp(min=1e-8)
-        diffs_normed = (diffs_flat / norms).cpu()                       # [B*(T-1), 1024]
+        diffs_normed = (diffs_flat / norms).float()                     # [B*(T-1), 1024]
 
         q_out = self.circuit(
             diffs_normed,
-            self.qlayer_weights.cpu().float()
+            self.qlayer_weights.float()
         ).float()                                                        # [B*(T-1), 1024]
 
         q_out = q_out.reshape(B, self.n_diffs, self.n_measurements).mean(1)  # [B, 1024]
 
-        delta = self.upscale(q_out.to(input_device))
-        return (mean_feat.float() + delta).to(input_dtype)
+        delta = self.upscale(q_out)
+        return (mean_feat.float() + delta).to(dtype=input_dtype)
 
     def extra_repr(self):
         return (f"in_features={self.in_features}, n_qubits={self.n_qubits}, "

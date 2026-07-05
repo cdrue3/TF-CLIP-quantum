@@ -1,0 +1,12 @@
+2026-06-25 19:36:04,416 TFCLIP INFO: checkpoint=logs/agvpreid_qpreprocess/80ep_classical_ablation/checkpoint_ep80.pth.tar
+2026-06-25 19:36:04,417 TFCLIP INFO: 
+============================================================
+Evaluating Case 1 (aerial→ground)
+============================================================
+2026-06-25 19:36:05,687 TFCLIP INFO: 164 tracklets total, num_query=2528
+2026-06-25 19:36:13,692 TFCLIP WARNING: Missing keys (12): ['bottleneck.bias', 'bottleneck.running_mean', 'bottleneck.running_var', 'bottleneck_proj.bias', 'bottleneck_proj.running_mean']...
+2026-06-25 19:36:13,692 TFCLIP INFO: Checkpoint loaded.
+2026-06-25 19:38:01,955 TFCLIP INFO: [Case 1 (aerial→ground)] Rank-1: 57.3%  Rank-5: 73.8%
+2026-06-25 19:38:02,094 TFCLIP INFO: 
+=== SUMMARY ===
+2026-06-25 19:38:02,095 TFCLIP INFO: Case 1 (aerial→ground): Rank-1 57.3%  Rank-5 73.8%

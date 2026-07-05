@@ -281,8 +281,6 @@ class QuantumClassifier(nn.Module):
                 nn.init.normal_(self.qlayer.weights, mean=0, std=0.01)
 
     # ------------------------------------------------------------------
-
-    # ------------------------------------------------------------------
     def forward(self, x: torch.Tensor) -> torch.Tensor:
         """
         Args:
@@ -290,56 +288,33 @@ class QuantumClassifier(nn.Module):
         Returns:
             logits: [B, num_classes]  (same dtype and device as input)
         """
-        input_dtype   = x.dtype
-        input_device  = x.device
+        input_dtype = x.dtype
 
         # AMP guard: cast to float32 for numerical stability.
         x = x.float()
 
         if self.encoding == "reuploading":
-            # Data re-uploading (survey §3.2.1 + §3.3.3):
-            # Each pre_net sees the same CLIP features and learns a different projection.
-            # sigmoid·π maps each output to (0, π) angles; outputs are concatenated.
-            # The VQC interleaves embed + entangle per layer (see __init__ for circuit).
             chunks = [torch.sigmoid(pn(x)) * math.pi for pn in self.pre_nets]
             x = torch.cat(chunks, dim=1).float()
             x = self.qlayer(x)
         else:
-            # Stage 1 – classical compression (runs on input device, e.g. CUDA)
-            # dense_angle: pre_net outputs 2*n_qubits; angle/iqp: n_qubits.
-            x = self.pre_net(x)                              # [B, n_qubits or 2*n_qubits]
+            x = self.pre_net(x)
 
-            # Stage 2 – encoding-specific scaling + quantum circuit (or classical ablation).
             if self.encoding == "dense_angle":
-                # Split into rotation angles (0, π) and phases (0, 2π).
-                # Angles: sigmoid(0)·π = π/2 — maximum d⟨Z⟩/dθ (same as single encoding).
-                # Phases: sigmoid(0)·2π = π — non-zero PhaseShift gradient everywhere.
-                angles = torch.sigmoid(x[:, :self.n_qubits]) * math.pi       # [B, n_qubits]
-                phases = torch.sigmoid(x[:, self.n_qubits:]) * 2 * math.pi   # [B, n_qubits]
-                x = torch.cat([angles, phases], dim=1)                        # [B, 2*n_qubits]
+                angles = torch.sigmoid(x[:, :self.n_qubits]) * math.pi
+                phases = torch.sigmoid(x[:, self.n_qubits:]) * 2 * math.pi
+                x = torch.cat([angles, phases], dim=1)
             else:
-                # 'angle' and 'iqp': sigmoid·π scaling — places mean at π/2 (max gradient).
-                x = torch.sigmoid(x) * math.pi                                # [B, n_qubits]
+                x = torch.sigmoid(x) * math.pi
 
             if self.bypass_quantum:
-                # Stage 2a – classical ablation: Linear(pre_net_out → n_measurements) + ReLU
-                # Runs on input_device (GPU); no device bridge needed.
-                x = self.classical_expansion(x)              # [B, n_measurements]  on input_device
+                x = self.classical_expansion(x)
             else:
-                # Stage 2b – quantum circuit
-                # Device bridge: PennyLane default.qubit runs on CPU.
-                # .cpu() and .to(device) are differentiable — gradients flow correctly.
-                # NOTE: re-cast to float32 here — autocast causes pre_net to return float16
-                # even after the explicit float() above; float16 → ComplexHalf state vectors
-                # in PennyLane → imaginary-part gradients silently discarded → VQC frozen.
-                x = x.float()
-                x = self.qlayer(x)
+                x = self.qlayer(x.float())
 
-        # Stage 3 – classical output projection (runs on input device)
-        x = self.post_net(x)                   # [B, num_classes]
+        x = self.post_net(x)
 
-        # Restore original dtype so downstream loss functions see consistent types.
-        return x.to(input_dtype)
+        return x.to(dtype=input_dtype)
 
     # ------------------------------------------------------------------
     def extra_repr(self) -> str:

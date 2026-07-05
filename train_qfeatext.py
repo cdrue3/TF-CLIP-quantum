@@ -281,7 +281,7 @@ if __name__ == '__main__':
     # post_net: nn.Linear(fused_dim, 625).
     #   fused_dim = in_features + 2^n_qubits (e.g. 768+256=1024 for 8q).
     #   Target shift ≈ baseline Linear(768→625) with LARGE_FC_LR=10×.
-    #   POST_NET_LR_FACTOR = max(5, int(768 * 10 / fused_dim))
+    #   POST_NET_LR_FACTOR = 1
     #     8q (fused=1024): floor(7680/1024)=7 → 7×
     #   This is lower than the sequential classifier (30× for 8q) because
     #   fused_dim is larger than n_measurements=256.
@@ -295,8 +295,8 @@ if __name__ == '__main__':
         POST_NET_LR_FACTOR = 10
     else:
         fused_dim = 768 + (2 ** args.n_qubits)   # representative (768 = ViT-B-16 in_planes)
-        POST_NET_LR_FACTOR = max(5, int(768 * 10 / fused_dim))
-    VQC_LR_FACTOR      = 3
+        POST_NET_LR_FACTOR = 1
+    VQC_LR_FACTOR      = 1
     n_post, n_vqc = 0, 0
 
     param_to_name = {id(p): n for n, p in model.named_parameters()}

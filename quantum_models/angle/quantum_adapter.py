@@ -138,13 +138,6 @@ class QuantumAdapter(nn.Module):
         # upscale: near-zero so residual delta ≈ 0 at init (identity adapter).
         nn.init.normal_(self.upscale.weight, mean=0, std=0.001)
 
-    def to(self, *args, **kwargs):
-        """Pin qlayer to CPU; pre_net and upscale can live on GPU."""
-        super().to(*args, **kwargs)
-        if not self.bypass_quantum:
-            self.qlayer.to(device=torch.device("cpu"), dtype=torch.float32)
-        return self
-
     def forward(self, x: torch.Tensor) -> torch.Tensor:
         """
         Args:
@@ -153,7 +146,6 @@ class QuantumAdapter(nn.Module):
             x_adapted: [B, in_features]  (same shape/dtype/device as input)
         """
         input_dtype  = x.dtype
-        input_device = x.device
 
         x_f = x.float()
         raw = self.pre_net(x_f)   # [B, n_qubits] or [B, 2*n_qubits]
@@ -170,13 +162,12 @@ class QuantumAdapter(nn.Module):
         if self.bypass_quantum:
             q_feat = self.classical_expansion(enc)             # [B, 2^n_qubits]
         else:
-            enc_cpu = enc.float()
-            q_feat = self.qlayer(enc_cpu).to(input_device)    # [B, 2^n_qubits]
+            q_feat = self.qlayer(enc.float())                  # [B, 2^n_qubits]
 
         delta = self.upscale(q_feat)                           # [B, in_features]
         x_adapted = x_f + delta
 
-        return x_adapted.to(input_dtype)
+        return x_adapted.to(dtype=input_dtype)
 
     def extra_repr(self) -> str:
         mode = "classical_bypass" if self.bypass_quantum else "VQC"
