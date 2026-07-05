@@ -173,7 +173,7 @@ def make_dataloader(cfg):
 		)
 
 		sampler_method = 'rrs_test'
-		batch_size_eval = 1
+		batch_size_eval = 32
 
 		val_set = VideoDataset(dataset.query + dataset.gallery, seq_len=seq_len, sample=sampler_method,
 		                       transform=transform_test)
@@ -182,7 +182,7 @@ def make_dataloader(cfg):
 			val_set,
 			batch_size=batch_size_eval,
 			shuffle=False,
-			pin_memory=True,
+			pin_memory=False,
 			num_workers=num_workers,
 			drop_last=False,
 			collate_fn=val_collate_fn

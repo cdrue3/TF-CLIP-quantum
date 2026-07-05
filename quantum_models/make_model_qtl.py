@@ -45,7 +45,7 @@ from model.clip.model import QuickGELU, LayerNorm
 from model.clip import clip
 from model.Visual_Prompt import visual_prompt
 
-from quantum_models.QTLclassifier import QTLClassifier
+from quantum_models.angle.QTLclassifier import QTLClassifier
 
 _tokenizer = _Tokenizer()
 

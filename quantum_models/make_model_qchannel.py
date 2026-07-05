@@ -41,7 +41,7 @@ from model.clip import clip
 from model.Visual_Prompt import visual_prompt
 
 # Quantum channel attention (new)
-from quantum_models.quantum_channel_attention import QuantumChannelAttention
+from quantum_models.angle.quantum_channel_attention import QuantumChannelAttention
 
 _tokenizer = _Tokenizer()
 

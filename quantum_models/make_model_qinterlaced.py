@@ -38,7 +38,7 @@ from model.clip import clip
 from model.Visual_Prompt import visual_prompt
 
 # Q-C-Q interlaced adapter (new)
-from quantum_models.quantum_interlaced import QuantumInterlacedAdapter
+from quantum_models.angle.quantum_interlaced import QuantumInterlacedAdapter
 
 _tokenizer = _Tokenizer()
 

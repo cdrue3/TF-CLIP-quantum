@@ -32,6 +32,7 @@ def do_train_stage2(cfg,
     # --- Configuration & Device Setup ---
     log_period = cfg.SOLVER.STAGE2.LOG_PERIOD
     eval_period = cfg.SOLVER.STAGE2.EVAL_PERIOD
+    checkpoint_period = cfg.SOLVER.STAGE2.CHECKPOINT_PERIOD
     device = "cuda"
     epochs = cfg.SOLVER.STAGE2.MAX_EPOCHS
 
@@ -229,12 +230,21 @@ def do_train_stage2(cfg,
 
             torch.cuda.synchronize()
             if (n_iter + 1) % log_period == 0:
+                alpha_str = ""
+                if hasattr(model, 'qhed') and model.qhed is not None:
+                    alpha_str = f", QHED_alpha: {model.qhed.alpha.item():.6f}"
+                # QGT gate logging — mean gate value across last batch
+                if hasattr(model, 'qtg') and hasattr(model.qtg, 'last_gates') \
+                        and model.qtg.last_gates is not None:
+                    alpha_str += f", gate_mean: {model.qtg.last_gates.mean().item():.4f}"
                 logger.info(
-                    "Epoch[{}] Iteration[{}/{}] Loss: {:.3f}, Acc_clip: {:.3f}, Acc_id1: {:.3f}, Acc_id2: {:.3f}, Base Lr: {:.2e}"
+                    "Epoch[{}] Iteration[{}/{}] Loss: {:.3f}, Acc_clip: {:.3f}, Acc_id1: {:.3f}, Acc_id2: {:.3f}, Base Lr: {:.2e}{}"
                     .format(epoch, (n_iter + 1), len(train_loader_stage2),
-                            loss_meter.avg, acc_meter.avg, acc_meter_id1.avg, acc_meter_id2.avg, scheduler.get_lr()[0]))
+                            loss_meter.avg, acc_meter.avg, acc_meter_id1.avg, acc_meter_id2.avg, scheduler.get_lr()[0], alpha_str))
 
-        scheduler.step() 
+        if hasattr(scheduler, 'set_metric'):
+            scheduler.set_metric(loss_meter.avg)
+        scheduler.step()
 
         end_time = time.time()
         time_per_batch = (end_time - start_time) / (n_iter + 1)
@@ -244,13 +254,13 @@ def do_train_stage2(cfg,
 
         if epoch % eval_period == 0:
             if cfg.MODEL.DIST_TRAIN and dist.get_rank() != 0:
-                pass 
+                pass
             else:
                 model.eval()
-                # Redirects to the dense inference function 
-                do_inference_dense(cfg, model, val_loader, num_query)
-            
-            save_slim_checkpoint(model, fpath=os.path.join(cfg.OUTPUT_DIR, 'checkpoint_ep.pth.tar'))
+                do_inference_rrs(cfg, model, val_loader, num_query)
+
+        if epoch % checkpoint_period == 0:
+            save_slim_checkpoint(model, fpath=os.path.join(cfg.OUTPUT_DIR, f'checkpoint_ep{epoch:02d}.pth.tar'))
 
     logger.info("==> Best Perform {:.1%}, achieved at epoch {}".format(best_performance, best_epoch))
     all_end_time = time.monotonic()

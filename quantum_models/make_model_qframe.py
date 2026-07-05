@@ -40,7 +40,7 @@ from model.clip import clip
 from model.Visual_Prompt import visual_prompt
 
 # Quantum frame attention (new)
-from quantum_models.quantum_frame_attention import QuantumFrameAttention
+from quantum_models.angle.quantum_frame_attention import QuantumFrameAttention
 
 _tokenizer = _Tokenizer()
 

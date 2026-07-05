@@ -44,7 +44,7 @@ from model.clip import clip
 from model.Visual_Prompt import visual_prompt
 
 # Quantum feature extractor (new)
-from quantum_models.quantum_feature_extractor import QuantumAugmentedClassifier
+from quantum_models.angle.quantum_feature_extractor import QuantumAugmentedClassifier
 
 _tokenizer = _Tokenizer()
 

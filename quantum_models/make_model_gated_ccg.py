@@ -62,7 +62,7 @@ from model.clip import clip
 from model.Visual_Prompt import visual_prompt
 
 # Quantum adapter (new)
-from quantum_models.quantum_gated_adapter_ccg import CameraConditionedGatedAdapter
+from quantum_models.angle.quantum_gated_adapter_ccg import CameraConditionedGatedAdapter
 
 _tokenizer = _Tokenizer()
 

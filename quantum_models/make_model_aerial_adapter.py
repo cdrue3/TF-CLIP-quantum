@@ -63,7 +63,7 @@ from model.clip import clip
 from model.Visual_Prompt import visual_prompt
 
 # Aerial-selective quantum adapter (new)
-from quantum_models.quantum_aerial_adapter import AerialSelectiveAdapter
+from quantum_models.angle.quantum_aerial_adapter import AerialSelectiveAdapter
 
 _tokenizer = _Tokenizer()
 

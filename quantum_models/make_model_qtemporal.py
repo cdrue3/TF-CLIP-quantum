@@ -45,7 +45,7 @@ from model.clip import clip
 from model.Visual_Prompt import visual_prompt
 
 # Temporal quantum aggregation (new)
-from quantum_models.quantum_temporal import QuantumTemporalAgg
+from quantum_models.angle.quantum_temporal import QuantumTemporalAgg
 
 _tokenizer = _Tokenizer()
 

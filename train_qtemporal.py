@@ -121,6 +121,18 @@ if __name__ == '__main__':
         nargs=argparse.REMAINDER,
     )
     parser.add_argument(
+        "--cosine_restart",
+        action="store_true",
+        default=False,
+        help="Use warmup + CosineAnnealingWarmRestarts (T_0=10, T_mult=1) instead of fixed MultiStepLR.",
+    )
+    parser.add_argument(
+        "--adaptive_lr",
+        action="store_true",
+        default=False,
+        help="Use ReduceLROnPlateau instead of fixed MultiStepLR (patience=5, factor=0.5).",
+    )
+    parser.add_argument(
         "--fast_schedule",
         action="store_true",
         default=False,
@@ -323,21 +335,43 @@ if __name__ == '__main__':
         f"(LR={cfg.SOLVER.STAGE2.BASE_LR * CLASSIFIER_LR_FACTOR:.2e}, {n_cls} params)."
     )
 
-    sched_steps = list(cfg.SOLVER.STAGE2.STEPS)
-    if args.fast_schedule:
-        total = cfg.SOLVER.STAGE2.MAX_EPOCHS
-        sched_steps = [max(1, int(total * 0.75)), max(2, int(total * 0.90))]
-        logger.info(f"[fast_schedule] MAX_EPOCHS={total}, scaled steps={sched_steps} "
-                    f"(proportional to [30,50,70]/80)")
-
-    scheduler_2stage = WarmupMultiStepLR(
-        optimizer_2stage,
-        sched_steps,
-        cfg.SOLVER.STAGE2.GAMMA,
-        cfg.SOLVER.STAGE2.WARMUP_FACTOR,
-        cfg.SOLVER.STAGE2.WARMUP_ITERS,
-        cfg.SOLVER.STAGE2.WARMUP_METHOD,
-    )
+    if args.cosine_restart:
+        from solver.adaptive_scheduler import CosineRestartWrapper
+        scheduler_2stage = CosineRestartWrapper(
+            optimizer_2stage,
+            warmup_epochs=cfg.SOLVER.STAGE2.WARMUP_ITERS,
+            warmup_factor=cfg.SOLVER.STAGE2.WARMUP_FACTOR,
+            T_0=10,
+            T_mult=1,
+            eta_min=cfg.SOLVER.STAGE2.LR_MIN,
+        )
+        logger.info(f"[cosine_restart] warmup={cfg.SOLVER.STAGE2.WARMUP_ITERS}ep + CosineAnnealingWarmRestarts T_0=10 T_mult=1 eta_min={cfg.SOLVER.STAGE2.LR_MIN:.1e}")
+    elif args.adaptive_lr:
+        from solver.adaptive_scheduler import AdaptiveLRWrapper
+        scheduler_2stage = AdaptiveLRWrapper(
+            optimizer_2stage,
+            warmup_epochs=cfg.SOLVER.STAGE2.WARMUP_ITERS,
+            warmup_factor=cfg.SOLVER.STAGE2.WARMUP_FACTOR,
+            patience=5,
+            factor=0.5,
+            min_lr=cfg.SOLVER.STAGE2.LR_MIN,
+        )
+        logger.info(f"[adaptive_lr] warmup={cfg.SOLVER.STAGE2.WARMUP_ITERS}ep + ReduceLROnPlateau patience=5 factor=0.5 min_lr={cfg.SOLVER.STAGE2.LR_MIN:.1e}")
+    else:
+        sched_steps = list(cfg.SOLVER.STAGE2.STEPS)
+        if args.fast_schedule:
+            total = cfg.SOLVER.STAGE2.MAX_EPOCHS
+            sched_steps = [max(1, int(total * 0.75)), max(2, int(total * 0.90))]
+            logger.info(f"[fast_schedule] MAX_EPOCHS={total}, scaled steps={sched_steps} "
+                        f"(proportional to [30,50,70]/80)")
+        scheduler_2stage = WarmupMultiStepLR(
+            optimizer_2stage,
+            sched_steps,
+            cfg.SOLVER.STAGE2.GAMMA,
+            cfg.SOLVER.STAGE2.WARMUP_FACTOR,
+            cfg.SOLVER.STAGE2.WARMUP_ITERS,
+            cfg.SOLVER.STAGE2.WARMUP_METHOD,
+        )
 
     # ------------------------------------------------------------------ #
     # Training loop

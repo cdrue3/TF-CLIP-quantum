@@ -35,3 +35,9 @@ __pycache__/
 # Misc
 *.npy
 dist_mat.npy
+
+# Claude Code session data
+.claude/
+
+# PyTorch cached tensors (clip_memory_cache.pt etc.)
+*.pt

@@ -45,7 +45,7 @@ from model.clip import clip
 from model.Visual_Prompt import visual_prompt
 
 # Temporal quantum aggregation (new)
-from quantum_models.quantum_temporal_diff import QuantumTemporalDiff
+from quantum_models.angle.quantum_temporal_diff import QuantumTemporalDiff
 
 _tokenizer = _Tokenizer()
 

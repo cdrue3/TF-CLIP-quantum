@@ -73,6 +73,13 @@ if __name__ == '__main__':
                         help="Disable AMP (may be faster on GPUs without Tensor Cores).")
     parser.add_argument("--compile", action="store_true", default=False,
                         help="Apply torch.compile to the model for potential speedup.")
+    parser.add_argument("--preprocess", default="none", type=str,
+                        choices=["none", "edge", "dft", "pca"],
+                        help="Quantum-inspired feature preprocessing before temporal pooling.")
+    parser.add_argument("--qhed", action="store_true", default=False,
+                        help="Enable Quantum Hadamard Edge Detection on raw images before ViT.")
+    parser.add_argument("--qhed_layers", default=1, type=int,
+                        help="StronglyEntanglingLayers after Hadamard in QHED. 0=pure QHED.")
     args = parser.parse_args()
 
     if args.config_file != "":
@@ -113,7 +120,8 @@ if __name__ == '__main__':
     if args.max_batches is not None:
         train_loader_stage2 = _LimitedLoader(train_loader_stage2, args.max_batches)
 
-    model = make_model(cfg, num_class=num_classes, camera_num=camera_num, view_num = view_num)
+    model = make_model(cfg, num_class=num_classes, camera_num=camera_num, view_num=view_num,
+                       preprocess=args.preprocess, qhed=args.qhed, qhed_layers=args.qhed_layers)
     if args.compile:
         logger.info("Applying torch.compile to model...")
         model = torch.compile(model)

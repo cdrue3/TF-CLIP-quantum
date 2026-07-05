@@ -9,6 +9,8 @@ _tokenizer = _Tokenizer()
 from .clip.model import QuickGELU, LayerNorm
 # from .TAT import TemporalAttentionTransformer
 from .Visual_Prompt import visual_prompt
+from model.feature_preprocessors import FeaturePreprocessor
+from model.quantum_image_preprocessor import QuantumImagePreprocessor
 
 
 def weights_init_kaiming(m):
@@ -121,7 +123,7 @@ class Temporal_Memory_Difusion(nn.Module):
 
 
 class build_transformer(nn.Module):
-    def __init__(self, num_classes, camera_num, view_num, cfg):
+    def __init__(self, num_classes, camera_num, view_num, cfg, preprocess: str = 'none', qhed: bool = False, qhed_layers: int = 1):
         super(build_transformer, self).__init__()
         self.model_name = cfg.MODEL.NAME
         self.cos_layer = cfg.MODEL.COS_LAYER
@@ -191,7 +193,8 @@ class build_transformer(nn.Module):
         # "meanP", "LSTM", "Transf", "Conv_1D", "Transf_cls"
         # self.temppool = visual_prompt(sim_head='meanP', T=cfg.INPUT.SEQ_LEN)
         self.TMD = Temporal_Memory_Difusion(width=768, layers=1, heads=12, droppath=None, T=cfg.INPUT.SEQ_LEN)
-        # self.ln_post = LayerNorm(512)
+        self.preprocessor = FeaturePreprocessor(mode=preprocess, in_features=self.in_planes, seq_len=cfg.INPUT.SEQ_LEN)
+        self.qhed = QuantumImagePreprocessor(n_layers=qhed_layers) if qhed else None
 
 
     def forward(self, x = None, get_image = False, cam_label= None, view_label=None, text_features2=None):
@@ -236,6 +239,8 @@ class build_transformer(nn.Module):
 
         elif self.model_name == 'ViT-B-16':
             x = x.view(-1, C, H, W)  # torch.Size([64, 3, 256, 128])
+            if self.qhed is not None:
+                x = self.qhed(x)  # quantum edge preprocessing before ViT
 
             if cam_label != None and view_label!=None:
                 cv_embed = self.sie_coe * self.cv_embed[cam_label * self.view_num + view_label]
@@ -259,8 +264,7 @@ class build_transformer(nn.Module):
             ###################################################
             img_feature = img_feature.view(B, T, -1)  # torch.Size([16, 4, 768])
             img_feature_proj = img_feature_proj.view(B, T, -1)  # # torch.Size([16, 4, 512])
-            # f_tp = self.temppool(img_feature_proj)  # b, 512
-            img_feature = img_feature.mean(1)  # torch.Size([16, 768])
+            img_feature = self.preprocessor(img_feature)  # [B, 768]
             img_feature_proj = img_feature_proj.mean(1)  # torch.Size([16, 512])
             ###################################################
             ft_for_another_branch = image_features.detach()
@@ -315,8 +319,10 @@ class build_transformer(nn.Module):
             self.state_dict()[i].copy_(param_dict[i])
         print('Loading pretrained model for finetuning from {}'.format(model_path))
 
-def make_model(cfg, num_class, camera_num, view_num):
-    model = build_transformer(num_class, camera_num, view_num, cfg)
+def make_model(cfg, num_class, camera_num, view_num, preprocess: str = 'none',
+               qhed: bool = False, qhed_layers: int = 1):
+    model = build_transformer(num_class, camera_num, view_num, cfg,
+                              preprocess=preprocess, qhed=qhed, qhed_layers=qhed_layers)
     return model
 
 
