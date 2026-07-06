@@ -1,0 +1,9 @@
+/home/ubuntu/.local/lib/python3.12/site-packages/timm/models/layers/__init__.py:49: FutureWarning: Importing from timm.models.layers is deprecated, please import via timm.layers
+  warnings.warn(f"Importing from {__name__} is deprecated, please import via timm.layers", FutureWarning)
+Traceback (most recent call last):
+  File "/home/ubuntu/TF-CLIP-quantum/train_qtemporal_deep.py", line 56, in <module>
+    from quantum_models.feature_extraction.make_model_qtemporal_deep import make_model
+  File "/home/ubuntu/TF-CLIP-quantum/quantum_models/feature_extraction/make_model_qtemporal_deep.py", line 48, in <module>
+    from quantum_models.angle.quantum_temporal import QuantumTemporalDeep
+ImportError: cannot import name 'QuantumTemporalDeep' from 'quantum_models.angle.quantum_temporal' (/home/ubuntu/TF-CLIP-quantum/quantum_models/angle/quantum_temporal.py). Did you mean: 'QuantumTemporalAgg'?
+EXIT: 0

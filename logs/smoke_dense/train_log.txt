@@ -1,8 +1,8 @@
-2026-05-11 11:11:11,250 TFCLIP INFO: Saving model in the path: logs/agvpreid_qtd_amp/seq8_20ep
-2026-05-11 11:11:11,250 TFCLIP INFO: Namespace(config_file='configs/vit_clipreid_agvpreid.yml', n_qubits=10, n_layers=2, classical_ablation=False, opts=['DATASETS.ROOT_DIR', 'DATA/subset_250', 'INPUT.SEQ_LEN', '8', 'SOLVER.STAGE2.MAX_EPOCHS', '20', 'SOLVER.STAGE2.EVAL_PERIOD', '999', 'SOLVER.STAGE2.CHECKPOINT_PERIOD', '5', 'OUTPUT_DIR', 'logs/agvpreid_qtd_amp/seq8_20ep'], fast_schedule=False, local_rank=0, n_ids=None, max_batches=None, max_mem_batches=None, max_eval_batches=None)
-2026-05-11 11:11:11,250 TFCLIP INFO: [QTD-Amp] n_qubits=10, n_layers=2, seq_len=8, mode=quantum VQC, pattern=motion diff re-uploading (residual on mean-pool), qtd: 768→10→1024→768 (skip + mean-pool), all 4 classifier heads: classical nn.Linear
-2026-05-11 11:11:11,250 TFCLIP INFO: Loaded configuration file configs/vit_clipreid_agvpreid.yml
-2026-05-11 11:11:11,250 TFCLIP INFO: 
+2026-05-27 11:06:30,550 TFCLIP INFO: Saving model in the path: logs/smoke_dense
+2026-05-27 11:06:30,550 TFCLIP INFO: Namespace(config_file='configs/vit_clipreid_agvpreid.yml', n_qubits=4, n_layers=1, classical_ablation=False, opts=['DATASETS.ROOT_DIR', 'DATA/subset_250', 'INPUT.SEQ_LEN', '8', 'SOLVER.STAGE2.MAX_EPOCHS', '1', 'SOLVER.STAGE2.EVAL_PERIOD', '999', 'OUTPUT_DIR', 'logs/smoke_dense'], fast_schedule=False, local_rank=0, n_ids=None, max_batches=3, max_mem_batches=3, max_eval_batches=None)
+2026-05-27 11:06:30,550 TFCLIP INFO: [TQA] n_qubits=4, n_layers=1, seq_len=8, mode=quantum VQC, pattern=temporal re-uploading (replaces mean-pool), tqa: 768→4→16→768 (skip + mean-pool), all 4 classifier heads: classical nn.Linear
+2026-05-27 11:06:30,550 TFCLIP INFO: Loaded configuration file configs/vit_clipreid_agvpreid.yml
+2026-05-27 11:06:30,551 TFCLIP INFO: 
 # configs/vit_clipreid_agvpreid.yml
 #
 # TF-CLIP — AG-VPReID dataset
@@ -84,7 +84,7 @@ DATASETS:
 
 OUTPUT_DIR: 'logs/agvpreid_classical_baseline'
 
-2026-05-11 11:11:11,251 TFCLIP INFO: Running with config:
+2026-05-27 11:06:30,551 TFCLIP INFO: Running with config:
 DATALOADER:
   NUM_INSTANCE: 4
   NUM_WORKERS: 4
@@ -133,7 +133,7 @@ MODEL:
   STRIDE_SIZE: [16, 16]
   TRANSFORMER_TYPE: None
   TRIPLET_LOSS_WEIGHT: 1.0
-OUTPUT_DIR: logs/agvpreid_qtd_amp/seq8_20ep
+OUTPUT_DIR: logs/smoke_dense
 SOLVER:
   MARGIN: 0.3
   SEED: 1234
@@ -161,7 +161,7 @@ SOLVER:
     BIAS_LR_FACTOR: 2
     CENTER_LOSS_WEIGHT: 0.0005
     CENTER_LR: 0.5
-    CHECKPOINT_PERIOD: 5
+    CHECKPOINT_PERIOD: 40
     COSINE_MARGIN: 0.5
     COSINE_SCALE: 30
     EVAL_PERIOD: 999
@@ -171,7 +171,7 @@ SOLVER:
     LARGE_Prompt_LR: True
     LOG_PERIOD: 50
     LR_MIN: 1.6e-05
-    MAX_EPOCHS: 20
+    MAX_EPOCHS: 1
     MOMENTUM: 0.9
     OPTIMIZER_NAME: Adam
     STEPS: (30, 50, 70)
@@ -190,6 +190,17 @@ TEST:
   NECK_FEAT: before
   RE_RANKING: False
   WEIGHT: logs/agvpreid_classical_baseline/last_model.pth.tar
-2026-05-11 11:11:14,270 TFCLIP INFO: [eval-loader] 164 tracklets total, num_query=2528.
-2026-05-11 11:11:23,253 TFCLIP INFO: [TQA_LR] qtd pre_net/qlayer 3× (LR=1.05e-04, 1 params); classifiers 10× (LR=3.50e-04, 4 params).
-2026-05-11 11:11:23,254 TFCLIP.train INFO: start training
+2026-05-27 11:06:32,366 TFCLIP INFO: [quick-test] --max_mem_batches=3: stage1 → 3 batches (I2T loss auto-skipped if cluster_features incomplete).
+2026-05-27 11:06:32,367 TFCLIP INFO: [quick-test] --max_batches=3: stage2 → 3 batches.
+2026-05-27 11:06:33,455 TFCLIP INFO: [eval-loader] 164 tracklets total, num_query=2528.
+2026-05-27 11:06:41,356 TFCLIP INFO: [TQA_LR] tqa pre_net/qlayer 3× (LR=1.05e-04, 2 params); classifiers 10× (LR=3.50e-04, 4 params).
+2026-05-27 11:06:41,356 TFCLIP.train INFO: start training
+2026-05-27 11:06:47,572 TFCLIP.train INFO: [GradCheck] Gradient norms after first backward pass:
+2026-05-27 11:06:47,658 TFCLIP.train INFO:   classifier2.weight: grad_norm=1.3915e+05  param_norm=4.3771e-01
+2026-05-27 11:06:47,660 TFCLIP.train INFO:   classifier_proj.weight: grad_norm=1.1370e+05  param_norm=3.5823e-01
+2026-05-27 11:06:47,662 TFCLIP.train INFO:   classifier_proj_temp.weight: grad_norm=4.4261e+04  param_norm=4.3814e-01
+2026-05-27 11:06:47,663 TFCLIP.train INFO:   classifier_proj_temp2.weight: grad_norm=1.4173e+05  param_norm=4.3915e-01
+2026-05-27 11:06:48,830 TFCLIP.train INFO: Epoch 1 done. Time per batch: 2.452[s] Speed: 3.3[samples/s]
+2026-05-27 11:06:48,831 TFCLIP.train INFO: ==> Best Perform 0.0%, achieved at epoch 1
+2026-05-27 11:06:48,831 TFCLIP.train INFO: Total running time: 0:00:07.368455
+2026-05-27 11:06:50,779 TFCLIP INFO: Final model (slim) saved to logs/smoke_dense/last_model.pth.tar

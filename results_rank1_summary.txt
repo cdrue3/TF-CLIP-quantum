@@ -1,0 +1,48 @@
+AG-VPReID Case 1 (aerial→ground) Rank-1 Results
+subset_250, SEQ_LEN=8, rrs_test sampler
+=================================================
+
+CLASSICAL BASELINE (80ep)
+ep10: 33.0%  ep20: 25.1%  ep30: 12.9%  ep40: 58.1%
+ep50: 61.6%  ep60: 62.3%  ep70: 62.4%  ep80: 62.3%
+Peak: 62.4% @ ep70
+
+-------------------------------------------------
+QUANTUM MODELS — 40ep sweeps
+-------------------------------------------------
+
+Deep-TQA n_layers=3 (40ep, STEPS=[30,50,70]):
+ep05: 52.0%  ep10: 35.7%  ep15: 57.8%  ep20: 56.7%
+ep25: 35.6%  ep30: 12.6%  ep35: 57.3%  ep40: 53.8%
+Peak: 57.8% @ ep15
+
+Ring Entanglement / BasicEntanglerLayers (40ep, STEPS=[30,50,70]):
+ep05: 50.7%  ep10: 48.9%  ep15: 51.1%  ep20: 55.9%
+ep25: 47.9%  ep30: 43.1%  ep35: 57.2%  ep40: 56.1%
+Peak: 57.2% @ ep35
+Notable: ep30 collapse much smaller than other models (43.1% vs ~13%)
+
+-------------------------------------------------
+QUANTUM MODELS — 80ep sweep
+-------------------------------------------------
+
+Deep-TQA n_layers=2 (80ep, STEPS=[30,50,70], GPU fix applied):
+ep10: 41.5%  ep20: 48.7%  ep30: 21.7%  ep40: 53.0%
+ep50: 58.3%  ep60: 56.3%  ep70: 56.7%  ep80: 56.7%
+Peak: 58.3% @ ep50  (classical peak: 62.4% @ ep70)
+Observation: plateaus after ep50, ~4pp below classical peak
+
+-------------------------------------------------
+KEY FINDINGS
+-------------------------------------------------
+- ep30 LR drop causes collapse in all models (quantum and classical)
+- Ring entanglement most robust to collapse (43.1% vs ~13% for others)
+- Quantum models converge faster but plateau earlier than classical
+- 768→8 compression bottleneck is likely cause of early plateau
+- GPU fix (removing CPU-pinning) gives ~3x speedup on default.qubit
+
+-------------------------------------------------
+NEXT EXPERIMENTS
+-------------------------------------------------
+1. Dense angle encoding 40ep (STEPS=[30,50,70]) — attacks 768→8 bottleneck
+2. Deep-TQA 80ep with STEPS=[50,70] — removes ep30 collapse, tests if plateau shifts

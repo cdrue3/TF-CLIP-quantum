@@ -1,0 +1,12 @@
+2026-05-21 00:27:54,379 TFCLIP INFO: checkpoint=logs/agvpreid_classical_qhed_20ep/checkpoint_ep20.pth.tar
+2026-05-21 00:27:54,379 TFCLIP INFO: 
+============================================================
+Evaluating Case 1 (aerial→ground)
+============================================================
+2026-05-21 00:27:55,475 TFCLIP INFO: 164 tracklets total, num_query=2528
+2026-05-21 00:28:03,398 TFCLIP WARNING: Missing keys (12): ['bottleneck.bias', 'bottleneck.running_mean', 'bottleneck.running_var', 'bottleneck_proj.bias', 'bottleneck_proj.running_mean']...
+2026-05-21 00:28:03,398 TFCLIP INFO: Checkpoint loaded.
+2026-05-21 00:30:00,894 TFCLIP INFO: [Case 1 (aerial→ground)] Rank-1: 52.3%  Rank-5: 69.5%
+2026-05-21 00:30:01,039 TFCLIP INFO: 
+=== SUMMARY ===
+2026-05-21 00:30:01,039 TFCLIP INFO: Case 1 (aerial→ground): Rank-1 52.3%  Rank-5 69.5%

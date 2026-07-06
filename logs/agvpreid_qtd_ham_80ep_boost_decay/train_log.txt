@@ -1,0 +1,688 @@
+2026-06-24 13:41:44,117 TFCLIP INFO: Saving model in the path: logs/agvpreid_qtd_ham_80ep_boost_decay
+2026-06-24 13:41:44,118 TFCLIP INFO: Namespace(config_file='configs/vit_clipreid_agvpreid.yml', n_qubits=5, n_layers=2, classical_ablation=False, opts=['SOLVER.STAGE2.MAX_EPOCHS', '80', 'SOLVER.STAGE2.EVAL_PERIOD', '999', 'SOLVER.STAGE2.CHECKPOINT_PERIOD', '10', 'DATASETS.ROOT_DIR', 'DATA/subset_250', 'OUTPUT_DIR', 'logs/agvpreid_qtd_ham_80ep_boost_decay'], fast_schedule=False, local_rank=0, n_ids=None, max_batches=None, max_mem_batches=None, max_eval_batches=None, lr_mode='decay')
+2026-06-24 13:41:44,118 TFCLIP INFO: [QTD-Ham] n_qubits=5, n_layers=2, seq_len=8, mode=quantum VQC, pattern=motion diff re-uploading (residual on mean-pool), qtd: 768→5→32→768 (skip + mean-pool), all 4 classifier heads: classical nn.Linear
+2026-06-24 13:41:44,118 TFCLIP INFO: Loaded configuration file configs/vit_clipreid_agvpreid.yml
+2026-06-24 13:41:44,118 TFCLIP INFO: 
+# configs/vit_clipreid_agvpreid.yml
+#
+# TF-CLIP — AG-VPReID dataset
+# 1602 train identities, official case1/case2 query-gallery splits
+
+MODEL:
+  PRETRAIN_CHOICE: 'imagenet'
+  METRIC_LOSS_TYPE: 'triplet'
+  IF_LABELSMOOTH: 'on'
+  IF_WITH_CENTER: 'no'
+  NAME: 'ViT-B-16'
+  STRIDE_SIZE: [16, 16]
+  ID_LOSS_WEIGHT : 0.25
+  TRIPLET_LOSS_WEIGHT : 1.0
+  I2T_LOSS_WEIGHT : 1.0
+  SIE_CAMERA: True
+  SIE_COE : 1.0
+
+INPUT:
+  SIZE_TRAIN: [256, 128]
+  SIZE_TEST: [256, 128]
+  PROB: 0.5
+  RE_PROB: 0.5
+  PADDING: 10
+  PIXEL_MEAN: [0.5, 0.5, 0.5]
+  PIXEL_STD: [0.5, 0.5, 0.5]
+  SEQ_LEN: 8
+
+DATALOADER:
+  SAMPLER: 'softmax_triplet'
+  NUM_INSTANCE: 4
+  NUM_WORKERS: 4
+
+SOLVER:
+  STAGE1:
+    IMS_PER_BATCH: 8
+    OPTIMIZER_NAME: "Adam"
+    BASE_LR: 0.00035
+    WARMUP_LR_INIT: 0.00001
+    LR_MIN: 1e-6
+    WARMUP_METHOD: 'linear'
+    WEIGHT_DECAY:  1e-4
+    WEIGHT_DECAY_BIAS: 1e-4
+    MAX_EPOCHS: 120
+    CHECKPOINT_PERIOD: 120
+    LOG_PERIOD: 50
+    WARMUP_EPOCHS: 5
+
+  STAGE2:
+    IMS_PER_BATCH: 8
+    OPTIMIZER_NAME: "Adam"
+    BASE_LR: 0.000035
+    WARMUP_METHOD: 'linear'
+    WARMUP_ITERS: 10
+    WARMUP_FACTOR: 0.1
+    WEIGHT_DECAY:  0.0001
+    WEIGHT_DECAY_BIAS: 0.0001
+    LARGE_FC_LR: False
+    LARGE_Prompt_LR: True
+    MAX_EPOCHS: 80
+    CHECKPOINT_PERIOD: 40
+    LOG_PERIOD: 50
+    EVAL_PERIOD: 10
+    BIAS_LR_FACTOR: 2
+    STEPS: [30, 50, 70]
+    GAMMA: 0.1
+
+TEST:
+  EVAL: False
+  IMS_PER_BATCH: 1
+  RE_RANKING: False
+  WEIGHT: 'logs/agvpreid_classical_baseline/last_model.pth.tar'
+  NECK_FEAT: 'before'
+  FEAT_NORM: 'yes'
+
+DATASETS:
+  NAMES: ('agvpreid')
+  ROOT_DIR: ('DATA/AG-VPReID')
+
+OUTPUT_DIR: 'logs/agvpreid_classical_baseline'
+
+2026-06-24 13:41:44,119 TFCLIP INFO: Running with config:
+DATALOADER:
+  NUM_INSTANCE: 4
+  NUM_WORKERS: 4
+  SAMPLER: softmax_triplet
+DATASETS:
+  MAX_PIDS: 0
+  NAMES: agvpreid
+  ROOT_DIR: DATA/subset_250
+  SEQ_SRD: 4
+  SPLIT: 0
+INPUT:
+  PADDING: 10
+  PIXEL_MEAN: [0.5, 0.5, 0.5]
+  PIXEL_STD: [0.5, 0.5, 0.5]
+  PROB: 0.5
+  RE_PROB: 0.5
+  SAMPLE_STRIDE: 4
+  SEQ_LEN: 8
+  SEQ_SRD: 4
+  SIZE_TEST: [256, 128]
+  SIZE_TRAIN: [256, 128]
+  TEST_FRAMES: 4
+MODEL:
+  ATT_DROP_RATE: 0.0
+  COS_LAYER: False
+  DEVICE: cuda
+  DEVICE_ID: 0
+  DIST_TRAIN: False
+  DROP_OUT: 0.0
+  DROP_PATH: 0.1
+  I2T_LOSS_WEIGHT: 1.0
+  ID_LOSS_TYPE: softmax
+  ID_LOSS_WEIGHT: 0.25
+  IF_LABELSMOOTH: on
+  IF_WITH_CENTER: no
+  LAST_STRIDE: 1
+  METRIC_LOSS_TYPE: triplet
+  NAME: ViT-B-16
+  NECK: bnneck
+  NO_MARGIN: False
+  PRETRAIN_CHOICE: imagenet
+  PRETRAIN_PATH: 
+  SIE_CAMERA: True
+  SIE_COE: 1.0
+  SIE_VIEW: False
+  STRIDE_SIZE: [16, 16]
+  TRANSFORMER_TYPE: None
+  TRIPLET_LOSS_WEIGHT: 1.0
+OUTPUT_DIR: logs/agvpreid_qtd_ham_80ep_boost_decay
+SOLVER:
+  MARGIN: 0.3
+  SEED: 1234
+  STAGE1:
+    BASE_LR: 0.00035
+    CHECKPOINT_PERIOD: 120
+    COSINE_MARGIN: 0.5
+    COSINE_SCALE: 30
+    EVAL_PERIOD: 10
+    IMS_PER_BATCH: 8
+    LOG_PERIOD: 50
+    LR_MIN: 1e-06
+    MAX_EPOCHS: 120
+    MOMENTUM: 0.9
+    OPTIMIZER_NAME: Adam
+    WARMUP_EPOCHS: 5
+    WARMUP_FACTOR: 0.01
+    WARMUP_ITERS: 500
+    WARMUP_LR_INIT: 1e-05
+    WARMUP_METHOD: linear
+    WEIGHT_DECAY: 0.0001
+    WEIGHT_DECAY_BIAS: 0.0001
+  STAGE2:
+    BASE_LR: 3.5e-05
+    BIAS_LR_FACTOR: 2
+    CENTER_LOSS_WEIGHT: 0.0005
+    CENTER_LR: 0.5
+    CHECKPOINT_PERIOD: 10
+    COSINE_MARGIN: 0.5
+    COSINE_SCALE: 30
+    EVAL_PERIOD: 999
+    GAMMA: 0.1
+    IMS_PER_BATCH: 8
+    LARGE_FC_LR: False
+    LARGE_Prompt_LR: True
+    LOG_PERIOD: 50
+    LR_MIN: 1.6e-05
+    MAX_EPOCHS: 80
+    MOMENTUM: 0.9
+    OPTIMIZER_NAME: Adam
+    STEPS: (30, 50, 70)
+    WARMUP_EPOCHS: 5
+    WARMUP_FACTOR: 0.1
+    WARMUP_ITERS: 10
+    WARMUP_LR_INIT: 0.01
+    WARMUP_METHOD: linear
+    WEIGHT_DECAY: 0.0001
+    WEIGHT_DECAY_BIAS: 0.0001
+TEST:
+  DIST_MAT: dist_mat.npy
+  EVAL: False
+  FEAT_NORM: yes
+  IMS_PER_BATCH: 1
+  NECK_FEAT: before
+  RE_RANKING: False
+  WEIGHT: logs/agvpreid_classical_baseline/last_model.pth.tar
+2026-06-24 13:41:46,930 TFCLIP INFO: [eval-loader] 164 tracklets total, num_query=2528.
+2026-06-24 13:41:59,497 TFCLIP INFO: [LR_MODE=decay] qtd 3× (LR=1.05e-04, 1 params); classifiers 10× (LR=3.50e-04, 4 params); boost decays to 1× at epoch 30
+2026-06-24 13:41:59,498 TFCLIP.train INFO: start training
+2026-06-24 13:42:06,702 TFCLIP.train INFO: [GradCheck] Gradient norms after first backward pass:
+2026-06-24 13:42:06,790 TFCLIP.train INFO:   classifier2.weight: grad_norm=2.4196e+03  param_norm=4.3749e-01
+2026-06-24 13:42:06,792 TFCLIP.train INFO:   classifier_proj.weight: grad_norm=1.1064e+05  param_norm=3.5733e-01
+2026-06-24 13:42:06,794 TFCLIP.train INFO:   classifier_proj_temp.weight: grad_norm=4.1291e+04  param_norm=4.3829e-01
+2026-06-24 13:42:06,796 TFCLIP.train INFO:   classifier_proj_temp2.weight: grad_norm=1.3426e+05  param_norm=4.3810e-01
+2026-06-24 13:44:07,853 TFCLIP.train INFO: Epoch[1] Iteration[50/265] Loss: 11.361, Acc_clip: 0.245, Acc_id1: 0.000, Acc_id2: 0.003, Base Lr: 3.50e-06
+2026-06-24 13:46:03,633 TFCLIP.train INFO: Epoch[1] Iteration[100/265] Loss: 10.266, Acc_clip: 0.319, Acc_id1: 0.001, Acc_id2: 0.011, Base Lr: 3.50e-06
+2026-06-24 13:48:09,675 TFCLIP.train INFO: Epoch[1] Iteration[150/265] Loss: 9.783, Acc_clip: 0.353, Acc_id1: 0.002, Acc_id2: 0.023, Base Lr: 3.50e-06
+2026-06-24 13:50:19,776 TFCLIP.train INFO: Epoch[1] Iteration[200/265] Loss: 9.525, Acc_clip: 0.369, Acc_id1: 0.002, Acc_id2: 0.039, Base Lr: 3.50e-06
+2026-06-24 13:52:24,031 TFCLIP.train INFO: Epoch[1] Iteration[250/265] Loss: 9.378, Acc_clip: 0.380, Acc_id1: 0.005, Acc_id2: 0.065, Base Lr: 3.50e-06
+2026-06-24 13:53:05,717 TFCLIP.train INFO: Epoch 1 done. Time per batch: 2.514[s] Speed: 3.2[samples/s]
+2026-06-24 13:55:19,810 TFCLIP.train INFO: Epoch[2] Iteration[50/265] Loss: 8.233, Acc_clip: 0.527, Acc_id1: 0.007, Acc_id2: 0.058, Base Lr: 6.65e-06
+2026-06-24 13:57:22,881 TFCLIP.train INFO: Epoch[2] Iteration[100/265] Loss: 8.219, Acc_clip: 0.525, Acc_id1: 0.005, Acc_id2: 0.053, Base Lr: 6.65e-06
+2026-06-24 13:59:33,830 TFCLIP.train INFO: Epoch[2] Iteration[150/265] Loss: 8.204, Acc_clip: 0.538, Acc_id1: 0.006, Acc_id2: 0.063, Base Lr: 6.65e-06
+2026-06-24 14:01:45,669 TFCLIP.train INFO: Epoch[2] Iteration[200/265] Loss: 8.069, Acc_clip: 0.563, Acc_id1: 0.006, Acc_id2: 0.080, Base Lr: 6.65e-06
+2026-06-24 14:04:15,630 TFCLIP.train INFO: Epoch[2] Iteration[250/265] Loss: 8.050, Acc_clip: 0.555, Acc_id1: 0.006, Acc_id2: 0.110, Base Lr: 6.65e-06
+2026-06-24 14:04:49,014 TFCLIP.train INFO: Epoch 2 done. Time per batch: 2.654[s] Speed: 3.0[samples/s]
+2026-06-24 14:06:38,797 TFCLIP.train INFO: Epoch[3] Iteration[50/265] Loss: 7.597, Acc_clip: 0.630, Acc_id1: 0.007, Acc_id2: 0.095, Base Lr: 9.80e-06
+2026-06-24 14:08:30,958 TFCLIP.train INFO: Epoch[3] Iteration[100/265] Loss: 7.716, Acc_clip: 0.609, Acc_id1: 0.004, Acc_id2: 0.087, Base Lr: 9.80e-06
+2026-06-24 14:10:30,035 TFCLIP.train INFO: Epoch[3] Iteration[150/265] Loss: 7.787, Acc_clip: 0.596, Acc_id1: 0.003, Acc_id2: 0.084, Base Lr: 9.80e-06
+2026-06-24 14:12:37,299 TFCLIP.train INFO: Epoch[3] Iteration[200/265] Loss: 7.694, Acc_clip: 0.606, Acc_id1: 0.003, Acc_id2: 0.107, Base Lr: 9.80e-06
+2026-06-24 14:14:42,319 TFCLIP.train INFO: Epoch[3] Iteration[250/265] Loss: 7.598, Acc_clip: 0.598, Acc_id1: 0.004, Acc_id2: 0.142, Base Lr: 9.80e-06
+2026-06-24 14:15:18,260 TFCLIP.train INFO: Epoch 3 done. Time per batch: 2.393[s] Speed: 3.3[samples/s]
+2026-06-24 14:17:49,180 TFCLIP.train INFO: Epoch[4] Iteration[50/265] Loss: 7.331, Acc_clip: 0.697, Acc_id1: 0.002, Acc_id2: 0.083, Base Lr: 1.29e-05
+2026-06-24 14:20:28,467 TFCLIP.train INFO: Epoch[4] Iteration[100/265] Loss: 7.266, Acc_clip: 0.676, Acc_id1: 0.002, Acc_id2: 0.100, Base Lr: 1.29e-05
+2026-06-24 14:22:58,677 TFCLIP.train INFO: Epoch[4] Iteration[150/265] Loss: 7.234, Acc_clip: 0.670, Acc_id1: 0.003, Acc_id2: 0.109, Base Lr: 1.29e-05
+2026-06-24 14:25:22,089 TFCLIP.train INFO: Epoch[4] Iteration[200/265] Loss: 7.187, Acc_clip: 0.673, Acc_id1: 0.003, Acc_id2: 0.132, Base Lr: 1.29e-05
+2026-06-24 14:27:45,670 TFCLIP.train INFO: Epoch[4] Iteration[250/265] Loss: 7.143, Acc_clip: 0.643, Acc_id1: 0.003, Acc_id2: 0.150, Base Lr: 1.29e-05
+2026-06-24 14:28:30,041 TFCLIP.train INFO: Epoch 4 done. Time per batch: 2.988[s] Speed: 2.7[samples/s]
+2026-06-24 14:30:30,107 TFCLIP.train INFO: Epoch[5] Iteration[50/265] Loss: 7.110, Acc_clip: 0.675, Acc_id1: 0.005, Acc_id2: 0.091, Base Lr: 1.61e-05
+2026-06-24 14:32:32,114 TFCLIP.train INFO: Epoch[5] Iteration[100/265] Loss: 6.986, Acc_clip: 0.701, Acc_id1: 0.004, Acc_id2: 0.107, Base Lr: 1.61e-05
+2026-06-24 14:34:48,153 TFCLIP.train INFO: Epoch[5] Iteration[150/265] Loss: 6.959, Acc_clip: 0.692, Acc_id1: 0.003, Acc_id2: 0.113, Base Lr: 1.61e-05
+2026-06-24 14:36:53,029 TFCLIP.train INFO: Epoch[5] Iteration[200/265] Loss: 6.943, Acc_clip: 0.679, Acc_id1: 0.002, Acc_id2: 0.138, Base Lr: 1.61e-05
+2026-06-24 14:38:53,182 TFCLIP.train INFO: Epoch[5] Iteration[250/265] Loss: 6.832, Acc_clip: 0.669, Acc_id1: 0.004, Acc_id2: 0.166, Base Lr: 1.61e-05
+2026-06-24 14:39:29,819 TFCLIP.train INFO: Epoch 5 done. Time per batch: 2.490[s] Speed: 3.2[samples/s]
+2026-06-24 14:41:42,094 TFCLIP.train INFO: Epoch[6] Iteration[50/265] Loss: 6.762, Acc_clip: 0.722, Acc_id1: 0.002, Acc_id2: 0.102, Base Lr: 1.93e-05
+2026-06-24 14:43:50,104 TFCLIP.train INFO: Epoch[6] Iteration[100/265] Loss: 6.808, Acc_clip: 0.702, Acc_id1: 0.002, Acc_id2: 0.116, Base Lr: 1.93e-05
+2026-06-24 14:45:58,140 TFCLIP.train INFO: Epoch[6] Iteration[150/265] Loss: 6.718, Acc_clip: 0.704, Acc_id1: 0.003, Acc_id2: 0.129, Base Lr: 1.93e-05
+2026-06-24 14:47:52,920 TFCLIP.train INFO: Epoch[6] Iteration[200/265] Loss: 6.666, Acc_clip: 0.697, Acc_id1: 0.008, Acc_id2: 0.160, Base Lr: 1.93e-05
+2026-06-24 14:50:16,664 TFCLIP.train INFO: Epoch[6] Iteration[250/265] Loss: 6.621, Acc_clip: 0.675, Acc_id1: 0.011, Acc_id2: 0.192, Base Lr: 1.93e-05
+2026-06-24 14:50:56,675 TFCLIP.train INFO: Epoch 6 done. Time per batch: 2.602[s] Speed: 3.1[samples/s]
+2026-06-24 14:53:14,179 TFCLIP.train INFO: Epoch[7] Iteration[50/265] Loss: 6.392, Acc_clip: 0.748, Acc_id1: 0.000, Acc_id2: 0.132, Base Lr: 2.24e-05
+2026-06-24 14:55:31,429 TFCLIP.train INFO: Epoch[7] Iteration[100/265] Loss: 6.312, Acc_clip: 0.780, Acc_id1: 0.004, Acc_id2: 0.158, Base Lr: 2.24e-05
+2026-06-24 14:57:43,773 TFCLIP.train INFO: Epoch[7] Iteration[150/265] Loss: 6.396, Acc_clip: 0.742, Acc_id1: 0.008, Acc_id2: 0.164, Base Lr: 2.24e-05
+2026-06-24 14:59:42,898 TFCLIP.train INFO: Epoch[7] Iteration[200/265] Loss: 6.291, Acc_clip: 0.748, Acc_id1: 0.009, Acc_id2: 0.189, Base Lr: 2.24e-05
+2026-06-24 15:01:50,763 TFCLIP.train INFO: Epoch[7] Iteration[250/265] Loss: 6.225, Acc_clip: 0.717, Acc_id1: 0.012, Acc_id2: 0.211, Base Lr: 2.24e-05
+2026-06-24 15:02:31,364 TFCLIP.train INFO: Epoch 7 done. Time per batch: 2.621[s] Speed: 3.1[samples/s]
+2026-06-24 15:04:37,895 TFCLIP.train INFO: Epoch[8] Iteration[50/265] Loss: 6.498, Acc_clip: 0.750, Acc_id1: 0.000, Acc_id2: 0.117, Base Lr: 2.55e-05
+2026-06-24 15:07:03,335 TFCLIP.train INFO: Epoch[8] Iteration[100/265] Loss: 6.455, Acc_clip: 0.752, Acc_id1: 0.000, Acc_id2: 0.162, Base Lr: 2.55e-05
+2026-06-24 15:09:24,990 TFCLIP.train INFO: Epoch[8] Iteration[150/265] Loss: 6.329, Acc_clip: 0.729, Acc_id1: 0.002, Acc_id2: 0.188, Base Lr: 2.55e-05
+2026-06-24 15:11:09,262 TFCLIP.train INFO: Epoch[8] Iteration[200/265] Loss: 6.268, Acc_clip: 0.727, Acc_id1: 0.002, Acc_id2: 0.205, Base Lr: 2.55e-05
+2026-06-24 15:12:50,810 TFCLIP.train INFO: Epoch[8] Iteration[250/265] Loss: 6.245, Acc_clip: 0.700, Acc_id1: 0.008, Acc_id2: 0.229, Base Lr: 2.55e-05
+2026-06-24 15:13:18,577 TFCLIP.train INFO: Epoch 8 done. Time per batch: 2.442[s] Speed: 3.3[samples/s]
+2026-06-24 15:15:20,497 TFCLIP.train INFO: Epoch[9] Iteration[50/265] Loss: 6.566, Acc_clip: 0.710, Acc_id1: 0.000, Acc_id2: 0.158, Base Lr: 2.87e-05
+2026-06-24 15:17:18,689 TFCLIP.train INFO: Epoch[9] Iteration[100/265] Loss: 6.509, Acc_clip: 0.745, Acc_id1: 0.005, Acc_id2: 0.176, Base Lr: 2.87e-05
+2026-06-24 15:19:04,345 TFCLIP.train INFO: Epoch[9] Iteration[150/265] Loss: 6.362, Acc_clip: 0.742, Acc_id1: 0.007, Acc_id2: 0.191, Base Lr: 2.87e-05
+2026-06-24 15:21:04,532 TFCLIP.train INFO: Epoch[9] Iteration[200/265] Loss: 6.154, Acc_clip: 0.740, Acc_id1: 0.011, Acc_id2: 0.230, Base Lr: 2.87e-05
+2026-06-24 15:23:05,827 TFCLIP.train INFO: Epoch[9] Iteration[250/265] Loss: 6.081, Acc_clip: 0.706, Acc_id1: 0.014, Acc_id2: 0.245, Base Lr: 2.87e-05
+2026-06-24 15:23:46,106 TFCLIP.train INFO: Epoch 9 done. Time per batch: 2.377[s] Speed: 3.4[samples/s]
+2026-06-24 15:25:59,390 TFCLIP.train INFO: Epoch[10] Iteration[50/265] Loss: 6.155, Acc_clip: 0.787, Acc_id1: 0.012, Acc_id2: 0.191, Base Lr: 3.19e-05
+2026-06-24 15:28:28,588 TFCLIP.train INFO: Epoch[10] Iteration[100/265] Loss: 6.129, Acc_clip: 0.771, Acc_id1: 0.009, Acc_id2: 0.194, Base Lr: 3.19e-05
+2026-06-24 15:30:52,400 TFCLIP.train INFO: Epoch[10] Iteration[150/265] Loss: 6.006, Acc_clip: 0.785, Acc_id1: 0.011, Acc_id2: 0.219, Base Lr: 3.19e-05
+2026-06-24 15:33:04,450 TFCLIP.train INFO: Epoch[10] Iteration[200/265] Loss: 5.919, Acc_clip: 0.766, Acc_id1: 0.013, Acc_id2: 0.250, Base Lr: 3.19e-05
+2026-06-24 15:35:16,792 TFCLIP.train INFO: Epoch[10] Iteration[250/265] Loss: 5.856, Acc_clip: 0.731, Acc_id1: 0.013, Acc_id2: 0.271, Base Lr: 3.19e-05
+2026-06-24 15:35:47,074 TFCLIP.train INFO: Epoch 10 done. Time per batch: 2.731[s] Speed: 2.9[samples/s]
+2026-06-24 15:37:06,193 TFCLIP.train INFO: Epoch[11] Iteration[50/265] Loss: 5.910, Acc_clip: 0.797, Acc_id1: 0.005, Acc_id2: 0.215, Base Lr: 3.50e-05
+2026-06-24 15:38:53,972 TFCLIP.train INFO: Epoch[11] Iteration[100/265] Loss: 5.897, Acc_clip: 0.796, Acc_id1: 0.006, Acc_id2: 0.214, Base Lr: 3.50e-05
+2026-06-24 15:40:42,782 TFCLIP.train INFO: Epoch[11] Iteration[150/265] Loss: 6.022, Acc_clip: 0.773, Acc_id1: 0.009, Acc_id2: 0.221, Base Lr: 3.50e-05
+2026-06-24 15:42:22,561 TFCLIP.train INFO: Epoch[11] Iteration[200/265] Loss: 5.926, Acc_clip: 0.772, Acc_id1: 0.009, Acc_id2: 0.247, Base Lr: 3.50e-05
+2026-06-24 15:43:39,778 TFCLIP.train INFO: Epoch[11] Iteration[250/265] Loss: 5.910, Acc_clip: 0.733, Acc_id1: 0.016, Acc_id2: 0.262, Base Lr: 3.50e-05
+2026-06-24 15:43:57,418 TFCLIP.train INFO: Epoch 11 done. Time per batch: 1.856[s] Speed: 4.3[samples/s]
+2026-06-24 15:44:50,731 TFCLIP.train INFO: Epoch[12] Iteration[50/265] Loss: 6.152, Acc_clip: 0.730, Acc_id1: 0.000, Acc_id2: 0.169, Base Lr: 3.50e-05
+2026-06-24 15:46:09,663 TFCLIP.train INFO: Epoch[12] Iteration[100/265] Loss: 5.990, Acc_clip: 0.779, Acc_id1: 0.004, Acc_id2: 0.218, Base Lr: 3.50e-05
+2026-06-24 15:47:37,767 TFCLIP.train INFO: Epoch[12] Iteration[150/265] Loss: 5.845, Acc_clip: 0.790, Acc_id1: 0.003, Acc_id2: 0.230, Base Lr: 3.50e-05
+2026-06-24 15:49:23,368 TFCLIP.train INFO: Epoch[12] Iteration[200/265] Loss: 5.820, Acc_clip: 0.780, Acc_id1: 0.006, Acc_id2: 0.263, Base Lr: 3.50e-05
+2026-06-24 15:51:27,766 TFCLIP.train INFO: Epoch[12] Iteration[250/265] Loss: 5.859, Acc_clip: 0.736, Acc_id1: 0.013, Acc_id2: 0.271, Base Lr: 3.50e-05
+2026-06-24 15:51:59,465 TFCLIP.train INFO: Epoch 12 done. Time per batch: 1.840[s] Speed: 4.3[samples/s]
+2026-06-24 15:53:51,187 TFCLIP.train INFO: Epoch[13] Iteration[50/265] Loss: 5.834, Acc_clip: 0.837, Acc_id1: 0.002, Acc_id2: 0.236, Base Lr: 3.50e-05
+2026-06-24 15:55:55,708 TFCLIP.train INFO: Epoch[13] Iteration[100/265] Loss: 5.655, Acc_clip: 0.842, Acc_id1: 0.001, Acc_id2: 0.262, Base Lr: 3.50e-05
+2026-06-24 15:57:56,861 TFCLIP.train INFO: Epoch[13] Iteration[150/265] Loss: 5.573, Acc_clip: 0.833, Acc_id1: 0.002, Acc_id2: 0.269, Base Lr: 3.50e-05
+2026-06-24 16:00:04,406 TFCLIP.train INFO: Epoch[13] Iteration[200/265] Loss: 5.435, Acc_clip: 0.813, Acc_id1: 0.004, Acc_id2: 0.306, Base Lr: 3.50e-05
+2026-06-24 16:02:09,169 TFCLIP.train INFO: Epoch[13] Iteration[250/265] Loss: 5.414, Acc_clip: 0.766, Acc_id1: 0.010, Acc_id2: 0.321, Base Lr: 3.50e-05
+2026-06-24 16:02:30,976 TFCLIP.train INFO: Epoch 13 done. Time per batch: 2.392[s] Speed: 3.3[samples/s]
+2026-06-24 16:03:57,128 TFCLIP.train INFO: Epoch[14] Iteration[50/265] Loss: 5.552, Acc_clip: 0.852, Acc_id1: 0.002, Acc_id2: 0.244, Base Lr: 3.50e-05
+2026-06-24 16:06:14,205 TFCLIP.train INFO: Epoch[14] Iteration[100/265] Loss: 5.446, Acc_clip: 0.859, Acc_id1: 0.005, Acc_id2: 0.262, Base Lr: 3.50e-05
+2026-06-24 16:08:26,138 TFCLIP.train INFO: Epoch[14] Iteration[150/265] Loss: 5.351, Acc_clip: 0.852, Acc_id1: 0.010, Acc_id2: 0.294, Base Lr: 3.50e-05
+2026-06-24 16:10:31,575 TFCLIP.train INFO: Epoch[14] Iteration[200/265] Loss: 5.245, Acc_clip: 0.846, Acc_id1: 0.015, Acc_id2: 0.321, Base Lr: 3.50e-05
+2026-06-24 16:12:33,877 TFCLIP.train INFO: Epoch[14] Iteration[250/265] Loss: 5.223, Acc_clip: 0.797, Acc_id1: 0.019, Acc_id2: 0.333, Base Lr: 3.50e-05
+2026-06-24 16:12:58,276 TFCLIP.train INFO: Epoch 14 done. Time per batch: 2.376[s] Speed: 3.4[samples/s]
+2026-06-24 16:14:40,132 TFCLIP.train INFO: Epoch[15] Iteration[50/265] Loss: 5.193, Acc_clip: 0.877, Acc_id1: 0.012, Acc_id2: 0.314, Base Lr: 3.50e-05
+2026-06-24 16:16:36,529 TFCLIP.train INFO: Epoch[15] Iteration[100/265] Loss: 5.160, Acc_clip: 0.881, Acc_id1: 0.007, Acc_id2: 0.310, Base Lr: 3.50e-05
+2026-06-24 16:18:33,534 TFCLIP.train INFO: Epoch[15] Iteration[150/265] Loss: 5.104, Acc_clip: 0.872, Acc_id1: 0.008, Acc_id2: 0.322, Base Lr: 3.50e-05
+2026-06-24 16:20:26,825 TFCLIP.train INFO: Epoch[15] Iteration[200/265] Loss: 5.098, Acc_clip: 0.866, Acc_id1: 0.012, Acc_id2: 0.346, Base Lr: 3.50e-05
+2026-06-24 16:22:16,679 TFCLIP.train INFO: Epoch[15] Iteration[250/265] Loss: 5.221, Acc_clip: 0.808, Acc_id1: 0.021, Acc_id2: 0.352, Base Lr: 3.50e-05
+2026-06-24 16:22:58,185 TFCLIP.train INFO: Epoch 15 done. Time per batch: 2.264[s] Speed: 3.5[samples/s]
+2026-06-24 16:24:55,434 TFCLIP.train INFO: Epoch[16] Iteration[50/265] Loss: 4.991, Acc_clip: 0.930, Acc_id1: 0.000, Acc_id2: 0.344, Base Lr: 3.50e-05
+2026-06-24 16:27:03,882 TFCLIP.train INFO: Epoch[16] Iteration[100/265] Loss: 4.944, Acc_clip: 0.910, Acc_id1: 0.009, Acc_id2: 0.364, Base Lr: 3.50e-05
+2026-06-24 16:28:59,245 TFCLIP.train INFO: Epoch[16] Iteration[150/265] Loss: 4.929, Acc_clip: 0.906, Acc_id1: 0.009, Acc_id2: 0.363, Base Lr: 3.50e-05
+2026-06-24 16:31:03,929 TFCLIP.train INFO: Epoch[16] Iteration[200/265] Loss: 4.897, Acc_clip: 0.885, Acc_id1: 0.014, Acc_id2: 0.379, Base Lr: 3.50e-05
+2026-06-24 16:33:15,277 TFCLIP.train INFO: Epoch[16] Iteration[250/265] Loss: 4.902, Acc_clip: 0.835, Acc_id1: 0.021, Acc_id2: 0.386, Base Lr: 3.50e-05
+2026-06-24 16:33:56,524 TFCLIP.train INFO: Epoch 16 done. Time per batch: 2.484[s] Speed: 3.2[samples/s]
+2026-06-24 16:36:19,200 TFCLIP.train INFO: Epoch[17] Iteration[50/265] Loss: 4.853, Acc_clip: 0.885, Acc_id1: 0.007, Acc_id2: 0.394, Base Lr: 3.50e-05
+2026-06-24 16:38:58,570 TFCLIP.train INFO: Epoch[17] Iteration[100/265] Loss: 4.860, Acc_clip: 0.885, Acc_id1: 0.005, Acc_id2: 0.383, Base Lr: 3.50e-05
+2026-06-24 16:41:37,492 TFCLIP.train INFO: Epoch[17] Iteration[150/265] Loss: 4.829, Acc_clip: 0.873, Acc_id1: 0.004, Acc_id2: 0.395, Base Lr: 3.50e-05
+2026-06-24 16:44:07,576 TFCLIP.train INFO: Epoch[17] Iteration[200/265] Loss: 4.772, Acc_clip: 0.871, Acc_id1: 0.005, Acc_id2: 0.423, Base Lr: 3.50e-05
+2026-06-24 16:46:34,329 TFCLIP.train INFO: Epoch[17] Iteration[250/265] Loss: 4.867, Acc_clip: 0.829, Acc_id1: 0.016, Acc_id2: 0.421, Base Lr: 3.50e-05
+2026-06-24 16:47:16,446 TFCLIP.train INFO: Epoch 17 done. Time per batch: 3.019[s] Speed: 2.7[samples/s]
+2026-06-24 16:49:31,241 TFCLIP.train INFO: Epoch[18] Iteration[50/265] Loss: 5.140, Acc_clip: 0.847, Acc_id1: 0.005, Acc_id2: 0.332, Base Lr: 3.50e-05
+2026-06-24 16:51:38,199 TFCLIP.train INFO: Epoch[18] Iteration[100/265] Loss: 4.949, Acc_clip: 0.886, Acc_id1: 0.005, Acc_id2: 0.371, Base Lr: 3.50e-05
+2026-06-24 16:53:47,892 TFCLIP.train INFO: Epoch[18] Iteration[150/265] Loss: 4.908, Acc_clip: 0.873, Acc_id1: 0.004, Acc_id2: 0.390, Base Lr: 3.50e-05
+2026-06-24 16:55:13,844 TFCLIP.train INFO: Epoch[18] Iteration[200/265] Loss: 4.803, Acc_clip: 0.857, Acc_id1: 0.006, Acc_id2: 0.415, Base Lr: 3.50e-05
+2026-06-24 16:57:32,947 TFCLIP.train INFO: Epoch[18] Iteration[250/265] Loss: 4.784, Acc_clip: 0.811, Acc_id1: 0.013, Acc_id2: 0.420, Base Lr: 3.50e-05
+2026-06-24 16:58:11,271 TFCLIP.train INFO: Epoch 18 done. Time per batch: 2.480[s] Speed: 3.2[samples/s]
+2026-06-24 17:00:36,268 TFCLIP.train INFO: Epoch[19] Iteration[50/265] Loss: 4.679, Acc_clip: 0.935, Acc_id1: 0.010, Acc_id2: 0.403, Base Lr: 3.50e-05
+2026-06-24 17:03:00,289 TFCLIP.train INFO: Epoch[19] Iteration[100/265] Loss: 4.654, Acc_clip: 0.914, Acc_id1: 0.009, Acc_id2: 0.438, Base Lr: 3.50e-05
+2026-06-24 17:05:21,146 TFCLIP.train INFO: Epoch[19] Iteration[150/265] Loss: 4.594, Acc_clip: 0.907, Acc_id1: 0.010, Acc_id2: 0.453, Base Lr: 3.50e-05
+2026-06-24 17:06:45,852 TFCLIP.train INFO: Epoch[19] Iteration[200/265] Loss: 4.572, Acc_clip: 0.884, Acc_id1: 0.012, Acc_id2: 0.471, Base Lr: 3.50e-05
+2026-06-24 17:08:02,648 TFCLIP.train INFO: Epoch[19] Iteration[250/265] Loss: 4.679, Acc_clip: 0.822, Acc_id1: 0.019, Acc_id2: 0.463, Base Lr: 3.50e-05
+2026-06-24 17:08:25,713 TFCLIP.train INFO: Epoch 19 done. Time per batch: 2.319[s] Speed: 3.5[samples/s]
+2026-06-24 17:10:14,599 TFCLIP.train INFO: Epoch[20] Iteration[50/265] Loss: 4.680, Acc_clip: 0.917, Acc_id1: 0.000, Acc_id2: 0.420, Base Lr: 3.50e-05
+2026-06-24 17:12:23,639 TFCLIP.train INFO: Epoch[20] Iteration[100/265] Loss: 4.654, Acc_clip: 0.905, Acc_id1: 0.001, Acc_id2: 0.419, Base Lr: 3.50e-05
+2026-06-24 17:14:13,289 TFCLIP.train INFO: Epoch[20] Iteration[150/265] Loss: 4.625, Acc_clip: 0.893, Acc_id1: 0.004, Acc_id2: 0.431, Base Lr: 3.50e-05
+2026-06-24 17:16:07,586 TFCLIP.train INFO: Epoch[20] Iteration[200/265] Loss: 4.567, Acc_clip: 0.876, Acc_id1: 0.011, Acc_id2: 0.452, Base Lr: 3.50e-05
+2026-06-24 17:18:11,328 TFCLIP.train INFO: Epoch[20] Iteration[250/265] Loss: 4.621, Acc_clip: 0.835, Acc_id1: 0.024, Acc_id2: 0.463, Base Lr: 3.50e-05
+2026-06-24 17:18:44,826 TFCLIP.train INFO: Epoch 20 done. Time per batch: 2.336[s] Speed: 3.4[samples/s]
+2026-06-24 17:20:34,925 TFCLIP.train INFO: Epoch[21] Iteration[50/265] Loss: 4.705, Acc_clip: 0.907, Acc_id1: 0.005, Acc_id2: 0.418, Base Lr: 3.50e-05
+2026-06-24 17:22:10,339 TFCLIP.train INFO: Epoch[21] Iteration[100/265] Loss: 4.609, Acc_clip: 0.925, Acc_id1: 0.007, Acc_id2: 0.441, Base Lr: 3.50e-05
+2026-06-24 17:23:14,728 TFCLIP.train INFO: Epoch[21] Iteration[150/265] Loss: 4.598, Acc_clip: 0.910, Acc_id1: 0.007, Acc_id2: 0.448, Base Lr: 3.50e-05
+2026-06-24 17:24:38,063 TFCLIP.train INFO: Epoch[21] Iteration[200/265] Loss: 4.547, Acc_clip: 0.891, Acc_id1: 0.011, Acc_id2: 0.463, Base Lr: 3.50e-05
+2026-06-24 17:26:08,419 TFCLIP.train INFO: Epoch[21] Iteration[250/265] Loss: 4.650, Acc_clip: 0.831, Acc_id1: 0.020, Acc_id2: 0.461, Base Lr: 3.50e-05
+2026-06-24 17:26:39,804 TFCLIP.train INFO: Epoch 21 done. Time per batch: 1.789[s] Speed: 4.5[samples/s]
+2026-06-24 17:27:58,990 TFCLIP.train INFO: Epoch[22] Iteration[50/265] Loss: 4.817, Acc_clip: 0.920, Acc_id1: 0.002, Acc_id2: 0.408, Base Lr: 3.50e-05
+2026-06-24 17:30:05,429 TFCLIP.train INFO: Epoch[22] Iteration[100/265] Loss: 4.768, Acc_clip: 0.902, Acc_id1: 0.005, Acc_id2: 0.415, Base Lr: 3.50e-05
+2026-06-24 17:32:35,408 TFCLIP.train INFO: Epoch[22] Iteration[150/265] Loss: 4.738, Acc_clip: 0.894, Acc_id1: 0.007, Acc_id2: 0.425, Base Lr: 3.50e-05
+2026-06-24 17:35:02,288 TFCLIP.train INFO: Epoch[22] Iteration[200/265] Loss: 4.714, Acc_clip: 0.877, Acc_id1: 0.010, Acc_id2: 0.423, Base Lr: 3.50e-05
+2026-06-24 17:37:12,327 TFCLIP.train INFO: Epoch[22] Iteration[250/265] Loss: 4.871, Acc_clip: 0.833, Acc_id1: 0.015, Acc_id2: 0.421, Base Lr: 3.50e-05
+2026-06-24 17:37:53,772 TFCLIP.train INFO: Epoch 22 done. Time per batch: 2.543[s] Speed: 3.1[samples/s]
+2026-06-24 17:40:19,401 TFCLIP.train INFO: Epoch[23] Iteration[50/265] Loss: 4.624, Acc_clip: 0.917, Acc_id1: 0.000, Acc_id2: 0.427, Base Lr: 3.50e-05
+2026-06-24 17:42:41,883 TFCLIP.train INFO: Epoch[23] Iteration[100/265] Loss: 4.612, Acc_clip: 0.892, Acc_id1: 0.001, Acc_id2: 0.430, Base Lr: 3.50e-05
+2026-06-24 17:45:01,533 TFCLIP.train INFO: Epoch[23] Iteration[150/265] Loss: 4.550, Acc_clip: 0.898, Acc_id1: 0.003, Acc_id2: 0.451, Base Lr: 3.50e-05
+2026-06-24 17:47:26,681 TFCLIP.train INFO: Epoch[23] Iteration[200/265] Loss: 4.521, Acc_clip: 0.880, Acc_id1: 0.009, Acc_id2: 0.472, Base Lr: 3.50e-05
+2026-06-24 17:49:54,364 TFCLIP.train INFO: Epoch[23] Iteration[250/265] Loss: 4.689, Acc_clip: 0.828, Acc_id1: 0.014, Acc_id2: 0.444, Base Lr: 3.50e-05
+2026-06-24 17:50:34,656 TFCLIP.train INFO: Epoch 23 done. Time per batch: 2.871[s] Speed: 2.8[samples/s]
+2026-06-24 17:52:16,078 TFCLIP.train INFO: Epoch[24] Iteration[50/265] Loss: 4.684, Acc_clip: 0.895, Acc_id1: 0.005, Acc_id2: 0.436, Base Lr: 3.50e-05
+2026-06-24 17:54:18,374 TFCLIP.train INFO: Epoch[24] Iteration[100/265] Loss: 4.511, Acc_clip: 0.895, Acc_id1: 0.006, Acc_id2: 0.482, Base Lr: 3.50e-05
+2026-06-24 17:55:31,483 TFCLIP.train INFO: Epoch[24] Iteration[150/265] Loss: 4.457, Acc_clip: 0.897, Acc_id1: 0.008, Acc_id2: 0.491, Base Lr: 3.50e-05
+2026-06-24 17:56:52,250 TFCLIP.train INFO: Epoch[24] Iteration[200/265] Loss: 4.403, Acc_clip: 0.881, Acc_id1: 0.014, Acc_id2: 0.510, Base Lr: 3.50e-05
+2026-06-24 17:58:24,932 TFCLIP.train INFO: Epoch[24] Iteration[250/265] Loss: 4.583, Acc_clip: 0.833, Acc_id1: 0.019, Acc_id2: 0.492, Base Lr: 3.50e-05
+2026-06-24 17:59:04,115 TFCLIP.train INFO: Epoch 24 done. Time per batch: 1.930[s] Speed: 4.1[samples/s]
+2026-06-24 18:00:32,986 TFCLIP.train INFO: Epoch[25] Iteration[50/265] Loss: 6.045, Acc_clip: 0.690, Acc_id1: 0.002, Acc_id2: 0.309, Base Lr: 3.50e-05
+2026-06-24 18:02:01,039 TFCLIP.train INFO: Epoch[25] Iteration[100/265] Loss: 5.644, Acc_clip: 0.757, Acc_id1: 0.004, Acc_id2: 0.312, Base Lr: 3.50e-05
+2026-06-24 18:03:39,699 TFCLIP.train INFO: Epoch[25] Iteration[150/265] Loss: 5.407, Acc_clip: 0.785, Acc_id1: 0.005, Acc_id2: 0.358, Base Lr: 3.50e-05
+2026-06-24 18:05:27,010 TFCLIP.train INFO: Epoch[25] Iteration[200/265] Loss: 5.122, Acc_clip: 0.806, Acc_id1: 0.008, Acc_id2: 0.411, Base Lr: 3.50e-05
+2026-06-24 18:07:00,432 TFCLIP.train INFO: Epoch[25] Iteration[250/265] Loss: 5.060, Acc_clip: 0.771, Acc_id1: 0.014, Acc_id2: 0.419, Base Lr: 3.50e-05
+2026-06-24 18:07:18,409 TFCLIP.train INFO: Epoch 25 done. Time per batch: 1.872[s] Speed: 4.3[samples/s]
+2026-06-24 18:08:56,895 TFCLIP.train INFO: Epoch[26] Iteration[50/265] Loss: 4.648, Acc_clip: 0.912, Acc_id1: 0.010, Acc_id2: 0.472, Base Lr: 3.50e-05
+2026-06-24 18:10:17,633 TFCLIP.train INFO: Epoch[26] Iteration[100/265] Loss: 4.520, Acc_clip: 0.915, Acc_id1: 0.007, Acc_id2: 0.488, Base Lr: 3.50e-05
+2026-06-24 18:11:33,194 TFCLIP.train INFO: Epoch[26] Iteration[150/265] Loss: 4.469, Acc_clip: 0.909, Acc_id1: 0.009, Acc_id2: 0.493, Base Lr: 3.50e-05
+2026-06-24 18:13:17,621 TFCLIP.train INFO: Epoch[26] Iteration[200/265] Loss: 4.420, Acc_clip: 0.889, Acc_id1: 0.008, Acc_id2: 0.510, Base Lr: 3.50e-05
+2026-06-24 18:15:19,176 TFCLIP.train INFO: Epoch[26] Iteration[250/265] Loss: 4.475, Acc_clip: 0.847, Acc_id1: 0.013, Acc_id2: 0.503, Base Lr: 3.50e-05
+2026-06-24 18:15:47,849 TFCLIP.train INFO: Epoch 26 done. Time per batch: 1.922[s] Speed: 4.2[samples/s]
+2026-06-24 18:17:29,510 TFCLIP.train INFO: Epoch[27] Iteration[50/265] Loss: 4.399, Acc_clip: 0.925, Acc_id1: 0.010, Acc_id2: 0.480, Base Lr: 3.50e-05
+2026-06-24 18:19:10,841 TFCLIP.train INFO: Epoch[27] Iteration[100/265] Loss: 4.283, Acc_clip: 0.927, Acc_id1: 0.014, Acc_id2: 0.514, Base Lr: 3.50e-05
+2026-06-24 18:21:09,187 TFCLIP.train INFO: Epoch[27] Iteration[150/265] Loss: 4.250, Acc_clip: 0.915, Acc_id1: 0.016, Acc_id2: 0.535, Base Lr: 3.50e-05
+2026-06-24 18:23:07,084 TFCLIP.train INFO: Epoch[27] Iteration[200/265] Loss: 4.254, Acc_clip: 0.896, Acc_id1: 0.014, Acc_id2: 0.544, Base Lr: 3.50e-05
+2026-06-24 18:25:24,121 TFCLIP.train INFO: Epoch[27] Iteration[250/265] Loss: 4.394, Acc_clip: 0.837, Acc_id1: 0.022, Acc_id2: 0.524, Base Lr: 3.50e-05
+2026-06-24 18:26:01,541 TFCLIP.train INFO: Epoch 27 done. Time per batch: 2.325[s] Speed: 3.4[samples/s]
+2026-06-24 18:28:21,063 TFCLIP.train INFO: Epoch[28] Iteration[50/265] Loss: 4.348, Acc_clip: 0.922, Acc_id1: 0.005, Acc_id2: 0.536, Base Lr: 3.50e-05
+2026-06-24 18:30:49,445 TFCLIP.train INFO: Epoch[28] Iteration[100/265] Loss: 4.306, Acc_clip: 0.905, Acc_id1: 0.005, Acc_id2: 0.541, Base Lr: 3.50e-05
+2026-06-24 18:33:10,089 TFCLIP.train INFO: Epoch[28] Iteration[150/265] Loss: 4.284, Acc_clip: 0.895, Acc_id1: 0.009, Acc_id2: 0.542, Base Lr: 3.50e-05
+2026-06-24 18:35:06,519 TFCLIP.train INFO: Epoch[28] Iteration[200/265] Loss: 4.254, Acc_clip: 0.882, Acc_id1: 0.012, Acc_id2: 0.557, Base Lr: 3.50e-05
+2026-06-24 18:37:36,148 TFCLIP.train INFO: Epoch[28] Iteration[250/265] Loss: 4.342, Acc_clip: 0.835, Acc_id1: 0.021, Acc_id2: 0.544, Base Lr: 3.50e-05
+2026-06-24 18:38:21,442 TFCLIP.train INFO: Epoch 28 done. Time per batch: 2.792[s] Speed: 2.9[samples/s]
+2026-06-24 18:40:40,635 TFCLIP.train INFO: Epoch[29] Iteration[50/265] Loss: 4.161, Acc_clip: 0.950, Acc_id1: 0.012, Acc_id2: 0.573, Base Lr: 3.50e-05
+2026-06-24 18:43:00,120 TFCLIP.train INFO: Epoch[29] Iteration[100/265] Loss: 4.235, Acc_clip: 0.938, Acc_id1: 0.016, Acc_id2: 0.545, Base Lr: 3.50e-05
+2026-06-24 18:45:16,872 TFCLIP.train INFO: Epoch[29] Iteration[150/265] Loss: 4.241, Acc_clip: 0.925, Acc_id1: 0.013, Acc_id2: 0.545, Base Lr: 3.50e-05
+2026-06-24 18:47:30,614 TFCLIP.train INFO: Epoch[29] Iteration[200/265] Loss: 4.252, Acc_clip: 0.907, Acc_id1: 0.015, Acc_id2: 0.542, Base Lr: 3.50e-05
+2026-06-24 18:49:37,001 TFCLIP.train INFO: Epoch[29] Iteration[250/265] Loss: 4.440, Acc_clip: 0.860, Acc_id1: 0.024, Acc_id2: 0.532, Base Lr: 3.50e-05
+2026-06-24 18:50:16,327 TFCLIP.train INFO: Epoch 29 done. Time per batch: 2.698[s] Speed: 3.0[samples/s]
+2026-06-24 18:52:28,832 TFCLIP.train INFO: Epoch[30] Iteration[50/265] Loss: 4.431, Acc_clip: 0.892, Acc_id1: 0.002, Acc_id2: 0.500, Base Lr: 3.50e-05
+2026-06-24 18:54:36,463 TFCLIP.train INFO: Epoch[30] Iteration[100/265] Loss: 4.412, Acc_clip: 0.900, Acc_id1: 0.002, Acc_id2: 0.507, Base Lr: 3.50e-05
+2026-06-24 18:56:36,111 TFCLIP.train INFO: Epoch[30] Iteration[150/265] Loss: 4.313, Acc_clip: 0.893, Acc_id1: 0.010, Acc_id2: 0.533, Base Lr: 3.50e-05
+2026-06-24 18:58:50,669 TFCLIP.train INFO: Epoch[30] Iteration[200/265] Loss: 4.313, Acc_clip: 0.880, Acc_id1: 0.012, Acc_id2: 0.554, Base Lr: 3.50e-05
+2026-06-24 19:01:01,776 TFCLIP.train INFO: Epoch[30] Iteration[250/265] Loss: 4.736, Acc_clip: 0.821, Acc_id1: 0.018, Acc_id2: 0.519, Base Lr: 3.50e-05
+2026-06-24 19:01:23,817 TFCLIP INFO: [BoostDecay] ep30: LR 1.05e-05 → 3.50e-06
+2026-06-24 19:01:23,818 TFCLIP INFO: [BoostDecay] ep30: LR 3.50e-05 → 3.50e-06
+2026-06-24 19:01:23,818 TFCLIP INFO: [BoostDecay] ep30: LR 3.50e-05 → 3.50e-06
+2026-06-24 19:01:23,818 TFCLIP INFO: [BoostDecay] ep30: LR 3.50e-05 → 3.50e-06
+2026-06-24 19:01:23,818 TFCLIP INFO: [BoostDecay] ep30: LR 3.50e-05 → 3.50e-06
+2026-06-24 19:01:23,818 TFCLIP.train INFO: Epoch 30 done. Time per batch: 2.538[s] Speed: 3.2[samples/s]
+2026-06-24 19:02:49,500 TFCLIP.train INFO: Epoch[31] Iteration[50/265] Loss: 6.400, Acc_clip: 0.637, Acc_id1: 0.012, Acc_id2: 0.303, Base Lr: 3.50e-06
+2026-06-24 19:04:30,778 TFCLIP.train INFO: Epoch[31] Iteration[100/265] Loss: 5.441, Acc_clip: 0.779, Acc_id1: 0.007, Acc_id2: 0.392, Base Lr: 3.50e-06
+2026-06-24 19:06:49,167 TFCLIP.train INFO: Epoch[31] Iteration[150/265] Loss: 5.076, Acc_clip: 0.815, Acc_id1: 0.009, Acc_id2: 0.433, Base Lr: 3.50e-06
+2026-06-24 19:08:39,249 TFCLIP.train INFO: Epoch[31] Iteration[200/265] Loss: 4.894, Acc_clip: 0.821, Acc_id1: 0.009, Acc_id2: 0.467, Base Lr: 3.50e-06
+2026-06-24 19:11:05,776 TFCLIP.train INFO: Epoch[31] Iteration[250/265] Loss: 4.939, Acc_clip: 0.789, Acc_id1: 0.016, Acc_id2: 0.465, Base Lr: 3.50e-06
+2026-06-24 19:11:50,344 TFCLIP.train INFO: Epoch 31 done. Time per batch: 2.356[s] Speed: 3.4[samples/s]
+2026-06-24 19:13:58,187 TFCLIP.train INFO: Epoch[32] Iteration[50/265] Loss: 4.228, Acc_clip: 0.922, Acc_id1: 0.005, Acc_id2: 0.559, Base Lr: 3.50e-06
+2026-06-24 19:15:45,180 TFCLIP.train INFO: Epoch[32] Iteration[100/265] Loss: 4.165, Acc_clip: 0.924, Acc_id1: 0.007, Acc_id2: 0.555, Base Lr: 3.50e-06
+2026-06-24 19:17:20,349 TFCLIP.train INFO: Epoch[32] Iteration[150/265] Loss: 4.109, Acc_clip: 0.924, Acc_id1: 0.008, Acc_id2: 0.577, Base Lr: 3.50e-06
+2026-06-24 19:18:47,665 TFCLIP.train INFO: Epoch[32] Iteration[200/265] Loss: 4.111, Acc_clip: 0.905, Acc_id1: 0.017, Acc_id2: 0.587, Base Lr: 3.50e-06
+2026-06-24 19:19:59,640 TFCLIP.train INFO: Epoch[32] Iteration[250/265] Loss: 4.176, Acc_clip: 0.861, Acc_id1: 0.022, Acc_id2: 0.571, Base Lr: 3.50e-06
+2026-06-24 19:20:23,015 TFCLIP.train INFO: Epoch 32 done. Time per batch: 1.942[s] Speed: 4.1[samples/s]
+2026-06-24 19:21:21,141 TFCLIP.train INFO: Epoch[33] Iteration[50/265] Loss: 4.088, Acc_clip: 0.955, Acc_id1: 0.002, Acc_id2: 0.571, Base Lr: 3.50e-06
+2026-06-24 19:22:45,990 TFCLIP.train INFO: Epoch[33] Iteration[100/265] Loss: 4.036, Acc_clip: 0.940, Acc_id1: 0.002, Acc_id2: 0.585, Base Lr: 3.50e-06
+2026-06-24 19:24:04,114 TFCLIP.train INFO: Epoch[33] Iteration[150/265] Loss: 3.996, Acc_clip: 0.936, Acc_id1: 0.003, Acc_id2: 0.611, Base Lr: 3.50e-06
+2026-06-24 19:25:29,205 TFCLIP.train INFO: Epoch[33] Iteration[200/265] Loss: 4.055, Acc_clip: 0.911, Acc_id1: 0.008, Acc_id2: 0.604, Base Lr: 3.50e-06
+2026-06-24 19:27:37,190 TFCLIP.train INFO: Epoch[33] Iteration[250/265] Loss: 4.114, Acc_clip: 0.860, Acc_id1: 0.024, Acc_id2: 0.591, Base Lr: 3.50e-06
+2026-06-24 19:28:18,846 TFCLIP.train INFO: Epoch 33 done. Time per batch: 1.802[s] Speed: 4.4[samples/s]
+2026-06-24 19:30:18,564 TFCLIP.train INFO: Epoch[34] Iteration[50/265] Loss: 3.960, Acc_clip: 0.930, Acc_id1: 0.007, Acc_id2: 0.607, Base Lr: 3.50e-06
+2026-06-24 19:32:07,610 TFCLIP.train INFO: Epoch[34] Iteration[100/265] Loss: 3.898, Acc_clip: 0.940, Acc_id1: 0.012, Acc_id2: 0.634, Base Lr: 3.50e-06
+2026-06-24 19:34:15,240 TFCLIP.train INFO: Epoch[34] Iteration[150/265] Loss: 3.918, Acc_clip: 0.930, Acc_id1: 0.013, Acc_id2: 0.632, Base Lr: 3.50e-06
+2026-06-24 19:35:39,233 TFCLIP.train INFO: Epoch[34] Iteration[200/265] Loss: 3.933, Acc_clip: 0.912, Acc_id1: 0.013, Acc_id2: 0.622, Base Lr: 3.50e-06
+2026-06-24 19:37:08,408 TFCLIP.train INFO: Epoch[34] Iteration[250/265] Loss: 4.080, Acc_clip: 0.866, Acc_id1: 0.022, Acc_id2: 0.601, Base Lr: 3.50e-06
+2026-06-24 19:37:26,601 TFCLIP.train INFO: Epoch 34 done. Time per batch: 2.075[s] Speed: 3.9[samples/s]
+2026-06-24 19:39:05,450 TFCLIP.train INFO: Epoch[35] Iteration[50/265] Loss: 3.929, Acc_clip: 0.950, Acc_id1: 0.010, Acc_id2: 0.622, Base Lr: 3.50e-06
+2026-06-24 19:40:39,792 TFCLIP.train INFO: Epoch[35] Iteration[100/265] Loss: 3.885, Acc_clip: 0.939, Acc_id1: 0.005, Acc_id2: 0.639, Base Lr: 3.50e-06
+2026-06-24 19:42:00,407 TFCLIP.train INFO: Epoch[35] Iteration[150/265] Loss: 3.871, Acc_clip: 0.927, Acc_id1: 0.004, Acc_id2: 0.649, Base Lr: 3.50e-06
+2026-06-24 19:43:54,448 TFCLIP.train INFO: Epoch[35] Iteration[200/265] Loss: 3.935, Acc_clip: 0.908, Acc_id1: 0.011, Acc_id2: 0.649, Base Lr: 3.50e-06
+2026-06-24 19:45:51,106 TFCLIP.train INFO: Epoch[35] Iteration[250/265] Loss: 4.047, Acc_clip: 0.858, Acc_id1: 0.020, Acc_id2: 0.632, Base Lr: 3.50e-06
+2026-06-24 19:46:23,963 TFCLIP.train INFO: Epoch 35 done. Time per batch: 2.043[s] Speed: 3.9[samples/s]
+2026-06-24 19:48:47,177 TFCLIP.train INFO: Epoch[36] Iteration[50/265] Loss: 3.797, Acc_clip: 0.957, Acc_id1: 0.007, Acc_id2: 0.659, Base Lr: 3.50e-06
+2026-06-24 19:51:31,926 TFCLIP.train INFO: Epoch[36] Iteration[100/265] Loss: 3.792, Acc_clip: 0.935, Acc_id1: 0.005, Acc_id2: 0.681, Base Lr: 3.50e-06
+2026-06-24 19:54:32,854 TFCLIP.train INFO: Epoch[36] Iteration[150/265] Loss: 3.850, Acc_clip: 0.929, Acc_id1: 0.007, Acc_id2: 0.666, Base Lr: 3.50e-06
+2026-06-24 19:57:37,791 TFCLIP.train INFO: Epoch[36] Iteration[200/265] Loss: 3.893, Acc_clip: 0.915, Acc_id1: 0.010, Acc_id2: 0.667, Base Lr: 3.50e-06
+2026-06-24 20:00:24,110 TFCLIP.train INFO: Epoch[36] Iteration[250/265] Loss: 4.006, Acc_clip: 0.863, Acc_id1: 0.020, Acc_id2: 0.641, Base Lr: 3.50e-06
+2026-06-24 20:01:14,416 TFCLIP.train INFO: Epoch 36 done. Time per batch: 3.360[s] Speed: 2.4[samples/s]
+2026-06-24 20:03:52,757 TFCLIP.train INFO: Epoch[37] Iteration[50/265] Loss: 3.855, Acc_clip: 0.912, Acc_id1: 0.002, Acc_id2: 0.647, Base Lr: 3.50e-06
+2026-06-24 20:06:35,796 TFCLIP.train INFO: Epoch[37] Iteration[100/265] Loss: 3.810, Acc_clip: 0.921, Acc_id1: 0.011, Acc_id2: 0.675, Base Lr: 3.50e-06
+2026-06-24 20:09:28,057 TFCLIP.train INFO: Epoch[37] Iteration[150/265] Loss: 3.789, Acc_clip: 0.928, Acc_id1: 0.010, Acc_id2: 0.684, Base Lr: 3.50e-06
+2026-06-24 20:12:20,485 TFCLIP.train INFO: Epoch[37] Iteration[200/265] Loss: 3.837, Acc_clip: 0.917, Acc_id1: 0.014, Acc_id2: 0.676, Base Lr: 3.50e-06
+2026-06-24 20:15:16,462 TFCLIP.train INFO: Epoch[37] Iteration[250/265] Loss: 3.949, Acc_clip: 0.857, Acc_id1: 0.025, Acc_id2: 0.644, Base Lr: 3.50e-06
+2026-06-24 20:16:12,735 TFCLIP.train INFO: Epoch 37 done. Time per batch: 3.390[s] Speed: 2.4[samples/s]
+2026-06-24 20:18:59,574 TFCLIP.train INFO: Epoch[38] Iteration[50/265] Loss: 3.797, Acc_clip: 0.947, Acc_id1: 0.000, Acc_id2: 0.681, Base Lr: 3.50e-06
+2026-06-24 20:21:50,676 TFCLIP.train INFO: Epoch[38] Iteration[100/265] Loss: 3.789, Acc_clip: 0.947, Acc_id1: 0.006, Acc_id2: 0.681, Base Lr: 3.50e-06
+2026-06-24 20:25:00,240 TFCLIP.train INFO: Epoch[38] Iteration[150/265] Loss: 3.804, Acc_clip: 0.930, Acc_id1: 0.005, Acc_id2: 0.682, Base Lr: 3.50e-06
+2026-06-24 20:28:10,330 TFCLIP.train INFO: Epoch[38] Iteration[200/265] Loss: 3.793, Acc_clip: 0.921, Acc_id1: 0.009, Acc_id2: 0.697, Base Lr: 3.50e-06
+2026-06-24 20:31:19,572 TFCLIP.train INFO: Epoch[38] Iteration[250/265] Loss: 3.911, Acc_clip: 0.861, Acc_id1: 0.014, Acc_id2: 0.670, Base Lr: 3.50e-06
+2026-06-24 20:32:17,387 TFCLIP.train INFO: Epoch 38 done. Time per batch: 3.640[s] Speed: 2.2[samples/s]
+2026-06-24 20:34:59,484 TFCLIP.train INFO: Epoch[39] Iteration[50/265] Loss: 3.798, Acc_clip: 0.952, Acc_id1: 0.002, Acc_id2: 0.654, Base Lr: 3.50e-06
+2026-06-24 20:37:44,658 TFCLIP.train INFO: Epoch[39] Iteration[100/265] Loss: 3.778, Acc_clip: 0.951, Acc_id1: 0.005, Acc_id2: 0.675, Base Lr: 3.50e-06
+2026-06-24 20:40:31,780 TFCLIP.train INFO: Epoch[39] Iteration[150/265] Loss: 3.786, Acc_clip: 0.934, Acc_id1: 0.008, Acc_id2: 0.677, Base Lr: 3.50e-06
+2026-06-24 20:43:15,190 TFCLIP.train INFO: Epoch[39] Iteration[200/265] Loss: 3.808, Acc_clip: 0.917, Acc_id1: 0.009, Acc_id2: 0.689, Base Lr: 3.50e-06
+2026-06-24 20:45:50,831 TFCLIP.train INFO: Epoch[39] Iteration[250/265] Loss: 3.981, Acc_clip: 0.857, Acc_id1: 0.015, Acc_id2: 0.656, Base Lr: 3.50e-06
+2026-06-24 20:46:32,032 TFCLIP.train INFO: Epoch 39 done. Time per batch: 3.250[s] Speed: 2.5[samples/s]
+2026-06-24 20:49:09,560 TFCLIP.train INFO: Epoch[40] Iteration[50/265] Loss: 3.704, Acc_clip: 0.942, Acc_id1: 0.002, Acc_id2: 0.712, Base Lr: 3.50e-06
+2026-06-24 20:52:05,705 TFCLIP.train INFO: Epoch[40] Iteration[100/265] Loss: 3.716, Acc_clip: 0.941, Acc_id1: 0.007, Acc_id2: 0.711, Base Lr: 3.50e-06
+2026-06-24 20:54:55,378 TFCLIP.train INFO: Epoch[40] Iteration[150/265] Loss: 3.733, Acc_clip: 0.933, Acc_id1: 0.007, Acc_id2: 0.714, Base Lr: 3.50e-06
+2026-06-24 20:57:46,952 TFCLIP.train INFO: Epoch[40] Iteration[200/265] Loss: 3.774, Acc_clip: 0.908, Acc_id1: 0.009, Acc_id2: 0.699, Base Lr: 3.50e-06
+2026-06-24 21:00:38,869 TFCLIP.train INFO: Epoch[40] Iteration[250/265] Loss: 3.853, Acc_clip: 0.854, Acc_id1: 0.015, Acc_id2: 0.678, Base Lr: 3.50e-06
+2026-06-24 21:01:26,701 TFCLIP.train INFO: Epoch 40 done. Time per batch: 3.402[s] Speed: 2.4[samples/s]
+2026-06-24 21:04:19,744 TFCLIP.train INFO: Epoch[41] Iteration[50/265] Loss: 3.740, Acc_clip: 0.940, Acc_id1: 0.002, Acc_id2: 0.684, Base Lr: 3.50e-06
+2026-06-24 21:06:59,200 TFCLIP.train INFO: Epoch[41] Iteration[100/265] Loss: 3.807, Acc_clip: 0.927, Acc_id1: 0.005, Acc_id2: 0.680, Base Lr: 3.50e-06
+2026-06-24 21:09:42,656 TFCLIP.train INFO: Epoch[41] Iteration[150/265] Loss: 3.777, Acc_clip: 0.920, Acc_id1: 0.006, Acc_id2: 0.704, Base Lr: 3.50e-06
+2026-06-24 21:12:32,153 TFCLIP.train INFO: Epoch[41] Iteration[200/265] Loss: 3.827, Acc_clip: 0.900, Acc_id1: 0.007, Acc_id2: 0.697, Base Lr: 3.50e-06
+2026-06-24 21:15:12,310 TFCLIP.train INFO: Epoch[41] Iteration[250/265] Loss: 4.022, Acc_clip: 0.847, Acc_id1: 0.016, Acc_id2: 0.660, Base Lr: 3.50e-06
+2026-06-24 21:16:01,393 TFCLIP.train INFO: Epoch 41 done. Time per batch: 3.300[s] Speed: 2.4[samples/s]
+2026-06-24 21:19:03,943 TFCLIP.train INFO: Epoch[42] Iteration[50/265] Loss: 3.699, Acc_clip: 0.955, Acc_id1: 0.025, Acc_id2: 0.692, Base Lr: 3.50e-06
+2026-06-24 21:22:10,512 TFCLIP.train INFO: Epoch[42] Iteration[100/265] Loss: 3.746, Acc_clip: 0.940, Acc_id1: 0.019, Acc_id2: 0.692, Base Lr: 3.50e-06
+2026-06-24 21:25:15,346 TFCLIP.train INFO: Epoch[42] Iteration[150/265] Loss: 3.726, Acc_clip: 0.938, Acc_id1: 0.015, Acc_id2: 0.704, Base Lr: 3.50e-06
+2026-06-24 21:28:12,756 TFCLIP.train INFO: Epoch[42] Iteration[200/265] Loss: 3.759, Acc_clip: 0.906, Acc_id1: 0.016, Acc_id2: 0.702, Base Lr: 3.50e-06
+2026-06-24 21:31:07,146 TFCLIP.train INFO: Epoch[42] Iteration[250/265] Loss: 3.866, Acc_clip: 0.854, Acc_id1: 0.026, Acc_id2: 0.668, Base Lr: 3.50e-06
+2026-06-24 21:31:53,106 TFCLIP.train INFO: Epoch 42 done. Time per batch: 3.605[s] Speed: 2.2[samples/s]
+2026-06-24 21:34:34,986 TFCLIP.train INFO: Epoch[43] Iteration[50/265] Loss: 3.722, Acc_clip: 0.962, Acc_id1: 0.000, Acc_id2: 0.686, Base Lr: 3.50e-06
+2026-06-24 21:37:28,037 TFCLIP.train INFO: Epoch[43] Iteration[100/265] Loss: 3.718, Acc_clip: 0.945, Acc_id1: 0.011, Acc_id2: 0.704, Base Lr: 3.50e-06
+2026-06-24 21:40:02,389 TFCLIP.train INFO: Epoch[43] Iteration[150/265] Loss: 3.752, Acc_clip: 0.924, Acc_id1: 0.011, Acc_id2: 0.703, Base Lr: 3.50e-06
+2026-06-24 21:42:58,051 TFCLIP.train INFO: Epoch[43] Iteration[200/265] Loss: 3.797, Acc_clip: 0.903, Acc_id1: 0.016, Acc_id2: 0.699, Base Lr: 3.50e-06
+2026-06-24 21:45:43,262 TFCLIP.train INFO: Epoch[43] Iteration[250/265] Loss: 3.975, Acc_clip: 0.848, Acc_id1: 0.030, Acc_id2: 0.671, Base Lr: 3.50e-06
+2026-06-24 21:46:28,781 TFCLIP.train INFO: Epoch 43 done. Time per batch: 3.317[s] Speed: 2.4[samples/s]
+2026-06-24 21:49:03,572 TFCLIP.train INFO: Epoch[44] Iteration[50/265] Loss: 3.747, Acc_clip: 0.915, Acc_id1: 0.005, Acc_id2: 0.696, Base Lr: 3.50e-06
+2026-06-24 21:51:55,527 TFCLIP.train INFO: Epoch[44] Iteration[100/265] Loss: 3.756, Acc_clip: 0.914, Acc_id1: 0.007, Acc_id2: 0.690, Base Lr: 3.50e-06
+2026-06-24 21:55:00,653 TFCLIP.train INFO: Epoch[44] Iteration[150/265] Loss: 3.751, Acc_clip: 0.898, Acc_id1: 0.009, Acc_id2: 0.703, Base Lr: 3.50e-06
+2026-06-24 21:58:07,857 TFCLIP.train INFO: Epoch[44] Iteration[200/265] Loss: 3.750, Acc_clip: 0.886, Acc_id1: 0.014, Acc_id2: 0.707, Base Lr: 3.50e-06
+2026-06-24 22:01:14,727 TFCLIP.train INFO: Epoch[44] Iteration[250/265] Loss: 3.827, Acc_clip: 0.847, Acc_id1: 0.021, Acc_id2: 0.683, Base Lr: 3.50e-06
+2026-06-24 22:02:07,242 TFCLIP.train INFO: Epoch 44 done. Time per batch: 3.541[s] Speed: 2.3[samples/s]
+2026-06-24 22:04:33,803 TFCLIP.train INFO: Epoch[45] Iteration[50/265] Loss: 3.711, Acc_clip: 0.947, Acc_id1: 0.002, Acc_id2: 0.712, Base Lr: 3.50e-06
+2026-06-24 22:07:25,314 TFCLIP.train INFO: Epoch[45] Iteration[100/265] Loss: 3.710, Acc_clip: 0.938, Acc_id1: 0.009, Acc_id2: 0.720, Base Lr: 3.50e-06
+2026-06-24 22:10:05,755 TFCLIP.train INFO: Epoch[45] Iteration[150/265] Loss: 3.677, Acc_clip: 0.938, Acc_id1: 0.008, Acc_id2: 0.741, Base Lr: 3.50e-06
+2026-06-24 22:12:53,285 TFCLIP.train INFO: Epoch[45] Iteration[200/265] Loss: 3.698, Acc_clip: 0.927, Acc_id1: 0.009, Acc_id2: 0.730, Base Lr: 3.50e-06
+2026-06-24 22:15:50,824 TFCLIP.train INFO: Epoch[45] Iteration[250/265] Loss: 3.929, Acc_clip: 0.861, Acc_id1: 0.015, Acc_id2: 0.685, Base Lr: 3.50e-06
+2026-06-24 22:16:45,097 TFCLIP.train INFO: Epoch 45 done. Time per batch: 3.313[s] Speed: 2.4[samples/s]
+2026-06-24 22:19:49,572 TFCLIP.train INFO: Epoch[46] Iteration[50/265] Loss: 3.726, Acc_clip: 0.945, Acc_id1: 0.007, Acc_id2: 0.694, Base Lr: 3.50e-06
+2026-06-24 22:23:01,168 TFCLIP.train INFO: Epoch[46] Iteration[100/265] Loss: 3.751, Acc_clip: 0.924, Acc_id1: 0.007, Acc_id2: 0.700, Base Lr: 3.50e-06
+2026-06-24 22:26:03,000 TFCLIP.train INFO: Epoch[46] Iteration[150/265] Loss: 3.729, Acc_clip: 0.923, Acc_id1: 0.008, Acc_id2: 0.715, Base Lr: 3.50e-06
+2026-06-24 22:29:05,810 TFCLIP.train INFO: Epoch[46] Iteration[200/265] Loss: 3.727, Acc_clip: 0.903, Acc_id1: 0.012, Acc_id2: 0.726, Base Lr: 3.50e-06
+2026-06-24 22:32:13,285 TFCLIP.train INFO: Epoch[46] Iteration[250/265] Loss: 3.883, Acc_clip: 0.845, Acc_id1: 0.022, Acc_id2: 0.688, Base Lr: 3.50e-06
+2026-06-24 22:33:14,043 TFCLIP.train INFO: Epoch 46 done. Time per batch: 3.732[s] Speed: 2.1[samples/s]
+2026-06-24 22:36:08,179 TFCLIP.train INFO: Epoch[47] Iteration[50/265] Loss: 3.727, Acc_clip: 0.935, Acc_id1: 0.007, Acc_id2: 0.712, Base Lr: 3.50e-06
+2026-06-24 22:39:03,270 TFCLIP.train INFO: Epoch[47] Iteration[100/265] Loss: 3.709, Acc_clip: 0.919, Acc_id1: 0.014, Acc_id2: 0.720, Base Lr: 3.50e-06
+2026-06-24 22:41:46,446 TFCLIP.train INFO: Epoch[47] Iteration[150/265] Loss: 3.700, Acc_clip: 0.915, Acc_id1: 0.011, Acc_id2: 0.726, Base Lr: 3.50e-06
+2026-06-24 22:44:29,823 TFCLIP.train INFO: Epoch[47] Iteration[200/265] Loss: 3.759, Acc_clip: 0.891, Acc_id1: 0.014, Acc_id2: 0.717, Base Lr: 3.50e-06
+2026-06-24 22:47:11,575 TFCLIP.train INFO: Epoch[47] Iteration[250/265] Loss: 3.862, Acc_clip: 0.847, Acc_id1: 0.018, Acc_id2: 0.690, Base Lr: 3.50e-06
+2026-06-24 22:47:58,329 TFCLIP.train INFO: Epoch 47 done. Time per batch: 3.350[s] Speed: 2.4[samples/s]
+2026-06-24 22:50:42,209 TFCLIP.train INFO: Epoch[48] Iteration[50/265] Loss: 3.647, Acc_clip: 0.970, Acc_id1: 0.000, Acc_id2: 0.726, Base Lr: 3.50e-06
+2026-06-24 22:53:29,511 TFCLIP.train INFO: Epoch[48] Iteration[100/265] Loss: 3.660, Acc_clip: 0.956, Acc_id1: 0.000, Acc_id2: 0.730, Base Lr: 3.50e-06
+2026-06-24 22:56:17,274 TFCLIP.train INFO: Epoch[48] Iteration[150/265] Loss: 3.676, Acc_clip: 0.939, Acc_id1: 0.011, Acc_id2: 0.727, Base Lr: 3.50e-06
+2026-06-24 22:59:05,592 TFCLIP.train INFO: Epoch[48] Iteration[200/265] Loss: 3.747, Acc_clip: 0.912, Acc_id1: 0.013, Acc_id2: 0.724, Base Lr: 3.50e-06
+2026-06-24 23:01:55,107 TFCLIP.train INFO: Epoch[48] Iteration[250/265] Loss: 3.859, Acc_clip: 0.859, Acc_id1: 0.022, Acc_id2: 0.691, Base Lr: 3.50e-06
+2026-06-24 23:02:37,951 TFCLIP.train INFO: Epoch 48 done. Time per batch: 3.345[s] Speed: 2.4[samples/s]
+2026-06-24 23:05:07,018 TFCLIP.train INFO: Epoch[49] Iteration[50/265] Loss: 3.683, Acc_clip: 0.930, Acc_id1: 0.000, Acc_id2: 0.740, Base Lr: 3.50e-06
+2026-06-24 23:07:57,448 TFCLIP.train INFO: Epoch[49] Iteration[100/265] Loss: 3.640, Acc_clip: 0.936, Acc_id1: 0.005, Acc_id2: 0.750, Base Lr: 3.50e-06
+2026-06-24 23:10:45,106 TFCLIP.train INFO: Epoch[49] Iteration[150/265] Loss: 3.626, Acc_clip: 0.939, Acc_id1: 0.004, Acc_id2: 0.752, Base Lr: 3.50e-06
+2026-06-24 23:13:34,381 TFCLIP.train INFO: Epoch[49] Iteration[200/265] Loss: 3.670, Acc_clip: 0.917, Acc_id1: 0.011, Acc_id2: 0.741, Base Lr: 3.50e-06
+2026-06-24 23:16:24,443 TFCLIP.train INFO: Epoch[49] Iteration[250/265] Loss: 3.835, Acc_clip: 0.857, Acc_id1: 0.018, Acc_id2: 0.699, Base Lr: 3.50e-06
+2026-06-24 23:17:13,443 TFCLIP.train INFO: Epoch 49 done. Time per batch: 3.316[s] Speed: 2.4[samples/s]
+2026-06-24 23:19:54,147 TFCLIP.train INFO: Epoch[50] Iteration[50/265] Loss: 3.665, Acc_clip: 0.935, Acc_id1: 0.007, Acc_id2: 0.731, Base Lr: 3.50e-06
+2026-06-24 23:22:14,640 TFCLIP.train INFO: Epoch[50] Iteration[100/265] Loss: 3.666, Acc_clip: 0.935, Acc_id1: 0.010, Acc_id2: 0.733, Base Lr: 3.50e-06
+2026-06-24 23:25:01,087 TFCLIP.train INFO: Epoch[50] Iteration[150/265] Loss: 3.661, Acc_clip: 0.931, Acc_id1: 0.018, Acc_id2: 0.735, Base Lr: 3.50e-06
+2026-06-24 23:27:48,525 TFCLIP.train INFO: Epoch[50] Iteration[200/265] Loss: 3.708, Acc_clip: 0.911, Acc_id1: 0.014, Acc_id2: 0.727, Base Lr: 3.50e-06
+2026-06-24 23:30:37,763 TFCLIP.train INFO: Epoch[50] Iteration[250/265] Loss: 3.867, Acc_clip: 0.859, Acc_id1: 0.018, Acc_id2: 0.691, Base Lr: 3.50e-06
+2026-06-24 23:31:27,625 TFCLIP.train INFO: Epoch 50 done. Time per batch: 3.223[s] Speed: 2.5[samples/s]
+2026-06-24 23:34:28,885 TFCLIP.train INFO: Epoch[51] Iteration[50/265] Loss: 3.677, Acc_clip: 0.927, Acc_id1: 0.010, Acc_id2: 0.726, Base Lr: 3.50e-07
+2026-06-24 23:37:31,809 TFCLIP.train INFO: Epoch[51] Iteration[100/265] Loss: 3.645, Acc_clip: 0.930, Acc_id1: 0.007, Acc_id2: 0.736, Base Lr: 3.50e-07
+2026-06-24 23:40:37,946 TFCLIP.train INFO: Epoch[51] Iteration[150/265] Loss: 3.669, Acc_clip: 0.923, Acc_id1: 0.013, Acc_id2: 0.729, Base Lr: 3.50e-07
+2026-06-24 23:43:34,535 TFCLIP.train INFO: Epoch[51] Iteration[200/265] Loss: 3.720, Acc_clip: 0.900, Acc_id1: 0.014, Acc_id2: 0.722, Base Lr: 3.50e-07
+2026-06-24 23:46:32,172 TFCLIP.train INFO: Epoch[51] Iteration[250/265] Loss: 3.763, Acc_clip: 0.870, Acc_id1: 0.017, Acc_id2: 0.709, Base Lr: 3.50e-07
+2026-06-24 23:47:24,566 TFCLIP.train INFO: Epoch 51 done. Time per batch: 3.599[s] Speed: 2.2[samples/s]
+2026-06-24 23:50:03,485 TFCLIP.train INFO: Epoch[52] Iteration[50/265] Loss: 3.616, Acc_clip: 0.955, Acc_id1: 0.015, Acc_id2: 0.755, Base Lr: 3.50e-07
+2026-06-24 23:52:55,663 TFCLIP.train INFO: Epoch[52] Iteration[100/265] Loss: 3.603, Acc_clip: 0.962, Acc_id1: 0.012, Acc_id2: 0.752, Base Lr: 3.50e-07
+2026-06-24 23:55:49,482 TFCLIP.train INFO: Epoch[52] Iteration[150/265] Loss: 3.618, Acc_clip: 0.948, Acc_id1: 0.013, Acc_id2: 0.750, Base Lr: 3.50e-07
+2026-06-24 23:58:41,860 TFCLIP.train INFO: Epoch[52] Iteration[200/265] Loss: 3.661, Acc_clip: 0.912, Acc_id1: 0.020, Acc_id2: 0.751, Base Lr: 3.50e-07
+2026-06-25 00:01:31,847 TFCLIP.train INFO: Epoch[52] Iteration[250/265] Loss: 3.811, Acc_clip: 0.860, Acc_id1: 0.027, Acc_id2: 0.710, Base Lr: 3.50e-07
+2026-06-25 00:02:20,614 TFCLIP.train INFO: Epoch 52 done. Time per batch: 3.394[s] Speed: 2.4[samples/s]
+2026-06-25 00:05:13,964 TFCLIP.train INFO: Epoch[53] Iteration[50/265] Loss: 3.675, Acc_clip: 0.955, Acc_id1: 0.010, Acc_id2: 0.725, Base Lr: 3.50e-07
+2026-06-25 00:08:16,154 TFCLIP.train INFO: Epoch[53] Iteration[100/265] Loss: 3.662, Acc_clip: 0.940, Acc_id1: 0.007, Acc_id2: 0.744, Base Lr: 3.50e-07
+2026-06-25 00:11:10,673 TFCLIP.train INFO: Epoch[53] Iteration[150/265] Loss: 3.668, Acc_clip: 0.921, Acc_id1: 0.008, Acc_id2: 0.737, Base Lr: 3.50e-07
+2026-06-25 00:14:13,619 TFCLIP.train INFO: Epoch[53] Iteration[200/265] Loss: 3.672, Acc_clip: 0.902, Acc_id1: 0.012, Acc_id2: 0.739, Base Lr: 3.50e-07
+2026-06-25 00:17:22,274 TFCLIP.train INFO: Epoch[53] Iteration[250/265] Loss: 3.823, Acc_clip: 0.853, Acc_id1: 0.021, Acc_id2: 0.703, Base Lr: 3.50e-07
+2026-06-25 00:18:14,182 TFCLIP.train INFO: Epoch 53 done. Time per batch: 3.612[s] Speed: 2.2[samples/s]
+2026-06-25 00:21:00,555 TFCLIP.train INFO: Epoch[54] Iteration[50/265] Loss: 3.672, Acc_clip: 0.912, Acc_id1: 0.005, Acc_id2: 0.750, Base Lr: 3.50e-07
+2026-06-25 00:23:45,263 TFCLIP.train INFO: Epoch[54] Iteration[100/265] Loss: 3.665, Acc_clip: 0.914, Acc_id1: 0.004, Acc_id2: 0.743, Base Lr: 3.50e-07
+2026-06-25 00:26:40,524 TFCLIP.train INFO: Epoch[54] Iteration[150/265] Loss: 3.643, Acc_clip: 0.924, Acc_id1: 0.009, Acc_id2: 0.746, Base Lr: 3.50e-07
+2026-06-25 00:29:29,981 TFCLIP.train INFO: Epoch[54] Iteration[200/265] Loss: 3.731, Acc_clip: 0.900, Acc_id1: 0.014, Acc_id2: 0.737, Base Lr: 3.50e-07
+2026-06-25 00:32:22,330 TFCLIP.train INFO: Epoch[54] Iteration[250/265] Loss: 3.838, Acc_clip: 0.859, Acc_id1: 0.019, Acc_id2: 0.710, Base Lr: 3.50e-07
+2026-06-25 00:33:09,336 TFCLIP.train INFO: Epoch 54 done. Time per batch: 3.391[s] Speed: 2.4[samples/s]
+2026-06-25 00:35:58,881 TFCLIP.train INFO: Epoch[55] Iteration[50/265] Loss: 3.659, Acc_clip: 0.938, Acc_id1: 0.000, Acc_id2: 0.748, Base Lr: 3.50e-07
+2026-06-25 00:38:55,781 TFCLIP.train INFO: Epoch[55] Iteration[100/265] Loss: 3.699, Acc_clip: 0.924, Acc_id1: 0.004, Acc_id2: 0.735, Base Lr: 3.50e-07
+2026-06-25 00:41:47,636 TFCLIP.train INFO: Epoch[55] Iteration[150/265] Loss: 3.734, Acc_clip: 0.920, Acc_id1: 0.002, Acc_id2: 0.732, Base Lr: 3.50e-07
+2026-06-25 00:44:42,841 TFCLIP.train INFO: Epoch[55] Iteration[200/265] Loss: 3.726, Acc_clip: 0.903, Acc_id1: 0.007, Acc_id2: 0.731, Base Lr: 3.50e-07
+2026-06-25 00:47:37,705 TFCLIP.train INFO: Epoch[55] Iteration[250/265] Loss: 3.800, Acc_clip: 0.859, Acc_id1: 0.020, Acc_id2: 0.706, Base Lr: 3.50e-07
+2026-06-25 00:48:27,224 TFCLIP.train INFO: Epoch 55 done. Time per batch: 3.477[s] Speed: 2.3[samples/s]
+2026-06-25 00:51:12,510 TFCLIP.train INFO: Epoch[56] Iteration[50/265] Loss: 3.667, Acc_clip: 0.922, Acc_id1: 0.005, Acc_id2: 0.730, Base Lr: 3.50e-07
+2026-06-25 00:54:03,030 TFCLIP.train INFO: Epoch[56] Iteration[100/265] Loss: 3.665, Acc_clip: 0.921, Acc_id1: 0.002, Acc_id2: 0.736, Base Lr: 3.50e-07
+2026-06-25 00:56:55,172 TFCLIP.train INFO: Epoch[56] Iteration[150/265] Loss: 3.656, Acc_clip: 0.928, Acc_id1: 0.009, Acc_id2: 0.747, Base Lr: 3.50e-07
+2026-06-25 00:59:44,575 TFCLIP.train INFO: Epoch[56] Iteration[200/265] Loss: 3.667, Acc_clip: 0.908, Acc_id1: 0.014, Acc_id2: 0.748, Base Lr: 3.50e-07
+2026-06-25 01:02:33,026 TFCLIP.train INFO: Epoch[56] Iteration[250/265] Loss: 3.862, Acc_clip: 0.863, Acc_id1: 0.027, Acc_id2: 0.711, Base Lr: 3.50e-07
+2026-06-25 01:03:19,528 TFCLIP.train INFO: Epoch 56 done. Time per batch: 3.380[s] Speed: 2.4[samples/s]
+2026-06-25 01:05:55,552 TFCLIP.train INFO: Epoch[57] Iteration[50/265] Loss: 3.611, Acc_clip: 0.952, Acc_id1: 0.000, Acc_id2: 0.755, Base Lr: 3.50e-07
+2026-06-25 01:08:50,257 TFCLIP.train INFO: Epoch[57] Iteration[100/265] Loss: 3.584, Acc_clip: 0.960, Acc_id1: 0.000, Acc_id2: 0.769, Base Lr: 3.50e-07
+2026-06-25 01:11:39,201 TFCLIP.train INFO: Epoch[57] Iteration[150/265] Loss: 3.590, Acc_clip: 0.953, Acc_id1: 0.005, Acc_id2: 0.779, Base Lr: 3.50e-07
+2026-06-25 01:14:31,951 TFCLIP.train INFO: Epoch[57] Iteration[200/265] Loss: 3.676, Acc_clip: 0.922, Acc_id1: 0.009, Acc_id2: 0.749, Base Lr: 3.50e-07
+2026-06-25 01:17:27,761 TFCLIP.train INFO: Epoch[57] Iteration[250/265] Loss: 3.872, Acc_clip: 0.859, Acc_id1: 0.020, Acc_id2: 0.705, Base Lr: 3.50e-07
+2026-06-25 01:18:16,949 TFCLIP.train INFO: Epoch 57 done. Time per batch: 3.399[s] Speed: 2.4[samples/s]
+2026-06-25 01:21:10,855 TFCLIP.train INFO: Epoch[58] Iteration[50/265] Loss: 3.671, Acc_clip: 0.950, Acc_id1: 0.007, Acc_id2: 0.717, Base Lr: 3.50e-07
+2026-06-25 01:24:03,815 TFCLIP.train INFO: Epoch[58] Iteration[100/265] Loss: 3.638, Acc_clip: 0.949, Acc_id1: 0.005, Acc_id2: 0.742, Base Lr: 3.50e-07
+2026-06-25 01:26:51,431 TFCLIP.train INFO: Epoch[58] Iteration[150/265] Loss: 3.632, Acc_clip: 0.933, Acc_id1: 0.007, Acc_id2: 0.746, Base Lr: 3.50e-07
+2026-06-25 01:29:43,692 TFCLIP.train INFO: Epoch[58] Iteration[200/265] Loss: 3.648, Acc_clip: 0.907, Acc_id1: 0.012, Acc_id2: 0.746, Base Lr: 3.50e-07
+2026-06-25 01:32:34,827 TFCLIP.train INFO: Epoch[58] Iteration[250/265] Loss: 3.750, Acc_clip: 0.864, Acc_id1: 0.020, Acc_id2: 0.720, Base Lr: 3.50e-07
+2026-06-25 01:33:24,143 TFCLIP.train INFO: Epoch 58 done. Time per batch: 3.436[s] Speed: 2.3[samples/s]
+2026-06-25 01:36:06,612 TFCLIP.train INFO: Epoch[59] Iteration[50/265] Loss: 3.672, Acc_clip: 0.930, Acc_id1: 0.005, Acc_id2: 0.719, Base Lr: 3.50e-07
+2026-06-25 01:38:57,509 TFCLIP.train INFO: Epoch[59] Iteration[100/265] Loss: 3.684, Acc_clip: 0.917, Acc_id1: 0.007, Acc_id2: 0.727, Base Lr: 3.50e-07
+2026-06-25 01:41:48,971 TFCLIP.train INFO: Epoch[59] Iteration[150/265] Loss: 3.706, Acc_clip: 0.914, Acc_id1: 0.006, Acc_id2: 0.739, Base Lr: 3.50e-07
+2026-06-25 01:44:38,356 TFCLIP.train INFO: Epoch[59] Iteration[200/265] Loss: 3.724, Acc_clip: 0.899, Acc_id1: 0.012, Acc_id2: 0.742, Base Lr: 3.50e-07
+2026-06-25 01:47:31,463 TFCLIP.train INFO: Epoch[59] Iteration[250/265] Loss: 3.848, Acc_clip: 0.847, Acc_id1: 0.026, Acc_id2: 0.710, Base Lr: 3.50e-07
+2026-06-25 01:48:23,051 TFCLIP.train INFO: Epoch 59 done. Time per batch: 3.392[s] Speed: 2.4[samples/s]
+2026-06-25 01:51:16,957 TFCLIP.train INFO: Epoch[60] Iteration[50/265] Loss: 3.614, Acc_clip: 0.957, Acc_id1: 0.007, Acc_id2: 0.752, Base Lr: 3.50e-07
+2026-06-25 01:54:17,643 TFCLIP.train INFO: Epoch[60] Iteration[100/265] Loss: 3.625, Acc_clip: 0.933, Acc_id1: 0.014, Acc_id2: 0.752, Base Lr: 3.50e-07
+2026-06-25 01:57:19,990 TFCLIP.train INFO: Epoch[60] Iteration[150/265] Loss: 3.613, Acc_clip: 0.934, Acc_id1: 0.012, Acc_id2: 0.761, Base Lr: 3.50e-07
+2026-06-25 02:00:24,820 TFCLIP.train INFO: Epoch[60] Iteration[200/265] Loss: 3.635, Acc_clip: 0.918, Acc_id1: 0.011, Acc_id2: 0.756, Base Lr: 3.50e-07
+2026-06-25 02:03:29,667 TFCLIP.train INFO: Epoch[60] Iteration[250/265] Loss: 3.755, Acc_clip: 0.868, Acc_id1: 0.016, Acc_id2: 0.726, Base Lr: 3.50e-07
+2026-06-25 02:04:21,017 TFCLIP.train INFO: Epoch 60 done. Time per batch: 3.629[s] Speed: 2.2[samples/s]
+2026-06-25 02:07:27,625 TFCLIP.train INFO: Epoch[61] Iteration[50/265] Loss: 3.647, Acc_clip: 0.933, Acc_id1: 0.000, Acc_id2: 0.764, Base Lr: 3.50e-07
+2026-06-25 02:10:32,201 TFCLIP.train INFO: Epoch[61] Iteration[100/265] Loss: 3.632, Acc_clip: 0.934, Acc_id1: 0.010, Acc_id2: 0.765, Base Lr: 3.50e-07
+2026-06-25 02:13:18,566 TFCLIP.train INFO: Epoch[61] Iteration[150/265] Loss: 3.609, Acc_clip: 0.936, Acc_id1: 0.013, Acc_id2: 0.772, Base Lr: 3.50e-07
+2026-06-25 02:16:22,581 TFCLIP.train INFO: Epoch[61] Iteration[200/265] Loss: 3.644, Acc_clip: 0.908, Acc_id1: 0.023, Acc_id2: 0.756, Base Lr: 3.50e-07
+2026-06-25 02:19:27,466 TFCLIP.train INFO: Epoch[61] Iteration[250/265] Loss: 3.774, Acc_clip: 0.858, Acc_id1: 0.031, Acc_id2: 0.720, Base Lr: 3.50e-07
+2026-06-25 02:20:17,816 TFCLIP.train INFO: Epoch 61 done. Time per batch: 3.611[s] Speed: 2.2[samples/s]
+2026-06-25 02:23:11,136 TFCLIP.train INFO: Epoch[62] Iteration[50/265] Loss: 3.660, Acc_clip: 0.905, Acc_id1: 0.015, Acc_id2: 0.731, Base Lr: 3.50e-07
+2026-06-25 02:26:11,637 TFCLIP.train INFO: Epoch[62] Iteration[100/265] Loss: 3.650, Acc_clip: 0.921, Acc_id1: 0.011, Acc_id2: 0.743, Base Lr: 3.50e-07
+2026-06-25 02:29:13,828 TFCLIP.train INFO: Epoch[62] Iteration[150/265] Loss: 3.646, Acc_clip: 0.913, Acc_id1: 0.013, Acc_id2: 0.746, Base Lr: 3.50e-07
+2026-06-25 02:32:05,613 TFCLIP.train INFO: Epoch[62] Iteration[200/265] Loss: 3.657, Acc_clip: 0.906, Acc_id1: 0.012, Acc_id2: 0.747, Base Lr: 3.50e-07
+2026-06-25 02:34:57,126 TFCLIP.train INFO: Epoch[62] Iteration[250/265] Loss: 3.780, Acc_clip: 0.863, Acc_id1: 0.021, Acc_id2: 0.710, Base Lr: 3.50e-07
+2026-06-25 02:35:45,003 TFCLIP.train INFO: Epoch 62 done. Time per batch: 3.512[s] Speed: 2.3[samples/s]
+2026-06-25 02:38:27,132 TFCLIP.train INFO: Epoch[63] Iteration[50/265] Loss: 3.616, Acc_clip: 0.965, Acc_id1: 0.005, Acc_id2: 0.741, Base Lr: 3.50e-07
+2026-06-25 02:41:19,584 TFCLIP.train INFO: Epoch[63] Iteration[100/265] Loss: 3.583, Acc_clip: 0.949, Acc_id1: 0.009, Acc_id2: 0.770, Base Lr: 3.50e-07
+2026-06-25 02:44:11,369 TFCLIP.train INFO: Epoch[63] Iteration[150/265] Loss: 3.595, Acc_clip: 0.938, Acc_id1: 0.011, Acc_id2: 0.768, Base Lr: 3.50e-07
+2026-06-25 02:47:04,180 TFCLIP.train INFO: Epoch[63] Iteration[200/265] Loss: 3.634, Acc_clip: 0.908, Acc_id1: 0.016, Acc_id2: 0.754, Base Lr: 3.50e-07
+2026-06-25 02:49:58,343 TFCLIP.train INFO: Epoch[63] Iteration[250/265] Loss: 3.767, Acc_clip: 0.860, Acc_id1: 0.020, Acc_id2: 0.715, Base Lr: 3.50e-07
+2026-06-25 02:50:47,540 TFCLIP.train INFO: Epoch 63 done. Time per batch: 3.419[s] Speed: 2.3[samples/s]
+2026-06-25 02:53:30,905 TFCLIP.train INFO: Epoch[64] Iteration[50/265] Loss: 3.622, Acc_clip: 0.942, Acc_id1: 0.015, Acc_id2: 0.771, Base Lr: 3.50e-07
+2026-06-25 02:56:22,432 TFCLIP.train INFO: Epoch[64] Iteration[100/265] Loss: 3.619, Acc_clip: 0.934, Acc_id1: 0.009, Acc_id2: 0.768, Base Lr: 3.50e-07
+2026-06-25 02:59:12,619 TFCLIP.train INFO: Epoch[64] Iteration[150/265] Loss: 3.604, Acc_clip: 0.938, Acc_id1: 0.013, Acc_id2: 0.768, Base Lr: 3.50e-07
+2026-06-25 03:02:05,048 TFCLIP.train INFO: Epoch[64] Iteration[200/265] Loss: 3.634, Acc_clip: 0.917, Acc_id1: 0.022, Acc_id2: 0.755, Base Lr: 3.50e-07
+2026-06-25 03:04:55,409 TFCLIP.train INFO: Epoch[64] Iteration[250/265] Loss: 3.883, Acc_clip: 0.869, Acc_id1: 0.029, Acc_id2: 0.712, Base Lr: 3.50e-07
+2026-06-25 03:05:44,029 TFCLIP.train INFO: Epoch 64 done. Time per batch: 3.396[s] Speed: 2.4[samples/s]
+2026-06-25 03:08:35,677 TFCLIP.train INFO: Epoch[65] Iteration[50/265] Loss: 3.615, Acc_clip: 0.950, Acc_id1: 0.000, Acc_id2: 0.743, Base Lr: 3.50e-07
+2026-06-25 03:11:34,792 TFCLIP.train INFO: Epoch[65] Iteration[100/265] Loss: 3.588, Acc_clip: 0.959, Acc_id1: 0.014, Acc_id2: 0.762, Base Lr: 3.50e-07
+2026-06-25 03:14:36,107 TFCLIP.train INFO: Epoch[65] Iteration[150/265] Loss: 3.605, Acc_clip: 0.950, Acc_id1: 0.016, Acc_id2: 0.766, Base Lr: 3.50e-07
+2026-06-25 03:17:33,905 TFCLIP.train INFO: Epoch[65] Iteration[200/265] Loss: 3.642, Acc_clip: 0.922, Acc_id1: 0.017, Acc_id2: 0.751, Base Lr: 3.50e-07
+2026-06-25 03:20:18,928 TFCLIP.train INFO: Epoch[65] Iteration[250/265] Loss: 3.804, Acc_clip: 0.866, Acc_id1: 0.025, Acc_id2: 0.709, Base Lr: 3.50e-07
+2026-06-25 03:21:04,634 TFCLIP.train INFO: Epoch 65 done. Time per batch: 3.487[s] Speed: 2.3[samples/s]
+2026-06-25 03:23:43,159 TFCLIP.train INFO: Epoch[66] Iteration[50/265] Loss: 3.605, Acc_clip: 0.967, Acc_id1: 0.000, Acc_id2: 0.749, Base Lr: 3.50e-07
+2026-06-25 03:26:29,166 TFCLIP.train INFO: Epoch[66] Iteration[100/265] Loss: 3.607, Acc_clip: 0.957, Acc_id1: 0.000, Acc_id2: 0.753, Base Lr: 3.50e-07
+2026-06-25 03:29:14,947 TFCLIP.train INFO: Epoch[66] Iteration[150/265] Loss: 3.602, Acc_clip: 0.938, Acc_id1: 0.005, Acc_id2: 0.763, Base Lr: 3.50e-07
+2026-06-25 03:32:00,189 TFCLIP.train INFO: Epoch[66] Iteration[200/265] Loss: 3.633, Acc_clip: 0.915, Acc_id1: 0.012, Acc_id2: 0.755, Base Lr: 3.50e-07
+2026-06-25 03:34:50,546 TFCLIP.train INFO: Epoch[66] Iteration[250/265] Loss: 3.802, Acc_clip: 0.858, Acc_id1: 0.020, Acc_id2: 0.712, Base Lr: 3.50e-07
+2026-06-25 03:35:38,970 TFCLIP.train INFO: Epoch 66 done. Time per batch: 3.312[s] Speed: 2.4[samples/s]
+2026-06-25 03:38:23,665 TFCLIP.train INFO: Epoch[67] Iteration[50/265] Loss: 3.626, Acc_clip: 0.942, Acc_id1: 0.002, Acc_id2: 0.754, Base Lr: 3.50e-07
+2026-06-25 03:41:12,104 TFCLIP.train INFO: Epoch[67] Iteration[100/265] Loss: 3.699, Acc_clip: 0.939, Acc_id1: 0.005, Acc_id2: 0.757, Base Lr: 3.50e-07
+2026-06-25 03:44:01,981 TFCLIP.train INFO: Epoch[67] Iteration[150/265] Loss: 3.664, Acc_clip: 0.933, Acc_id1: 0.010, Acc_id2: 0.763, Base Lr: 3.50e-07
+2026-06-25 03:46:56,215 TFCLIP.train INFO: Epoch[67] Iteration[200/265] Loss: 3.675, Acc_clip: 0.908, Acc_id1: 0.014, Acc_id2: 0.755, Base Lr: 3.50e-07
+2026-06-25 03:49:44,636 TFCLIP.train INFO: Epoch[67] Iteration[250/265] Loss: 3.796, Acc_clip: 0.858, Acc_id1: 0.024, Acc_id2: 0.720, Base Lr: 3.50e-07
+2026-06-25 03:50:29,220 TFCLIP.train INFO: Epoch 67 done. Time per batch: 3.385[s] Speed: 2.4[samples/s]
+2026-06-25 03:53:30,392 TFCLIP.train INFO: Epoch[68] Iteration[50/265] Loss: 3.559, Acc_clip: 0.957, Acc_id1: 0.015, Acc_id2: 0.772, Base Lr: 3.50e-07
+2026-06-25 03:56:46,049 TFCLIP.train INFO: Epoch[68] Iteration[100/265] Loss: 3.561, Acc_clip: 0.951, Acc_id1: 0.015, Acc_id2: 0.775, Base Lr: 3.50e-07
+2026-06-25 04:00:01,531 TFCLIP.train INFO: Epoch[68] Iteration[150/265] Loss: 3.589, Acc_clip: 0.938, Acc_id1: 0.011, Acc_id2: 0.764, Base Lr: 3.50e-07
+2026-06-25 04:02:32,573 TFCLIP.train INFO: Epoch[68] Iteration[200/265] Loss: 3.612, Acc_clip: 0.920, Acc_id1: 0.012, Acc_id2: 0.758, Base Lr: 3.50e-07
+2026-06-25 04:05:38,267 TFCLIP.train INFO: Epoch[68] Iteration[250/265] Loss: 3.801, Acc_clip: 0.872, Acc_id1: 0.018, Acc_id2: 0.714, Base Lr: 3.50e-07
+2026-06-25 04:06:35,269 TFCLIP.train INFO: Epoch 68 done. Time per batch: 3.645[s] Speed: 2.2[samples/s]
+2026-06-25 04:09:15,865 TFCLIP.train INFO: Epoch[69] Iteration[50/265] Loss: 3.562, Acc_clip: 0.957, Acc_id1: 0.030, Acc_id2: 0.790, Base Lr: 3.50e-07
+2026-06-25 04:12:12,672 TFCLIP.train INFO: Epoch[69] Iteration[100/265] Loss: 3.633, Acc_clip: 0.938, Acc_id1: 0.020, Acc_id2: 0.753, Base Lr: 3.50e-07
+2026-06-25 04:15:10,786 TFCLIP.train INFO: Epoch[69] Iteration[150/265] Loss: 3.611, Acc_clip: 0.933, Acc_id1: 0.018, Acc_id2: 0.769, Base Lr: 3.50e-07
+2026-06-25 04:18:08,560 TFCLIP.train INFO: Epoch[69] Iteration[200/265] Loss: 3.645, Acc_clip: 0.911, Acc_id1: 0.024, Acc_id2: 0.758, Base Lr: 3.50e-07
+2026-06-25 04:21:04,183 TFCLIP.train INFO: Epoch[69] Iteration[250/265] Loss: 3.728, Acc_clip: 0.877, Acc_id1: 0.024, Acc_id2: 0.736, Base Lr: 3.50e-07
+2026-06-25 04:21:56,842 TFCLIP.train INFO: Epoch 69 done. Time per batch: 3.478[s] Speed: 2.3[samples/s]
+2026-06-25 04:24:52,033 TFCLIP.train INFO: Epoch[70] Iteration[50/265] Loss: 3.602, Acc_clip: 0.947, Acc_id1: 0.010, Acc_id2: 0.733, Base Lr: 3.50e-07
+2026-06-25 04:27:57,350 TFCLIP.train INFO: Epoch[70] Iteration[100/265] Loss: 3.621, Acc_clip: 0.938, Acc_id1: 0.006, Acc_id2: 0.744, Base Lr: 3.50e-07
+2026-06-25 04:31:00,256 TFCLIP.train INFO: Epoch[70] Iteration[150/265] Loss: 3.617, Acc_clip: 0.933, Acc_id1: 0.009, Acc_id2: 0.753, Base Lr: 3.50e-07
+2026-06-25 04:34:03,336 TFCLIP.train INFO: Epoch[70] Iteration[200/265] Loss: 3.652, Acc_clip: 0.903, Acc_id1: 0.014, Acc_id2: 0.752, Base Lr: 3.50e-07
+2026-06-25 04:37:05,529 TFCLIP.train INFO: Epoch[70] Iteration[250/265] Loss: 3.771, Acc_clip: 0.853, Acc_id1: 0.023, Acc_id2: 0.717, Base Lr: 3.50e-07
+2026-06-25 04:37:55,490 TFCLIP.train INFO: Epoch 70 done. Time per batch: 3.631[s] Speed: 2.2[samples/s]
+2026-06-25 04:40:37,503 TFCLIP.train INFO: Epoch[71] Iteration[50/265] Loss: 3.552, Acc_clip: 0.975, Acc_id1: 0.007, Acc_id2: 0.777, Base Lr: 3.50e-08
+2026-06-25 04:43:13,968 TFCLIP.train INFO: Epoch[71] Iteration[100/265] Loss: 3.575, Acc_clip: 0.961, Acc_id1: 0.011, Acc_id2: 0.772, Base Lr: 3.50e-08
+2026-06-25 04:46:36,920 TFCLIP.train INFO: Epoch[71] Iteration[150/265] Loss: 3.612, Acc_clip: 0.939, Acc_id1: 0.011, Acc_id2: 0.763, Base Lr: 3.50e-08
+2026-06-25 04:49:36,064 TFCLIP.train INFO: Epoch[71] Iteration[200/265] Loss: 3.672, Acc_clip: 0.917, Acc_id1: 0.014, Acc_id2: 0.753, Base Lr: 3.50e-08
+2026-06-25 04:52:25,276 TFCLIP.train INFO: Epoch[71] Iteration[250/265] Loss: 3.922, Acc_clip: 0.869, Acc_id1: 0.028, Acc_id2: 0.708, Base Lr: 3.50e-08
+2026-06-25 04:53:05,646 TFCLIP.train INFO: Epoch 71 done. Time per batch: 3.461[s] Speed: 2.3[samples/s]
+2026-06-25 04:55:44,326 TFCLIP.train INFO: Epoch[72] Iteration[50/265] Loss: 3.621, Acc_clip: 0.940, Acc_id1: 0.015, Acc_id2: 0.731, Base Lr: 3.50e-08
+2026-06-25 04:58:34,652 TFCLIP.train INFO: Epoch[72] Iteration[100/265] Loss: 3.679, Acc_clip: 0.938, Acc_id1: 0.015, Acc_id2: 0.744, Base Lr: 3.50e-08
+2026-06-25 05:01:19,526 TFCLIP.train INFO: Epoch[72] Iteration[150/265] Loss: 3.672, Acc_clip: 0.919, Acc_id1: 0.017, Acc_id2: 0.735, Base Lr: 3.50e-08
+2026-06-25 05:03:59,728 TFCLIP.train INFO: Epoch[72] Iteration[200/265] Loss: 3.664, Acc_clip: 0.907, Acc_id1: 0.021, Acc_id2: 0.738, Base Lr: 3.50e-08
+2026-06-25 05:06:58,790 TFCLIP.train INFO: Epoch[72] Iteration[250/265] Loss: 3.779, Acc_clip: 0.863, Acc_id1: 0.027, Acc_id2: 0.705, Base Lr: 3.50e-08
+2026-06-25 05:07:50,193 TFCLIP.train INFO: Epoch 72 done. Time per batch: 3.351[s] Speed: 2.4[samples/s]
+2026-06-25 05:10:56,540 TFCLIP.train INFO: Epoch[73] Iteration[50/265] Loss: 3.583, Acc_clip: 0.942, Acc_id1: 0.002, Acc_id2: 0.758, Base Lr: 3.50e-08
+2026-06-25 05:14:08,357 TFCLIP.train INFO: Epoch[73] Iteration[100/265] Loss: 3.665, Acc_clip: 0.938, Acc_id1: 0.010, Acc_id2: 0.752, Base Lr: 3.50e-08
+2026-06-25 05:17:19,737 TFCLIP.train INFO: Epoch[73] Iteration[150/265] Loss: 3.666, Acc_clip: 0.928, Acc_id1: 0.016, Acc_id2: 0.748, Base Lr: 3.50e-08
+2026-06-25 05:20:08,331 TFCLIP.train INFO: Epoch[73] Iteration[200/265] Loss: 3.706, Acc_clip: 0.907, Acc_id1: 0.016, Acc_id2: 0.743, Base Lr: 3.50e-08
+2026-06-25 05:22:56,249 TFCLIP.train INFO: Epoch[73] Iteration[250/265] Loss: 3.783, Acc_clip: 0.863, Acc_id1: 0.017, Acc_id2: 0.723, Base Lr: 3.50e-08
+2026-06-25 05:23:48,648 TFCLIP.train INFO: Epoch 73 done. Time per batch: 3.617[s] Speed: 2.2[samples/s]
+2026-06-25 05:26:43,552 TFCLIP.train INFO: Epoch[74] Iteration[50/265] Loss: 3.610, Acc_clip: 0.952, Acc_id1: 0.007, Acc_id2: 0.777, Base Lr: 3.50e-08
+2026-06-25 05:29:47,454 TFCLIP.train INFO: Epoch[74] Iteration[100/265] Loss: 3.596, Acc_clip: 0.954, Acc_id1: 0.007, Acc_id2: 0.766, Base Lr: 3.50e-08
+2026-06-25 05:32:36,851 TFCLIP.train INFO: Epoch[74] Iteration[150/265] Loss: 3.631, Acc_clip: 0.936, Acc_id1: 0.011, Acc_id2: 0.753, Base Lr: 3.50e-08
+2026-06-25 05:35:44,834 TFCLIP.train INFO: Epoch[74] Iteration[200/265] Loss: 3.639, Acc_clip: 0.917, Acc_id1: 0.016, Acc_id2: 0.758, Base Lr: 3.50e-08
+2026-06-25 05:38:47,328 TFCLIP.train INFO: Epoch[74] Iteration[250/265] Loss: 3.707, Acc_clip: 0.873, Acc_id1: 0.021, Acc_id2: 0.732, Base Lr: 3.50e-08
+2026-06-25 05:39:30,390 TFCLIP.train INFO: Epoch 74 done. Time per batch: 3.554[s] Speed: 2.3[samples/s]
+2026-06-25 05:41:30,528 TFCLIP.train INFO: Epoch[75] Iteration[50/265] Loss: 3.614, Acc_clip: 0.940, Acc_id1: 0.000, Acc_id2: 0.765, Base Lr: 3.50e-08
+2026-06-25 05:43:57,962 TFCLIP.train INFO: Epoch[75] Iteration[100/265] Loss: 3.627, Acc_clip: 0.939, Acc_id1: 0.015, Acc_id2: 0.764, Base Lr: 3.50e-08
+2026-06-25 05:46:50,480 TFCLIP.train INFO: Epoch[75] Iteration[150/265] Loss: 3.620, Acc_clip: 0.932, Acc_id1: 0.011, Acc_id2: 0.767, Base Lr: 3.50e-08
+2026-06-25 05:49:44,081 TFCLIP.train INFO: Epoch[75] Iteration[200/265] Loss: 3.637, Acc_clip: 0.913, Acc_id1: 0.013, Acc_id2: 0.762, Base Lr: 3.50e-08
+2026-06-25 05:52:36,766 TFCLIP.train INFO: Epoch[75] Iteration[250/265] Loss: 3.750, Acc_clip: 0.875, Acc_id1: 0.023, Acc_id2: 0.732, Base Lr: 3.50e-08
+2026-06-25 05:53:27,766 TFCLIP.train INFO: Epoch 75 done. Time per batch: 3.160[s] Speed: 2.5[samples/s]
+2026-06-25 05:56:19,661 TFCLIP.train INFO: Epoch[76] Iteration[50/265] Loss: 3.621, Acc_clip: 0.957, Acc_id1: 0.002, Acc_id2: 0.740, Base Lr: 3.50e-08
+2026-06-25 05:59:13,152 TFCLIP.train INFO: Epoch[76] Iteration[100/265] Loss: 3.622, Acc_clip: 0.935, Acc_id1: 0.001, Acc_id2: 0.763, Base Lr: 3.50e-08
+2026-06-25 06:01:56,145 TFCLIP.train INFO: Epoch[76] Iteration[150/265] Loss: 3.627, Acc_clip: 0.926, Acc_id1: 0.006, Acc_id2: 0.762, Base Lr: 3.50e-08
+2026-06-25 06:04:55,970 TFCLIP.train INFO: Epoch[76] Iteration[200/265] Loss: 3.675, Acc_clip: 0.900, Acc_id1: 0.014, Acc_id2: 0.751, Base Lr: 3.50e-08
+2026-06-25 06:07:59,141 TFCLIP.train INFO: Epoch[76] Iteration[250/265] Loss: 3.794, Acc_clip: 0.862, Acc_id1: 0.019, Acc_id2: 0.719, Base Lr: 3.50e-08
+2026-06-25 06:08:52,371 TFCLIP.train INFO: Epoch 76 done. Time per batch: 3.489[s] Speed: 2.3[samples/s]
+2026-06-25 06:11:49,351 TFCLIP.train INFO: Epoch[77] Iteration[50/265] Loss: 3.605, Acc_clip: 0.935, Acc_id1: 0.002, Acc_id2: 0.751, Base Lr: 3.50e-08
+2026-06-25 06:14:56,725 TFCLIP.train INFO: Epoch[77] Iteration[100/265] Loss: 3.628, Acc_clip: 0.933, Acc_id1: 0.001, Acc_id2: 0.749, Base Lr: 3.50e-08
+2026-06-25 06:18:03,002 TFCLIP.train INFO: Epoch[77] Iteration[150/265] Loss: 3.600, Acc_clip: 0.936, Acc_id1: 0.002, Acc_id2: 0.768, Base Lr: 3.50e-08
+2026-06-25 06:21:09,535 TFCLIP.train INFO: Epoch[77] Iteration[200/265] Loss: 3.635, Acc_clip: 0.912, Acc_id1: 0.016, Acc_id2: 0.760, Base Lr: 3.50e-08
+2026-06-25 06:23:49,001 TFCLIP.train INFO: Epoch[77] Iteration[250/265] Loss: 3.716, Acc_clip: 0.869, Acc_id1: 0.031, Acc_id2: 0.718, Base Lr: 3.50e-08
+2026-06-25 06:24:37,540 TFCLIP.train INFO: Epoch 77 done. Time per batch: 3.594[s] Speed: 2.2[samples/s]
+2026-06-25 06:27:22,179 TFCLIP.train INFO: Epoch[78] Iteration[50/265] Loss: 3.639, Acc_clip: 0.947, Acc_id1: 0.000, Acc_id2: 0.731, Base Lr: 3.50e-08
+2026-06-25 06:30:15,884 TFCLIP.train INFO: Epoch[78] Iteration[100/265] Loss: 3.624, Acc_clip: 0.951, Acc_id1: 0.000, Acc_id2: 0.754, Base Lr: 3.50e-08
+2026-06-25 06:33:10,700 TFCLIP.train INFO: Epoch[78] Iteration[150/265] Loss: 3.622, Acc_clip: 0.938, Acc_id1: 0.008, Acc_id2: 0.763, Base Lr: 3.50e-08
+2026-06-25 06:36:04,770 TFCLIP.train INFO: Epoch[78] Iteration[200/265] Loss: 3.671, Acc_clip: 0.920, Acc_id1: 0.016, Acc_id2: 0.760, Base Lr: 3.50e-08
+2026-06-25 06:39:01,085 TFCLIP.train INFO: Epoch[78] Iteration[250/265] Loss: 3.757, Acc_clip: 0.872, Acc_id1: 0.020, Acc_id2: 0.732, Base Lr: 3.50e-08
+2026-06-25 06:39:49,291 TFCLIP.train INFO: Epoch 78 done. Time per batch: 3.454[s] Speed: 2.3[samples/s]
+2026-06-25 06:42:38,914 TFCLIP.train INFO: Epoch[79] Iteration[50/265] Loss: 3.617, Acc_clip: 0.940, Acc_id1: 0.000, Acc_id2: 0.739, Base Lr: 3.50e-08
+2026-06-25 06:45:38,528 TFCLIP.train INFO: Epoch[79] Iteration[100/265] Loss: 3.631, Acc_clip: 0.946, Acc_id1: 0.006, Acc_id2: 0.745, Base Lr: 3.50e-08
+2026-06-25 06:48:32,384 TFCLIP.train INFO: Epoch[79] Iteration[150/265] Loss: 3.664, Acc_clip: 0.939, Acc_id1: 0.008, Acc_id2: 0.754, Base Lr: 3.50e-08
+2026-06-25 06:51:29,683 TFCLIP.train INFO: Epoch[79] Iteration[200/265] Loss: 3.688, Acc_clip: 0.911, Acc_id1: 0.011, Acc_id2: 0.744, Base Lr: 3.50e-08
+2026-06-25 06:54:24,462 TFCLIP.train INFO: Epoch[79] Iteration[250/265] Loss: 3.795, Acc_clip: 0.867, Acc_id1: 0.024, Acc_id2: 0.723, Base Lr: 3.50e-08
+2026-06-25 06:55:17,488 TFCLIP.train INFO: Epoch 79 done. Time per batch: 3.503[s] Speed: 2.3[samples/s]
+2026-06-25 06:58:07,232 TFCLIP.train INFO: Epoch[80] Iteration[50/265] Loss: 3.614, Acc_clip: 0.965, Acc_id1: 0.007, Acc_id2: 0.742, Base Lr: 3.50e-08
+2026-06-25 07:01:03,825 TFCLIP.train INFO: Epoch[80] Iteration[100/265] Loss: 3.614, Acc_clip: 0.961, Acc_id1: 0.004, Acc_id2: 0.763, Base Lr: 3.50e-08
+2026-06-25 07:04:02,748 TFCLIP.train INFO: Epoch[80] Iteration[150/265] Loss: 3.618, Acc_clip: 0.949, Acc_id1: 0.005, Acc_id2: 0.762, Base Lr: 3.50e-08
+2026-06-25 07:07:00,725 TFCLIP.train INFO: Epoch[80] Iteration[200/265] Loss: 3.630, Acc_clip: 0.933, Acc_id1: 0.013, Acc_id2: 0.761, Base Lr: 3.50e-08
+2026-06-25 07:09:59,347 TFCLIP.train INFO: Epoch[80] Iteration[250/265] Loss: 3.841, Acc_clip: 0.866, Acc_id1: 0.023, Acc_id2: 0.703, Base Lr: 3.50e-08
+2026-06-25 07:10:52,324 TFCLIP.train INFO: Epoch 80 done. Time per batch: 3.528[s] Speed: 2.3[samples/s]
+2026-06-25 07:10:55,361 TFCLIP.train INFO: ==> Best Perform 0.0%, achieved at epoch 1
+2026-06-25 07:10:55,361 TFCLIP.train INFO: Total running time: 17:28:55.774258
+2026-06-25 07:10:58,479 TFCLIP INFO: Final model (slim) saved to logs/agvpreid_qtd_ham_80ep_boost_decay/last_model.pth.tar

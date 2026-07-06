@@ -1,0 +1,24 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(nvidia-smi *)",
+      "Bash(nvidia-smi)",
+      "Bash(ps aux *)",
+      "Bash(ps aux)",
+      "Bash(rclone ls *)",
+      "Bash(rclone lsd *)",
+      "Bash(pkill -f *)",
+      "Bash(grep *)",
+      "Bash(ls *)",
+      "Bash(tail *)",
+      "Bash(mkdir -p *)",
+      "Bash(bash scripts/eval_sweep.sh *)",
+      "Bash(cd /home/ubuntu/TF-CLIP-quantum && python train_qpreprocess.py *)",
+      "Bash(cd /home/ubuntu/TF-CLIP-quantum && python train_qautoencoder.py *)",
+      "Bash(cd /home/ubuntu/TF-CLIP-quantum && python train_qtemporal_spsa.py *)",
+      "Bash(cd /home/ubuntu/TF-CLIP-quantum && python train_qmultihead.py *)",
+      "Bash(cd /home/ubuntu/TF-CLIP-quantum && python train_qtemporal_ent.py *)",
+      "Bash(cd /home/ubuntu/TF-CLIP-quantum && python train_qtemporal_deep.py *)"
+    ]
+  }
+}

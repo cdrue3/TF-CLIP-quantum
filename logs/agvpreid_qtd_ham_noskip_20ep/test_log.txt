@@ -1,0 +1,10 @@
+2026-05-20 19:59:44,771 TFCLIP INFO: [eval_qtd_ham] n_qubits=5, n_layers=2
+2026-05-20 19:59:44,771 TFCLIP INFO: [eval_qtd_ham] checkpoint=logs/agvpreid_qtd_ham_noskip_20ep/last_model.pth.tar
+2026-05-20 19:59:45,847 TFCLIP INFO: [eval_qtd_ham] 164 tracklets total, num_query=2528, num_classes=250, cameras=6
+2026-05-20 19:59:45,847 TFCLIP INFO: [eval_qtd_ham] Building model + precomputing Pauli basis (may take ~10s)...
+2026-05-20 19:59:53,012 TFCLIP INFO: [eval_qtd_ham] Model ready.
+2026-05-20 19:59:53,012 TFCLIP INFO: Loading checkpoint from: logs/agvpreid_qtd_ham_noskip_20ep/last_model.pth.tar
+2026-05-20 19:59:53,497 TFCLIP WARNING: Missing keys (13): ['qtd.pauli_basis', 'bottleneck.bias', 'bottleneck.running_mean', 'bottleneck.running_var', 'bottleneck_proj.bias']...
+2026-05-20 19:59:53,497 TFCLIP INFO: Checkpoint loaded successfully.
+2026-05-20 19:59:53,499 TFCLIP INFO: Starting evaluation — 164 batches (Hamiltonian eval is slow, ~2-3x angle QTD)...
+2026-05-20 20:11:07,671 TFCLIP INFO: [eval_qtd_ham DONE] Rank-1: 49.1%  Rank-5: 65.8%
